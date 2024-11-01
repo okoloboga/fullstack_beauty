@@ -1,0 +1,535 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Comforter&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poiret+One&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+        <title>Статьи</title>
+        <style>
+            .articles__title {
+                margin-top: 50px;
+            }
+
+            .articles__controls {
+                display: flex;
+                width: 100%;
+                position: relative;
+                gap: 20px;
+            }
+
+            .write-article-btn {
+                flex: 0 0 20%; /* 10% ширины */
+
+            }
+
+            .mobile__filters {
+                display: none;
+            }
+
+            .articles__top__button {
+                height: 65px;
+                width: 65px;
+                border-radius: 50%;
+                background-color: transparent;
+                border: 1px solid rgba(198, 41, 37, 1);
+                position: absolute;
+                right: 10px;
+                bottom: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .search-input {
+                flex: 1;
+                background-image: url("./images/search.svg");
+                background-repeat: no-repeat;
+                padding-left: 50px !important;
+                background-position: 10px center;
+            }
+
+            .filter-btn {
+                flex: 0 0 5%; /* 5% ширины */
+                background-color: transparent;
+            }
+
+            .articles__controls button {
+                font-family: "Playfair Display", sans-serif;
+                font-size: 20px;
+            }
+
+            .articles__types {
+                margin-top: 40px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+            }
+
+            .articles__types button{
+                font-family: "Playfair Display", sans-serif;
+                width: 100%;
+                padding: 9px 12px;
+                opacity: 100%;
+            }
+
+            .articles__types button a {
+                font-size: 20px;
+                color: #1F1F1F !important;
+                font-weight: 500;
+            }
+
+            .popup-content div {
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            /* Стили для Popup */
+            .popup {
+                display: none;
+                position: absolute;
+                z-index: 1000;
+                width: 300px;
+                background-color: white;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                right: 0;
+                top: 150px;
+            }
+
+            .popup-content {
+                padding: 20px;
+                text-align: center;
+            }
+
+            .close-btn {
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                position: absolute;
+                top: 10px;
+                right: 20px;
+            }
+
+            .articles__block__cards__div {
+                position: relative;
+            }
+
+
+            .articles__block__title {
+                justify-content: space-between;
+            }
+
+            .articles__block__title * {
+                flex: 1;
+            }
+
+            .articles__block {
+                margin-top: 90px;
+            }
+
+            .articles__block__card__activities{
+                gap: 25px;
+            }
+
+            .articles__block__card__activities img {
+                margin-right: 5px;
+            }
+
+            .articles__block__card__activities p {
+                margin-bottom: 0 !important;
+            }
+
+            .articles__block__card {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            .articles__block__card p {
+                opacity: 80%;
+                color: #1F1F1F;
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+
+            .articles__block__card h4 {
+                margin-bottom: 10px;
+                font-size: 20px;
+            }
+
+            .articles__block__cards {
+                scroll-behavior: smooth;
+                flex: 1;
+                gap: 20px; /* Adjust as needed */
+                margin-top: 60px;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+
+            .articles__block__cards .articles__block__card {
+                flex: 0 0 calc(33.33% - 20px);
+                user-select: none;
+                cursor: default;
+            }
+
+            .articles__block__cards .articles__block__card__img {
+                width: 100%;
+            }
+
+            .articles__block__card .button__without__bg {
+                margin: 20px 0;
+            }
+
+            .articles__block__cards::-webkit-scrollbar {
+                height: 10px;
+            }
+
+            .articles__block__cards::-webkit-scrollbar-thumb {
+                background-color: #ccc;
+                border-radius: 5px;
+            }
+
+            .slider-button.prev img {
+                transform: rotate(180deg);
+            }
+
+            .articles__controls__child {
+                flex: 1;
+            }
+
+        </style>
+
+        <link rel="stylesheet" href="./css/main.css">
+        <link rel="stylesheet" href="./css/media.css">
+        <title>Title</title>
+    </head>
+    <body>
+    <header class="header">
+        <div class="container flex justify-between items-center">
+            <div class="header__logo">
+                <a href="index.html">
+                    <img src="./images/logo.svg" alt="Logo">
+                </a>
+            </div>
+            <nav class="header__nav flex item-center">
+                <ul class="flex">
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="articles.html">Статьи</a></li>
+                    <li><a href="news-best.html">Новости</a></li>
+                    <li><a href="partners.html">Партнёры</a></li>
+                </ul>
+            </nav>
+            <div class="header__actions flex item-center">
+                <a href="edit-profile.html" class="user-icon">
+                    <img src="images/user.svg" alt="User Logo">
+                </a>
+                <div class="burger-menu" id="burgerMenu">
+                    <span class="burger-icon"></span>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-nav">
+                <ul>
+                    <li><a href="#" class="user-icon">
+                        <img src="images/user.svg" alt="User Logo">
+                    </a></li>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="articles.html">Статьи</a></li>
+                    <li><a href="news-best.html">Новости</a></li>
+                    <li><a href="partners.html">Партнёры</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+        <main>
+            <section class="articles container">
+                <div class="articles__title text-center">
+                    <h1 class="title">СТАТЬИ</h1>
+                </div>
+                <div class="articles__div">
+                    <div class="articles__div__search">
+                        <div class="articles__controls justify-between">
+                            <button class="write-article-btn button__with__bg"><a href="create-article.html">Написать статью</a></button>
+                            <div class="articles__controls__child flex item-center justify-between relative">
+                                <input type="text" class="search-input default__input">
+                                <button class="filter-btn" id="openPopup"><img src="./images/filter-icon.svg" alt=""></button>
+                            </div>
+                            <div class="popup" id="popup">
+                                <div class="popup-content text-left flex justify-center item-center flex-column">
+                                    <button class="close-btn" id="closePopup">&times;</button>
+                                    <div class="flex flex-column">
+                                        <h2>Сортировать:</h2>
+                                        <label><input type="checkbox" name="category1"> По колличеству просмотров</label>
+                                        <label><input type="checkbox" name="category2"> По колличеству лайков</label>
+                                        <label><input type="checkbox" name="category3"> По автору</label>
+                                        <label><input type="checkbox" name="category4"> От новых к старым</label>
+                                        <label><input type="checkbox" name="category4"> От старых к новым</label>
+                                        <label class="mobile__filters"><input type="checkbox" name="category5"> Косметика</label>
+                                        <label class="mobile__filters"><input type="checkbox" name="category6"> Одежда</label>
+                                        <label class="mobile__filters"><input type="checkbox" name="category7"> Украшения</label>
+                                        <label class="mobile__filters"><input type="checkbox" name="category8"> Причёски</label>
+                                        <label class="mobile__filters"><input type="checkbox" name="category9"> Питание</label>
+                                        <label class="mobile__filters"><input type="checkbox" name="category10"> Спорт</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="articles__types">
+                            <button class="button__without__bg"><a href="">Косметика</a></button>
+                            <button class="button__without__bg"><a href="">Одежда</a></button>
+                            <button class="button__without__bg"><a href="">Украшения</a></button>
+                            <button class="button__without__bg"><a href="">Причёски</a></button>
+                            <button class="button__without__bg"><a href="">Питание</a></button>
+                            <button class="button__without__bg"><a href="">Спорт</a></button>
+                        </div>
+                        <div class="articles__block__cards__div">
+                            <div class="articles__block__cards flex">
+
+                                <div class="articles__block__card">
+                                    <div>
+                                        <img src="./images/articles5.png" alt="" class="articles__block__card__img">
+                                        <h4>Валерия Иванова </h4>
+                                        <div class="articles__block__card__activities flex">
+                                            <div class="flex">
+                                                <img src="./images/like.svg" alt="">
+                                                <p>118</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/dislike.svg" alt="">
+                                                <p>15</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/star.svg" alt="">
+                                                <p>20</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/comments.svg" alt="">
+                                                <p>3</p>
+                                            </div>
+                                        </div>
+                                        <p>Для нежных сияющих макияжей Peripera All Take Mood Palette #14 Come, Glosser</p>
+                                    </div>
+                                    <a  class="button__without__bg" href="product.html">Читать далее</a>
+                                </div>
+                                <div class="articles__block__card" >
+                                    <div>
+                                        <img src="./images/articles6.png" alt="" class="articles__block__card__img">
+                                        <h4>Мария Дмитренко</h4>
+                                        <div class="articles__block__card__activities flex">
+                                            <div class="flex">
+                                                <img src="./images/like.svg" alt="">
+                                                <p>98</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/dislike.svg" alt="">
+                                                <p>12</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/star.svg" alt="">
+                                                <p>21</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/comments.svg" alt="">
+                                                <p>6</p>
+                                            </div>
+                                        </div>
+                                        <p>Трио лёгких бюджетных санскринов на химических фильтрах нового поколения</p>
+                                    </div>
+                                    <a  class="button__without__bg" href="product.html">Читать далее</a>
+                                </div>
+                                <div class="articles__block__card">
+                                    <div>
+                                        <img src="./images/articles1.png" alt="" class="articles__block__card__img">
+                                        <h4>Анастасия Гринько</h4>
+                                        <div class="articles__block__card__activities flex">
+                                            <div class="flex">
+                                                <img src="./images/like.svg" alt="">
+                                                <p>114</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/dislike.svg" alt="">
+                                                <p>11</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/star.svg" alt="">
+                                                <p>23</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/comments.svg" alt="">
+                                                <p>5</p>
+                                            </div>
+                                        </div>
+                                        <p>Культовый в своем роде: Dior Addict Lip Maximizer в оттенке 001 Pink</p>
+                                    </div>
+                                    <a  class="button__without__bg" href="product.html">Читать далее</a>
+                                </div>
+                                <div class="articles__block__card">
+                                    <div>
+                                        <img src="./images/articles2.png" alt="" class="articles__block__card__img">
+                                        <h4>Ольга Лопаткина</h4>
+                                        <div class="articles__block__card__activities flex">
+                                            <div class="flex">
+                                                <img src="./images/like.svg" alt="">
+                                                <p>114</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/dislike.svg" alt="">
+                                                <p>11</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/star.svg" alt="">
+                                                <p>23</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/comments.svg" alt="">
+                                                <p>5</p>
+                                            </div>
+                                        </div>
+                                        <p>Dasique Melting Candy Balm 09 Lychee Cream</p>
+                                    </div>
+                                    <a  class="button__without__bg" href="product.html">Читать далее</a>
+                                </div>
+                                <div class="articles__block__card">
+                                    <div>
+                                        <img src="./images/articles3.png" alt="" class="articles__block__card__img">
+                                        <h4>Людмила Молчан</h4>
+                                        <div class="articles__block__card__activities flex">
+                                            <div class="flex">
+                                                <img src="./images/like.svg" alt="">
+                                                <p>114</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/dislike.svg" alt="">
+                                                <p>11</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/star.svg" alt="">
+                                                <p>23</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/comments.svg" alt="">
+                                                <p>5</p>
+                                            </div>
+                                        </div>
+                                        <p>Likato Professional: Salicylic Acid Serum / Niacinamide + Zinc Serum. Сравнение с культовыми аналогами The Ordinary</p>
+                                    </div>
+                                    <a  class="button__without__bg" href="product.html">Читать далее</a>
+                                </div>
+                                <div class="articles__block__card">
+                                    <div>
+                                        <img src="./images/articles3.png" alt="" class="articles__block__card__img">
+                                        <h4>Людмила Молчан</h4>
+                                        <div class="articles__block__card__activities flex">
+                                            <div class="flex">
+                                                <img src="./images/like.svg" alt="">
+                                                <p>114</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/dislike.svg" alt="">
+                                                <p>11</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/star.svg" alt="">
+                                                <p>23</p>
+                                            </div>
+                                            <div class="flex">
+                                                <img src="./images/comments.svg" alt="">
+                                                <p>5</p>
+                                            </div>
+                                        </div>
+                                        <p>Likato Professional: Salicylic Acid Serum / Niacinamide + Zinc Serum. Сравнение с культовыми аналогами The Ordinary</p>
+                                    </div>
+                                    <a  class="button__without__bg" href="product.html">Читать далее</a>
+                                </div>
+                            </div>
+                            <button class="articles__top__button"><img src="./images/top-arrow.svg" alt="Top Arrow Icon"></button>
+                        </div>
+                        <button class="button__with__bg" style="margin-top: 50px;">Показать ещё</button>
+                    </div>
+                </div>
+            </section>
+            <section class="connect__section">
+                <div class="container flex flex-column">
+                    <div class="connect__section__title flex">
+                        <div></div>
+                        <h1 class="title">Связаться <br>с нами</h1>
+                    </div>
+                    <div class="connect__section__social__media__form flex">
+                        <div class="connect__section__social__media flex flex-column justify-between">
+                            <div>
+                                <p>Присоединяйтесь к нам в социльных сетях</p>
+                                <div class="flex">
+                                    <a href=""><img src="./images/instagram.svg" alt=""></a>
+                                    <a href=""><img src="./images/vk.svg" alt=""></a>
+                                    <a href=""><img src="./images/telegram.svg" alt=""></a>
+                                    <a href=""><img src="./images/facebook.svg" alt=""></a>
+                                </div>
+                            </div>
+                            <div>
+                                <p><a href="">Политика конфиденциальности</a></p>
+                                <p><a href="">Политика обработки файлов cookie</a></p>
+                            </div>
+                        </div>
+                        <div class="connect__section__form">
+                            <p>Пожалуйста, отправьте запрос, и мы свяжемся с вами как можно скорее.</p>
+                            <div class="flex flex-column">
+                                <label for="message" class="form-label">Чем мы можем вам помочь?</label>
+                                <textarea id="message" class="form-input large-input"></textarea>
+                                <label for="email" class="form-label">Ваш E-mail?</label>
+                                <input type="email" id="email" class="form-input small-input">
+                                <button type="submit" class="button__without__bg">Отправить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="container">
+            <p>
+                © 2024 <br>
+                Все права защищены. Полное или частичное копирование материалов сайта без согласования с редакцией запрещено.
+            </p>
+        </footer>
+
+        <script>
+            // popup js code
+            document.getElementById('openPopup').addEventListener('click', function(event) {
+                const popup = document.getElementById('popup');
+
+                // Проверяем текущее состояние и переключаем видимость
+                if (popup.style.display === 'none' || popup.style.display === '') {
+                    popup.style.display = 'block';
+                } else {
+                    popup.style.display = 'none';
+                }
+            });
+
+            document.getElementById('closePopup').addEventListener('click', function() {
+                document.getElementById('popup').style.display = 'none';
+            });
+
+            // popup js code
+
+            // top button code
+
+            const scrollToTopBtn = document.querySelector(".articles__top__button");
+
+
+            scrollToTopBtn.onclick = function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            // top button code
+
+        </script>
+        <script src="./js/menu-burger.js"></script>
+    </body>
+    </html>

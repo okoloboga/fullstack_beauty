@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comforter&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poiret+One&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/media.css">
+    <title>Style.rf</title>
+    <style>
+        @media (max-width: 768px) {
+            .slider-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="container flex justify-between items-center">
+        <div class="header__logo">
+            <a href="index.html">
+                <img src="./images/logo.svg" alt="Logo">
+            </a>
+        </div>
+        <nav class="header__nav flex item-center">
+            <ul class="flex">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="articles.html">Статьи</a></li>
+                <li><a href="news-best.html">Новости</a></li>
+                <li><a href="partners.html">Партнёры</a></li>
+            </ul>
+        </nav>
+        <div class="header__actions flex item-center">
+            <a href="edit-profile.html" class="user-icon">
+                <img src="images/user.svg" alt="User Logo">
+            </a>
+            <div class="burger-menu" id="burgerMenu">
+                <span class="burger-icon"></span>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+        <nav class="mobile-nav">
+            <ul>
+                <li><a href="edit-profile.html" class="user-icon">
+                    <img src="images/user.svg" alt="User Logo">
+                </a></li>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="articles.html">Статьи</a></li>
+                    <li><a href="news-best.html">Новости</a></li>
+                    <li><a href="partners.html">Партнёры</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main>
+    <section class="first__section">
+        <div class="first__block">
+            <div class="first__block__child flex justify-between">
+                <div class="first__block__text flex justify-center item-center text-right flex-column">
+                    <div>
+                        <h1 class="base-text-color">Style<span class="base-text-color">.rf</span></h1>
+                    </div>
+                    <div>
+                        <p class="base-text-color">
+                            Бьюти комьюнити. <br>
+                            Площадка для единомышленников.
+                        </p>
+                    </div>
+                </div>
+                <div class="first__block__img">
+                    <img src="./images/girl.svg" alt="">
+                </div>
+            </div>
+            <div class="first__block__nav flex">
+                <div class="first__block__nav__small-block"></div>
+                <div class="first__block__nav__main-block">
+                    <p>СТИЛЬ</p></div>
+                <div class="first__block__nav__main-block">
+                    <p>МОДА</p></div>
+                <div class="first__block__nav__main-block">
+                    <p>КРАСОТА</p></div>
+                <div class="first__block__nav__main-block">
+                    <p>ЭСТЕТИКА</p>
+                </div>
+                <div class="first__block__nav__small-block"></div>
+            </div>
+            <div class="first__block__nav first__block__nav__mobile flex">
+                <div class="first__block__nav__small-block"></div>
+                <div class="first__block__nav__main-block">
+                    <p>СТИЛЬ</p></div>
+                <div class="first__block__nav__main-block">
+                    <p>МОДА</p></div>
+                <div class="first__block__nav__small-block"></div>
+            </div>
+        </div>
+    </section>
+    <section class="second__section">
+        <div class="container">
+            <div class="second__section-title">
+                <div></div>
+                <h1 class="title">о проекты</h1>
+            </div>
+            <div class="second__section__cards">
+                <div class="second__section__card">
+                    <h4 class="second__section__card-title flex flex-column">
+                        <span class="second__section__card-title-1"><span>Style</span>.rf - это новое онлайн пространство, где собраны</span>
+                        <span class="second__section__card-title-2">все, причастные к бьюти-сфере, в одном месте.</span>
+                        <span class="second__section__card-title-3">Это красота, мода, фитнес, визаж, рзвитие, релакс,</span>
+                        <span class="second__section__card-title-4">фото, дизайн, стиль, эстетика и многое другое.</span>
+                    </h4>
+                    <h4 class="second__section__card-title flex flex-column">
+                         <span class="mobile" style="width: auto;margin: 30px 0 10px;"><span style="font-size: 40px; line-height: 0px;">Style.rf </span> -это новое онлайн пространство, где собраны все, причастные к бьюти-сфере, в одном месте. Это красота, мода, фитнес, визаж, рзвитие, релакс, фото, дизайн, стиль, эстетика и многое другое.</span>
+                    </h4>
+                    <div class="second__section__card-mini-divs flex justify-between">
+                        <div class="second__section__card-mini">
+                            <div>
+                                <img src="./images/second__section__girl.png" alt="Girl">
+                                <img src="./images/second__section__girl2.png" alt="Girl">
+                            </div>
+                            <p>
+                                Что модно в этом сезоне?
+                                Какой макияж подобрать для свидания в ресторане?
+                                Какие продукты помогают улучшить кожу лица?
+                                Ответы на эти и многие другие вопросы можно найти на нашем сайте.
+                            </p>
+                        </div>
+                        <div class="second__section__card-mini flex">
+                            <p>На нашей площадке встречаются люди всех бьюти-профессий и обмениваются опытом! 
+                                Style.rf - удобный поисковик партнёров для создания совместных проектов,
+                                работы над текущими проектами и просто для знакомства и общения. 
+                                Каждый зарегистрированный пользователь становится партнёром проекта Style.rf.
+                                Присоединяйся и пиши, мы ждём именно тебя!</p>
+                            <img src="./images/second__section__girl3.png" alt="Girl">
+                        </div>
+                    </div>
+                </div>
+                <div class="second__section__card">
+                    <h4 class="second__section__card-title flex flex-column">
+                        <span class="second__section__card-title-1">Если вы являетесь экспертом в своей нише </span>
+                        <span class="second__section__card-title-2">и хотите поделиться с девушками полезными </span>
+                        <span class="second__section__card-title-3">лайфхаками и советами, то скорее регистрируйтесь</span>
+                        <span class="second__section__card-title-4">и расскажите о себе и своём деле на нашем сайте.</span>
+                    </h4>
+                    <h4 class="second__section__card-title flex flex-column">
+                        <span class="mobile" style="width: auto;margin: 30px 0 10px;"> Если вы являетесь экспертом в своей нише и хотите поделиться с девушками полезными лайфхаками и советами, то скорее регистрируйтесь и расскажите о себе и своём деле на нашем сайте.</span>
+                    </h4>
+                    <div class="second__section__card__mini flex justify-between">
+                        <div>
+                            <img src="./images/second__section__girl4.png" alt="">
+                            <p>Девушки вы ещё не с нами?
+                                Тогда скорее подписывайтесь и не пропускайте наши новости
+                                и статьи - там кладезь полезной информации, секретные техники
+                                и современные тенденции. Присоединяйтесь и преображайтесь вместе с нами!</p>
+                        </div>
+                        <div>
+                            <img src="./images/second__section__girls.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="news__section">
+        <div class="news__block container">
+            <div class="news__block__title flex">
+                <div></div>
+                <h1 class="title">новости</h1>
+            </div>
+            <div>
+                <div class="news__block__cards flex">
+                    <div>
+                        <div class="news__block__card">
+                            <div>
+                                <img src="./images/news1.png" alt="">
+                                <p>Нашумевший бренд Rhode, который создан Хейли Болдуин в девичестве, сейчас может продать многое.</p>
+                            </div>
+                            <a  class="button__without__bg" href="news-best.html">Читать далее</a>
+                        </div>
+                    </div>
+                    <div class="flex news__block__cards__gap">
+                        <div class="news__block__card">
+                            <div>
+                                <img src="./images/news2.png" alt="">
+                                <p>Essie Punk At Heart Fall 2024 Collection</p>
+                            </div>
+                            <a  class="button__without__bg" href="news-best.html">Читать далее</a>
+                        </div>
+                        <div class="news__block__card">
+                            <div>
+                                <img src="./images/news3.png" alt="">
+                                <p>Artdeco Cosmetic Summer Brights Collection</p>
+                            </div>
+                            <a  class="button__without__bg" href="news-best.html">Читать далее</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="news__block__cards2 flex">
+                        <div class="news__block__card">
+                            <div>
+                                <img src="./images/news4.png" alt="">
+                                <p>Осенняя коллекция Dior Map of Paris Makeup Collection Fall 2024</p>
+                            </div>
+                            <a  class="button__without__bg" href="news-best.html">Читать далее</a>
+                        </div>
+                        <div class="news__block__card">
+                            <div>
+                                <img src="./images/news5.png" alt="">
+                                <p>Новые коллекции от Givenchy и Byredo</p>
+                            </div>
+                            <a  class="button__without__bg" href="news-best.html">Читать далее</a>
+                        </div>
+                        <div class="news__block__card">
+                            <div>
+                                <img src="./images/news6.png" alt="">
+                                <p>Летняя сказка от Flowerknows</p>
+                            </div>
+                            <a  class="button__without__bg" href="news-best.html">Читать далее</a>
+                        </div>
+                </div>
+            </div>
+            <div class="news__block__card__btn">
+                <a class="button__with__bg" href="news-best.html">Все новости</a>
+            </div>
+        </div>
+    </section>
+    <section class="articles__section">
+        <div class="container">
+            <div class="articles__block">
+                <div class="articles__block__title flex">
+                    <div></div>
+                    <h1 class="title">популярные <br>статьи</h1>
+                </div>
+                <div class="slider-container">
+                    <div class="articles__block__cards flex">
+                        <button class="slider-button prev" style="display: none;">
+                            <img src="./images/right-arrow.svg" alt="">
+                        </button>
+                        <div class="articles__block__card">
+                            <div>
+                                <img src="./images/articles1.png" alt="" class="articles__block__card__img">
+                                <h4>Анастасия Гринько</h4>
+                                <div class="articles__block__card__activities flex">
+                                    <div class="flex">
+                                        <img src="./images/like.svg" alt="">
+                                        <p>114</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/dislike.svg" alt="">
+                                        <p>11</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/star.svg" alt="">
+                                        <p>23</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/comments.svg" alt="">
+                                        <p>5</p>
+                                    </div>
+                                </div>
+                                <p>Культовый в своем роде: Dior Addict Lip Maximizer в оттенке 001 Pink</p>
+                            </div>
+                            <a  class="button__without__bg" href="articles.html">Читать далее</a>
+                        </div>
+                        <div class="articles__block__card">
+                            <div>
+                                <img src="./images/articles2.png" alt="" class="articles__block__card__img">
+                                <h4>Ольга Лопаткина</h4>
+                                <div class="articles__block__card__activities flex">
+                                    <div class="flex">
+                                        <img src="./images/like.svg" alt="">
+                                        <p>114</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/dislike.svg" alt="">
+                                        <p>11</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/star.svg" alt="">
+                                        <p>23</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/comments.svg" alt="">
+                                        <p>5</p>
+                                    </div>
+                                </div>
+                                <p>Dasique Melting Candy Balm 09 Lychee Cream</p>
+                            </div>
+                            <a  class="button__without__bg" href="articles.html">Читать далее</a>
+                        </div>
+                        <div class="articles__block__card">
+                            <div>
+                                <img src="./images/articles3.png" alt="" class="articles__block__card__img">
+                                <h4>Людмила Молчан</h4>
+                                <div class="articles__block__card__activities flex">
+                                    <div class="flex">
+                                        <img src="./images/like.svg" alt="">
+                                        <p>114</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/dislike.svg" alt="">
+                                        <p>11</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/star.svg" alt="">
+                                        <p>23</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/comments.svg" alt="">
+                                        <p>5</p>
+                                    </div>
+                                </div>
+                                <p>Likato Professional: Salicylic Acid Serum / Niacinamide + Zinc Serum. Сравнение с культовыми аналогами The Ordinary</p>
+                            </div>
+                            <a  class="button__without__bg" href="articles.html">Читать далее</a>
+                        </div>
+                        <div class="articles__block__card">
+                            <div>
+                                <img src="./images/articles1.png" alt="" class="articles__block__card__img">
+                                <h4>Анастасия Гринько</h4>
+                                <div class="articles__block__card__activities flex">
+                                    <div class="flex">
+                                        <img src="./images/like.svg" alt="">
+                                        <p>114</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/dislike.svg" alt="">
+                                        <p>11</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/star.svg" alt="">
+                                        <p>23</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/comments.svg" alt="">
+                                        <p>5</p>
+                                    </div>
+                                </div>
+                                <p>Культовый в своем роде: Dior Addict Lip Maximizer в оттенке 001 Pink</p>
+                            </div>
+                            <a  class="button__without__bg" href="articles.html">Читать далее</a>
+                        </div>
+                        <div class="articles__block__card">
+                            <div>
+                                <img src="./images/articles2.png" alt="" class="articles__block__card__img">
+                                <h4>Ольга Лопаткина</h4>
+                                <div class="articles__block__card__activities flex">
+                                    <div class="flex">
+                                        <img src="./images/like.svg" alt="">
+                                        <p>114</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/dislike.svg" alt="">
+                                        <p>11</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/star.svg" alt="">
+                                        <p>23</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/comments.svg" alt="">
+                                        <p>5</p>
+                                    </div>
+                                </div>
+                                <p>Dasique Melting Candy Balm 09 Lychee Cream</p>
+                            </div>
+                            <a  class="button__without__bg" href="articles.html">Читать далее</a>
+                        </div>
+                        <div class="articles__block__card">
+                            <div>
+                                <img src="./images/articles3.png" alt="" class="articles__block__card__img">
+                                <h4>Людмила Молчан</h4>
+                                <div class="articles__block__card__activities flex">
+                                    <div class="flex">
+                                        <img src="./images/like.svg" alt="">
+                                        <p>114</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/dislike.svg" alt="">
+                                        <p>11</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/star.svg" alt="">
+                                        <p>23</p>
+                                    </div>
+                                    <div class="flex">
+                                        <img src="./images/comments.svg" alt="">
+                                        <p>5</p>
+                                    </div>
+                                </div>
+                                <p>Likato Professional: Salicylic Acid Serum / Niacinamide + Zinc Serum. Сравнение с культовыми аналогами The Ordinary</p>
+                            </div>
+                            <a  class="button__without__bg" href="articles.html">Читать далее</a>
+                        </div>
+
+                        <button class="slider-button next">
+                            <img src="./images/right-arrow.svg" alt="">
+                        </button>
+                    </div>
+                </div>
+                <div class="articles__block__card__btn">
+                    <a class="button__with__bg" href="articles.html">Все новости</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="connect__section">
+        <div class="container flex flex-column">
+            <div class="connect__section__title flex">
+                <div></div>
+                <h1 class="title">Связаться <br>с нами</h1>
+            </div>
+            <div class="connect__section__social__media__form flex">
+                <div class="connect__section__social__media flex flex-column justify-between">
+                    <div>
+                        <p>Присоединяйтесь к нам в социльных сетях</p>
+                        <div class="flex">
+                            <a href=""><img src="./images/instagram.svg" alt=""></a>
+                            <a href=""><img src="./images/vk.svg" alt=""></a>
+                            <a href=""><img src="./images/telegram.svg" alt=""></a>
+                            <a href=""><img src="./images/facebook.svg" alt=""></a>
+                        </div>
+                    </div>
+                    <div>
+                        <p><a href="">Политика конфиденциальности</a></p>
+                        <p><a href="">Политика обработки файлов cookie</a></p>
+                    </div>
+                </div>
+                <div class="connect__section__form">
+                    <p>Пожалуйста, отправьте запрос, и мы свяжемся с вами как можно скорее.</p>
+                    <div class="flex flex-column">
+                        <label for="message" class="form-label">Чем мы можем вам помочь?</label>
+                        <textarea id="message" class="form-input large-input"></textarea>
+                        <label for="email" class="form-label">Ваш E-mail?</label>
+                        <input type="email" id="email" class="form-input small-input">
+                        <button type="submit" class="button__without__bg">Отправить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<footer class="container">
+    <p>
+        © 2024 <br>
+        Все права защищены. Полное или частичное копирование материалов сайта без согласования с редакцией запрещено.
+    </p>
+</footer>
+<script src="js/index.js"></script>
+<script src="./js/menu-burger.js"></script>
+</body>
+</html>
