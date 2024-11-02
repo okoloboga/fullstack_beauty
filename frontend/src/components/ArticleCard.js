@@ -10,30 +10,30 @@ const ArticleCard = ({ article }) => {
     <div className="articles__block__card">
       <div>
         <img
-          src={article.image}
+          src={article.coverImage ? `/${article.coverImage}` : require('../assets/images/default.jpg').default}
           alt=""
           className="articles__block__card__img"
         />
-        <h4>{article.author}</h4>
+        <h4>{article.author.name}</h4>
         <div className="articles__block__card__activities flex">
           <div className="flex">
             <img src={likeIcon} alt="Лайк" />
-            <p>{article.likes}</p>
+            <p>{article.likes || 0}</p>
           </div>
           <div className="flex">
             <img src={dislikeIcon} alt="Дизлайк" />
-            <p>{article.dislikes}</p>
+            <p>{article.dislikes || 0}</p>
           </div>
           <div className="flex">
             <img src={starIcon} alt="Звезда" />
-            <p>{article.stars}</p>
+            <p>{article.stars || 0}</p>
           </div>
           <div className="flex">
             <img src={commentsIcon} alt="Комментарии" />
-            <p>{article.comments}</p>
+            <p>{article.comments || 0}</p>
           </div>
         </div>
-        <p>{article.description}</p>
+        <p>{article.content.slice(0, 100)}...</p>
       </div>
       <Link className="button__without__bg" to={`/articles/${article.id}`}>
         Читать далее

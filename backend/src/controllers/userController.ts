@@ -47,3 +47,51 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const updateUserProfile = async (req: Request, res: Response): Promise<void> => {
+    const userId = req.params.id; // получаем ID пользователя из параметров запроса
+    const {
+        email,
+        name,
+        city,
+        activity,
+        phone,
+        instagram,
+        vk,
+        telegram,
+        facebook,
+        about,
+        receiveNewsletter,
+    } = req.body;
+
+    try {
+        const userRepository = AppDataSource.getRepository(User);
+        const user = await userRepository.findOneBy({ id: Number(userId) });
+
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+
+        // Обновляем поля пользователя
+        user.email = email ?? user.email;
+        user.name = name ?? user.name;
+        user.city = city ?? user.city;
+        user.activity = activity ?? user.activity;
+        user.phone = phone ?? user.phone;
+        user.instagram = instagram ?? user.instagram;
+        user.vk = vk ?? user.vk;
+        user.telegram = telegram ?? user.telegram;
+        user.facebook = facebook ?? user.facebook;
+        user.about = about ?? user.about;
+        user.receiveNewsletter = receiveNewsletter ?? user.receiveNewsletter;
+
+        await userRepository.save(user);
+
+        res.status(200).json({ message: "Profile updated successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+

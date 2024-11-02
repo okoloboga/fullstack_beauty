@@ -1,6 +1,8 @@
 import React from 'react';
 import NewsList from '../components/NewsList';
 import ConnectSection from '../components/sections/ConnectSection';
+import { Link } from 'react-router-dom';
+
 
 const NewsNewestPage = () => {
   return (

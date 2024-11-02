@@ -1,35 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import ArticleCard from './ArticleCard';
 import filterIcon from '../assets/images/filter-icon.svg';
 import topArrowIcon from '../assets/images/top-arrow.svg';
-// Импортируйте необходимые данные и изображения
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const ArticlesList = () => {
   // Состояния для управления поиском, фильтрами и popup
   const [searchQuery, setSearchQuery] = useState('');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  // Добавьте состояния для фильтров, если необходимо
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Массив статей (можете импортировать из файла данных)
-  const articles = [
-    {
-      id: 1,
-      image: require('../assets/images/articles5.png').default,
-      author: 'Валерия Иванова',
-      likes: 118,
-      dislikes: 15,
-      stars: 20,
-      comments: 3,
-      description:
-        'Для нежных сияющих макияжей Peripera All Take Mood Palette #14 Come, Glosser',
-    },
-    // Добавьте остальные статьи
-  ];
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/articles`); // Запрос на сервер для получения всех статей
+        setArticles(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Ошибка при загрузке статей:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, []);
 
   // Фильтрация статей на основе поиска
   const filteredArticles = articles.filter((article) =>
-    article.description.toLowerCase().includes(searchQuery.toLowerCase())
+    article.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Обработчики для поиска и popup
@@ -95,9 +97,11 @@ const ArticlesList = () => {
         </div>
         <div className="articles__block__cards__div">
           <div className="articles__block__cards flex">
-            {filteredArticles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
-            ))}
+            {loading ? (
+              <p>Загрузка статей...</p>
+            ) : (
+              filteredArticles.map((article) => <ArticleCard key={article.id} article={article} />)
+            )}
           </div>
           <button className="articles__top__button" onClick={handleScrollToTop}>
             <img src={topArrowIcon} alt="Top Arrow Icon" />

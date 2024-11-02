@@ -14,4 +14,38 @@ export class User {
 
     @Column()
     role!: string; // 'user', 'partner', 'admin'
+
+    // Дополнительные поля профиля (все необязательные)
+    @Column({ nullable: true })
+    email?: string;
+
+    @Column({ nullable: true })
+    name?: string;
+
+    @Column({ nullable: true })
+    city?: string;
+
+    @Column({ nullable: true })
+    activity?: string;
+
+    @Column({ nullable: true })
+    phone?: string;
+
+    @Column({ nullable: true })
+    instagram?: string;
+
+    @Column({ nullable: true })
+    vk?: string;
+
+    @Column({ nullable: true })
+    telegram?: string;
+
+    @Column({ nullable: true })
+    facebook?: string;
+
+    @Column({ nullable: true })
+    about?: string;
+
+    @Column({ nullable: true })
+    receiveNewsletter?: boolean;
 }

@@ -6,12 +6,14 @@ import Footer from './components/Footer';
 import ArticlesPage from './pages/ArticlesPage';
 import ArticleDetailPage from './pages/ArticleDetailPage';
 import NewsBestPage from './pages/NewsBestPage';
-import NewsDetailPage from './pages/NewsDetailPage';
+import NewDetailPage from './pages/NewDetailPage';
 import NewsNewestPage from './pages/NewsNewestPage';
 import EditProfilePage from './pages/EditProfilePage';
+import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
+import ProtectedRoute from './components/ProtectedRoute'; // Добавленный защищенный маршрут
+import CreateArticleForm from './components/CreateArticleForm';
 
-
-// Импортируйте другие страницы по мере необходимости
 import './styles/main.css';
 import './styles/index.css';
 import './styles/media.css';
@@ -25,10 +27,18 @@ function App() {
         <Route path="/articles" element={<ArticlesPage />} />
         <Route path="/articles/:id" element={<ArticleDetailPage />} />
         <Route path="/news-best" element={<NewsBestPage />} />
-        <Route path="/news/:id" element={<NewsDetailPage />} />
+        <Route path="/news/:id" element={<NewDetailPage />} />
         <Route path="/news-newest" element={<NewsNewestPage />} />
-        <Route path="/edit-profile" element={<EditProfilePage />} />
-        {/* Добавьте другие маршруты */}
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* Защищенные маршруты */}
+        <Route element={<ProtectedRoute allowedRoles={['partner', 'admin']} />}>
+          <Route path="/create-article" element={<CreateArticleForm />} />
+        </Route>
+        <Route element={<ProtectedRoute allowedRoles={['partner', 'admin']} />}>
+          <Route path="/edit-profile" element={<EditProfilePage />} />
+        </Route>
       </Routes>
       <Footer />
     </Router>

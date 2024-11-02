@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import express from "express";
+import cors from "cors"; // Импортируем CORS
 import userRoutes from "./routes/userRoutes";
 import articleRoutes from "./routes/articleRoutes";
 import commentRoutes from "./routes/commentRoutes";
@@ -12,6 +13,10 @@ import { AppDataSource } from "./config/db";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Поддержка CORS
+app.use(cors()); // Здесь включаем CORS
+
+// Middleware для обработки JSON
 app.use(express.json());
 
 // Подключение к базе данных

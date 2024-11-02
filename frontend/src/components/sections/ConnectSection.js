@@ -5,6 +5,8 @@ import vkIcon from '../../assets/images/vk.svg';
 import telegramIcon from '../../assets/images/telegram.svg';
 import facebookIcon from '../../assets/images/facebook.svg';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const ConnectSection = () => {
     const [message, setMessage] = useState('');
     const [email, setEmail] = useState('');
@@ -24,7 +26,7 @@ const ConnectSection = () => {
       };
   
       // Отправка данных на сервер с использованием fetch
-      fetch('/api/contact', {
+      fetch(`${apiUrl}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
