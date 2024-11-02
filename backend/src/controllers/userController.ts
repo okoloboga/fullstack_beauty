@@ -5,14 +5,14 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const registerUser = async (req: Request, res: Response) => {
-    const { username, password, role } = req.body;
+    const { username, password } = req.body;
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User();
         user.username = username;
         user.password = hashedPassword;
-        user.role = role;
+        user.role = "user";
 
         const userRepository = AppDataSource.getRepository(User);
         await userRepository.save(user);

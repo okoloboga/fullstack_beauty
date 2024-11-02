@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import ArticleCard from './ArticleCard';
 import filterIcon from '../assets/images/filter-icon.svg';
 import topArrowIcon from '../assets/images/top-arrow.svg';
+import jwt_decode from 'jwt-decode'; // Импортируем jwt-decode для декодирования токена
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -13,6 +14,20 @@ const ArticlesList = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState(null); // Для хранения роли пользователя
+
+  // Получаем роль пользователя из токена
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedToken = jwt_decode(token);
+        setUserRole(decodedToken.role); // Сохраняем роль пользователя в состоянии
+      } catch (error) {
+        console.error('Ошибка декодирования токена:', error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchArticles = async () => {
@@ -56,9 +71,12 @@ const ArticlesList = () => {
     <div className="articles__div">
       <div className="articles__div__search">
         <div className="articles__controls justify-between">
-          <button className="write-article-btn button__with__bg">
-            <Link to="/create-article">Написать статью</Link>
-          </button>
+          {/* Условно рендерим кнопку "Написать статью" */}
+          {(userRole === 'partner' || userRole === 'admin') && (
+            <button className="write-article-btn button__with__bg">
+              <Link to="/create-article">Написать статью</Link>
+            </button>
+          )}
           <div className="articles__controls__child flex item-center justify-between relative">
             <input
               type="text"

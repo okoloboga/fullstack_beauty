@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Импортируем toast
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const LoginForm = () => {
@@ -9,7 +11,7 @@ const LoginForm = () => {
     password: '',
   });
 
-  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,13 +31,14 @@ const LoginForm = () => {
 
       // Сохраняем токен в localStorage
       localStorage.setItem('token', response.data.token);
-      history.push('/edit-profile');
+      toast.success('Авторизация успешна!'); // Успешное уведомление
+      navigate('/edit-profile');
       
     } catch (error) {
       if (error.response) {
-        setErrorMessage(error.response.data.message);
+        toast.error(error.response.data.message); // Уведомление об ошибке
       } else {
-        setErrorMessage('Ошибка при авторизации, попробуйте еще раз');
+        toast.error('Ошибка при авторизации, попробуйте еще раз');
       }
     }
   };
@@ -52,6 +55,7 @@ const LoginForm = () => {
             className="default__input"
             value={formData.username}
             onChange={handleChange}
+            required
           />
         </div>
       </div>
@@ -66,11 +70,10 @@ const LoginForm = () => {
             className="default__input"
             value={formData.password}
             onChange={handleChange}
+            required
           />
         </div>
       </div>
-
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
 
       <button className="button__with__bg form__post" type="submit">
         Войти

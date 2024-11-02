@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify'; // Импортируем ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Импортируем стили Toastify
 import Header from './components/Header';
 import MainContent from './components/MainContent';
 import Footer from './components/Footer';
@@ -11,7 +13,7 @@ import NewsNewestPage from './pages/NewsNewestPage';
 import EditProfilePage from './pages/EditProfilePage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
-import ProtectedRoute from './components/ProtectedRoute'; // Добавленный защищенный маршрут
+import ProtectedRoute from './components/ProtectedRoute';
 import CreateArticleForm from './components/CreateArticleForm';
 
 import './styles/main.css';
@@ -22,6 +24,7 @@ function App() {
   return (
     <Router>
       <Header />
+      <ToastContainer /> {/* Добавляем ToastContainer */}
       <Routes>
         <Route path="/" element={<MainContent />} />
         <Route path="/articles" element={<ArticlesPage />} />
