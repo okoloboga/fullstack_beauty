@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 // URL API для получения данных
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -27,7 +27,7 @@ const NewsDetailPage: React.FC = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get<NewsItem>(`${apiUrl}/api/news/${id}`);
+        const response = await axiosInstance.get<NewsItem>(`${apiUrl}/api/news/${id}`);
         setNews(response.data);
       } catch (err) {
         setError('Ошибка при загрузке новости');
@@ -61,7 +61,7 @@ const NewsDetailPage: React.FC = () => {
         <h1>{news.title}</h1>
         {news.coverImage && (
           <img
-            src={`/${news.coverImage}`}
+            src={`${apiUrl}/${news.coverImage}`}
             alt={news.title}
             className="news-detail-page__image"
           />

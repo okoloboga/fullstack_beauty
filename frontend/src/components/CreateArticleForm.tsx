@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
+import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -78,7 +79,7 @@ const CreateArticleForm: React.FC = () => {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/api/articles`, formDataToSend, {
+      const response = await axiosInstance.post(`${apiUrl}/api/articles`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

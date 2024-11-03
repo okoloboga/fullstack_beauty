@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import { Link } from 'react-router-dom';
 import ArticleCard from './ArticleCard';
 import filterIcon from '../assets/images/filter-icon.svg';
@@ -55,7 +55,7 @@ const ArticlesList: React.FC = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get<Article[]>(`${apiUrl}/api/articles`);
+        const response = await axiosInstance.get<Article[]>(`${apiUrl}/api/articles`);
         setArticles(response.data);
       } catch (error) {
         console.error('Ошибка при загрузке статей:', error);

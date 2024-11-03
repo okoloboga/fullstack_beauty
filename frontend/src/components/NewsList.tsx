@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import NewsCard from './NewsCard';
@@ -49,7 +50,7 @@ const NewsList: React.FC<NewsListProps> = ({ type }) => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get<NewsItem[]>(`${apiUrl}/api/news`);
+        const response = await axiosInstance.get<NewsItem[]>(`${apiUrl}/api/news`);
         let newsData = response.data;
 
         // Фильтруем новости в зависимости от типа

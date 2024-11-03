@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axios, { AxiosError } from 'axios';
+import axiosInstance from '../utils/axiosInstance';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -50,10 +51,11 @@ const CreateNewForm: React.FC = () => {
       img.onload = () => {
         if (img.width > 1920 || img.height > 1080) {
           setErrorMessage('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
-        } else {
-          setCoverImage(file);
-          setErrorMessage('');
-        }
+          return;
+        } 
+        
+        setCoverImage(file);
+        setErrorMessage('');
       };
     }
   };
@@ -83,7 +85,7 @@ const CreateNewForm: React.FC = () => {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/api/news`, formDataToSend, {
+      const response = await axiosInstance.post(`${apiUrl}/api/news`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

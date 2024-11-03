@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios, { AxiosError } from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -146,7 +147,7 @@ const EditProfileForm: React.FC = () => {
       });
 
       // Отправляем запрос на сервер
-      const response = await axios.put(`${apiUrl}/api/users/profile/${userId}`, formDataToSend, {
+      const response = await axiosInstance.put(`${apiUrl}/api/users/profile/${userId}`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

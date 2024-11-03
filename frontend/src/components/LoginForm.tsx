@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios, { AxiosError } from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify'; // Импортируем toast для уведомлений
 
@@ -37,7 +38,7 @@ const LoginForm: React.FC = () => {
 
     try {
       // Отправляем запрос на backend для авторизации
-      const response = await axios.post(`${apiUrl}/api/users/login`, formData);
+      const response = await axiosInstance.post(`${apiUrl}/api/users/login`, formData);
       console.log('Успешная авторизация:', response.data);
 
       // Сохраняем токен в localStorage

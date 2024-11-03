@@ -4,16 +4,19 @@ import { Article } from "../models/Article";
 import { User } from "../models/User";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import multer from "multer";
+import path from 'path';
 import fs from "fs";
+
+const uploadDir = path.join(__dirname, '../../uploads');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/");
+      cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
+      cb(null, `${Date.now()}-${file.originalname}`);
     },
-});
+  });
 
 const upload = multer({ storage });
 
@@ -32,8 +35,8 @@ export const createArticle = [
                 return;
             }
 
-            if (author.role !== "partner") {
-                res.status(403).json({ message: "Only partners can create articles" });
+            if (author.role == "user") {
+                res.status(403).json({ message: "Only partners and admins can create articles" });
                 return;
             }
 
@@ -47,7 +50,8 @@ export const createArticle = [
             article.title = title;
             article.content = content;
             article.author = author;
-            article.coverImage = req.file.path;
+            // Сохраняем относительный путь, а не полный
+            article.coverImage = `uploads/${req.file.filename}`;
 
             const articleRepository = AppDataSource.getRepository(Article);
             await articleRepository.save(article);
@@ -58,6 +62,8 @@ export const createArticle = [
         }
     },
 ];
+
+
 
 
 // Получить все статьи
@@ -127,7 +133,7 @@ export const updateArticle = [
                         }
                     });
                 }
-                article.coverImage = req.file.path;
+                article.coverImage = `uploads/${req.file.filename}`;
             }
 
             await articleRepository.save(article);

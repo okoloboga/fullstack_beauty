@@ -50,7 +50,7 @@ const App: React.FC = () => {
 
         {/* Доступ к созданию новостей только для администраторов */}
         <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-          <Route path="/create-new" element={<CreateNewForm />} />
+          <Route path="/create-news" element={<CreateNewForm />} />
         </Route>
 
         {/* Редактирование профиля доступно для всех авторизованных пользователей */}

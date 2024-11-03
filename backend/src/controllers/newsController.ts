@@ -10,12 +10,12 @@ import fs from "fs";
 // Конфигурация хранения файлов
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "uploads/");
+      cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
+      cb(null, `${Date.now()}-${file.originalname}`);
     },
-});
+  });
 
 const upload = multer({ storage });
 
@@ -50,7 +50,7 @@ export const createNews = [
             news.title = title;
             news.content = content;
             news.author = author;
-            news.coverImage = req.file.path;
+            news.coverImage = `uploads/${req.file.filename}`;
 
             const newsRepository = AppDataSource.getRepository(News);
             await newsRepository.save(news);
@@ -143,7 +143,7 @@ export const updateNews = [
                         }
                     });
                 }
-                news.coverImage = req.file.path;
+                news.coverImage = `uploads/${req.file.filename}`;
             }
 
             await newsRepository.save(news);

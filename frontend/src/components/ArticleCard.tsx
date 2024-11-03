@@ -25,6 +25,8 @@ interface ArticleCardProps {
   article: Article;
 }
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 // Компонент карточки статьи
 const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
   return (
@@ -32,7 +34,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
       <div>
         {/* Изображение статьи или изображение по умолчанию */}
         <img
-          src={article.coverImage ? `/${article.coverImage}` : require('../assets/images/default.jpg').default}
+          src={`${apiUrl}/${article.coverImage}`} // Используем apiUrl, чтобы собрать полный URL
           alt={article.title}
           className="articles__block__card__img"
         />

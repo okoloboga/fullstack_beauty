@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios, { AxiosError } from 'axios';
+import axiosInstance from '../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify'; // Импортируем toast
 
@@ -42,7 +43,7 @@ const RegisterForm: React.FC = () => {
 
     try {
       // Отправляем запрос на backend для регистрации
-      const response = await axios.post(`${apiUrl}/api/users/register`, {
+      const response = await axiosInstance.post(`${apiUrl}/api/users/register`, {
         username: formData.username,
         password: formData.password,
       });

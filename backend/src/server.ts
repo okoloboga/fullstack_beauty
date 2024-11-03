@@ -21,7 +21,7 @@ app.use(cors()); // Здесь включаем CORS
 app.use(express.json());
 
 // Подключение папки uploads как статической
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Подключение к базе данных
 AppDataSource.initialize()

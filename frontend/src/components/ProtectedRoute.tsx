@@ -16,11 +16,25 @@ const decodeToken = (token: string) => {
   }
 };
 
+// Функция для проверки срока действия токена
+const isTokenExpired = (token: string): boolean => {
+  try {
+    const decodedToken = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+    return decodedToken.exp < currentTime;
+  } catch (error) {
+    console.error('Ошибка проверки токена:', error);
+    return true;
+  }
+};
+
+
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
   const token = localStorage.getItem('token');
 
-  // Если токена нет, перенаправляем на страницу входа
-  if (!token) {
+  // Если токена нет или срок истек, перенаправляем пользователя на страницу входа
+  if (!token || isTokenExpired(token)) {
+    localStorage.removeItem('token');
     return <Navigate to="/login" replace />;
   }
 
