@@ -48,4 +48,7 @@ export class User {
 
     @Column({ nullable: true })
     receiveNewsletter?: boolean;
+
+    @Column({ nullable: true })
+    profileImage?: string;  // Новое поле для хранения пути к изображению профиля
 }

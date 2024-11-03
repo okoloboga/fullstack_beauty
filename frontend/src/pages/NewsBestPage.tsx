@@ -22,7 +22,7 @@ const NewsBestPage: React.FC = () => {
           </div>
         </div>
         {/* Компонент, отображающий список лучших новостей */}
-        <NewsList />
+        <NewsList type="best" />
       </section>
 
       {/* Секция для связи с пользователями */}

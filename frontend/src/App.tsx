@@ -15,6 +15,7 @@ import EditProfilePage from './pages/EditProfilePage'; // Страница дл�
 import RegisterPage from './pages/RegisterPage'; // Страница регистрации
 import LoginPage from './pages/LoginPage'; // Страница входа
 import ProtectedRoute from './components/ProtectedRoute'; // Компонент для защиты маршрутов
+import AuthenticatedRoute from './components/AuthenticatedRoute'; // Компонент для проверки авторизации пользователя
 import CreateArticleForm from './components/CreateArticleForm'; // Форма создания статьи
 import CreateNewForm from './components/CreateNewForm'; // Форма создания новости
 
@@ -52,8 +53,8 @@ const App: React.FC = () => {
           <Route path="/create-new" element={<CreateNewForm />} />
         </Route>
 
-        {/* Редактирование профиля доступно для ролей 'partner' и 'admin' */}
-        <Route element={<ProtectedRoute allowedRoles={['partner', 'admin']} />}>
+        {/* Редактирование профиля доступно для всех авторизованных пользователей */}
+        <Route element={<AuthenticatedRoute />}>
           <Route path="/edit-profile" element={<EditProfilePage />} />
         </Route>
       </Routes>

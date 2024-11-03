@@ -17,30 +17,33 @@ const ProfileNavigation: React.FC<ProfileNavigationProps> = ({ active }) => {
     navigate('/login');
   };
 
+  // Функции для обработки навигации по профилю
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
+
   return (
     <div className="navigation">
-      <button 
-        className={`button__without__bg edit__profile ${active === 'edit-profile' ? 'active' : ''}`}
-      >
-        <Link to="/edit-profile">РЕДАКТИРОВАТЬ ПРОФИЛЬ</Link>
-      </button>
       <div className="navigation__list">
-        <button 
+        <button
           className={`button__without__bg navigation__link ${active === 'my-articles' ? 'active' : ''}`}
+          onClick={() => handleNavigation('/my-articles')}
         >
-          <Link to="/my-articles">МОИ СТАТЬИ</Link>
+          МОИ СТАТЬИ
         </button>
-        <button 
+        <button
           className={`button__without__bg navigation__link ${active === 'my-reviews' ? 'active' : ''}`}
+          onClick={() => handleNavigation('/my-reviews')}
         >
-          <Link to="/my-reviews">ОТЗЫВЫ ОБО МНЕ</Link>
+          ОТЗЫВЫ ОБО МНЕ
         </button>
-        <button 
+        <button
           className={`button__without__bg navigation__link ${active === 'my-favorites' ? 'active' : ''}`}
+          onClick={() => handleNavigation('/my-favorites')}
         >
-          <Link to="/my-favorites">ИЗБРАННОЕ</Link>
+          ИЗБРАННОЕ
         </button>
-        {/* Добавляем кнопку выхода */}
+        {/* Кнопка выхода */}
         <button
           className="button__without__bg navigation__link logout__button"
           onClick={handleLogout}

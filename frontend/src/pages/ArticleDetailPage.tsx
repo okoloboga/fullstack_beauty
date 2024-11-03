@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { articles } from '../data/articles'; // Предположим, что вы храните данные статей в отдельном файле
+import axios from 'axios';
 
 // Определение типа для статьи
 interface Article {
@@ -10,13 +10,42 @@ interface Article {
   content: string;
 }
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 // Основной компонент страницы детализации статьи
 const ArticleDetailPage: React.FC = () => {
   // Получаем параметр id из URL. TypeScript знает, что useParams возвращает Record<string, string | undefined>
   const { id } = useParams<{ id: string }>();
+  const [article, setArticle] = useState<Article | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Находим статью по id (преобразуем id в число для сравнения)
-  const article = articles.find((a: Article) => a.id === parseInt(id || '', 10));
+  useEffect(() => {
+    const fetchArticle = async () => {
+      try {
+        const response = await axios.get<Article>(`${apiUrl}/api/articles/${id}`);
+        setArticle(response.data);
+      } catch (err) {
+        setError('Ошибка при загрузке статьи');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchArticle();
+    }
+  }, [id]);
+
+  // Если статья загружается, отображаем сообщение о загрузке
+  if (loading) {
+    return <div>Загрузка статьи...</div>;
+  }
+
+  // Если произошла ошибка, отображаем сообщение об ошибке
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   // Если статья не найдена, отображаем сообщение об ошибке
   if (!article) {
