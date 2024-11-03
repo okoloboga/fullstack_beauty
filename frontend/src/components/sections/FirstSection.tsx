@@ -1,11 +1,13 @@
 import React from 'react';
 import girlImage from '../../assets/images/girl.svg';
 
-const FirstSection = () => {
+// Компонент FirstSection - первый экран, который содержит заголовок и основные направления сайта
+const FirstSection: React.FC = () => {
   return (
     <section className="first__section">
       <div className="first__block">
         <div className="first__block__child flex justify-between">
+          {/* Блок с текстом (заголовок и описание) */}
           <div className="first__block__text flex justify-center item-center text-right flex-column">
             <div>
               <h1 className="base-text-color">
@@ -19,10 +21,14 @@ const FirstSection = () => {
               </p>
             </div>
           </div>
+
+          {/* Блок с изображением */}
           <div className="first__block__img">
-            <img src={girlImage} alt="" />
+            <img src={girlImage} alt="Иллюстрация девушки" />
           </div>
         </div>
+
+        {/* Навигационный блок для десктопной версии */}
         <div className="first__block__nav flex">
           <div className="first__block__nav__small-block"></div>
           <div className="first__block__nav__main-block">
@@ -39,6 +45,8 @@ const FirstSection = () => {
           </div>
           <div className="first__block__nav__small-block"></div>
         </div>
+
+        {/* Навигационный блок для мобильной версии */}
         <div className="first__block__nav first__block__nav__mobile flex">
           <div className="first__block__nav__small-block"></div>
           <div className="first__block__nav__main-block">

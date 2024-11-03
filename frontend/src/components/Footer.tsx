@@ -1,6 +1,8 @@
 import React from 'react';
 
-const Footer = () => {
+// Компонент Footer представляет футер сайта
+// Отображает копирайт и информацию о правах
+const Footer: React.FC = () => {
   return (
     <footer className="container">
       <p>

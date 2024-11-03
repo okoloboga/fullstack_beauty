@@ -7,22 +7,42 @@ import dislikeIcon from '../../assets/images/dislike.svg';
 import starIcon from '../../assets/images/star.svg';
 import commentsIcon from '../../assets/images/comments.svg';
 
-const apiUrl = process.env.REACT_APP_API_URL;
+// Тип данных статьи, чтобы TypeScript понимал структуру каждого объекта статьи
+interface Article {
+  id: number;
+  coverImage: string;
+  title: string;
+  description: string;
+  author: {
+    name: string;
+  };
+  likes?: number;
+  dislikes?: number;
+  stars?: number;
+  comments?: number;
+}
 
-const ArticlesSection = () => {
-  const sliderRef = useRef(null);
-  const [showPrev, setShowPrev] = useState(false);
-  const [showNext, setShowNext] = useState(true);
-  const [articles, setArticles] = useState([]);
+const apiUrl = process.env.REACT_APP_API_URL; // URL API, который используется для получения данных
 
+const ArticlesSection: React.FC = () => {
+  // Используем useRef для доступа к слайдеру
+  const sliderRef = useRef<HTMLDivElement | null>(null);
+  // Управление видимостью кнопок предыдущего и следующего слайдов
+  const [showPrev, setShowPrev] = useState<boolean>(false);
+  const [showNext, setShowNext] = useState<boolean>(true);
+  // Состояние для хранения списка статей
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  // Функция для обновления видимости кнопок слайдера
   const updateButtonVisibility = () => {
     const slider = sliderRef.current;
     if (slider) {
-      setShowPrev(slider.scrollLeft > 0);
-      setShowNext(slider.scrollLeft + slider.clientWidth < slider.scrollWidth);
+      setShowPrev(slider.scrollLeft > 0); // Показываем кнопку "предыдущий", если есть место слева
+      setShowNext(slider.scrollLeft + slider.clientWidth < slider.scrollWidth); // Показываем кнопку "следующий", если есть место справа
     }
   };
 
+  // Обработчик клика для прокрутки слайдера вправо
   const handleNextClick = () => {
     const slider = sliderRef.current;
     if (slider) {
@@ -33,6 +53,7 @@ const ArticlesSection = () => {
     }
   };
 
+  // Обработчик клика для прокрутки слайдера влево
   const handlePrevClick = () => {
     const slider = sliderRef.current;
     if (slider) {
@@ -43,26 +64,28 @@ const ArticlesSection = () => {
     }
   };
 
+  // useEffect для получения данных статей с сервера
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/articles?sort=popular&limit=3`); // например, для получения самых популярных статей
-        setArticles(response.data);
+        const response = await axios.get<Article[]>(`${apiUrl}/api/articles?sort=popular&limit=3`); // Получаем популярные статьи, максимум 3
+        setArticles(response.data); // Сохраняем статьи в состояние
       } catch (error) {
         console.error('Ошибка при загрузке статей:', error);
       }
     };
 
-    fetchArticles();
+    fetchArticles(); // Вызов функции получения статей
   }, []);
 
+  // useEffect для добавления слушателя события скроллинга на слайдер
   useEffect(() => {
     const slider = sliderRef.current;
     if (slider) {
-      slider.addEventListener('scroll', updateButtonVisibility);
-      updateButtonVisibility();
+      slider.addEventListener('scroll', updateButtonVisibility); // Добавляем слушателя события скроллинга для обновления видимости кнопок
+      updateButtonVisibility(); // Инициализация видимости кнопок при загрузке
       return () => {
-        slider.removeEventListener('scroll', updateButtonVisibility);
+        slider.removeEventListener('scroll', updateButtonVisibility); // Убираем слушателя при размонтировании компонента
       };
     }
   }, []);
@@ -77,6 +100,7 @@ const ArticlesSection = () => {
           </div>
           <div className="slider-container">
             <div className="articles__block__cards flex" ref={sliderRef}>
+              {/* Кнопка для прокрутки влево */}
               <button
                 className="slider-button prev"
                 onClick={handlePrevClick}
@@ -85,6 +109,7 @@ const ArticlesSection = () => {
                 <img src={rightArrow} alt="Предыдущий" />
               </button>
 
+              {/* Карточки статей */}
               {articles.map((article) => (
                 <div className="articles__block__card" key={article.id}>
                   <div>
@@ -97,19 +122,19 @@ const ArticlesSection = () => {
                     <div className="articles__block__card__activities flex">
                       <div className="flex">
                         <img src={likeIcon} alt="Лайк" />
-                        <p>{article.likes || 0}</p>
+                        <p>{article.likes || 0}</p> {/* Если likes нет, показываем 0 */}
                       </div>
                       <div className="flex">
                         <img src={dislikeIcon} alt="Дизлайк" />
-                        <p>{article.dislikes || 0}</p>
+                        <p>{article.dislikes || 0}</p> {/* Если dislikes нет, показываем 0 */}
                       </div>
                       <div className="flex">
                         <img src={starIcon} alt="Звезда" />
-                        <p>{article.stars || 0}</p>
+                        <p>{article.stars || 0}</p> {/* Если stars нет, показываем 0 */}
                       </div>
                       <div className="flex">
                         <img src={commentsIcon} alt="Комментарии" />
-                        <p>{article.comments || 0}</p>
+                        <p>{article.comments || 0}</p> {/* Если comments нет, показываем 0 */}
                       </div>
                     </div>
                     <p>{article.description}</p>
@@ -120,6 +145,7 @@ const ArticlesSection = () => {
                 </div>
               ))}
 
+              {/* Кнопка для прокрутки вправо */}
               <button
                 className="slider-button next"
                 onClick={handleNextClick}
@@ -129,6 +155,7 @@ const ArticlesSection = () => {
               </button>
             </div>
           </div>
+          {/* Кнопка для перехода ко всем статьям */}
           <div className="articles__block__card__btn">
             <Link className="button__with__bg" to="/articles">
               Все статьи

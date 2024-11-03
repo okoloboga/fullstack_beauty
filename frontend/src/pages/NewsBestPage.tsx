@@ -3,13 +3,15 @@ import NewsList from '../components/NewsList';
 import ConnectSection from '../components/sections/ConnectSection';
 import { Link } from 'react-router-dom';
 
-
-const NewsBestPage = () => {
+// Компонент страницы с лучшими новостями
+const NewsBestPage: React.FC = () => {
   return (
     <main>
+      {/* Основная секция с заголовком и кнопками навигации */}
       <section className="news container">
         <div className="news__title text-center">
           <h2 className="title">НОВОСТИ</h2>
+          {/* Кнопки для переключения между самыми новыми и лучшими новостями */}
           <div className="news__title__btns flex">
             <Link to="/news-newest">
               <button className="button__without__bg">СВЕЖЕЕ</button>
@@ -19,8 +21,11 @@ const NewsBestPage = () => {
             </Link>
           </div>
         </div>
+        {/* Компонент, отображающий список лучших новостей */}
         <NewsList />
       </section>
+
+      {/* Секция для связи с пользователями */}
       <ConnectSection />
     </main>
   );

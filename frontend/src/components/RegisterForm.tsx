@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import axios, { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify'; // Импортируем toast
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const RegisterForm = () => {
-  const [formData, setFormData] = useState({
+// Определение интерфейса для данных формы регистрации
+interface RegisterFormData {
+  username: string;
+  password: string;
+  confirmPassword: string;
+}
+
+const RegisterForm: React.FC = () => {
+  const [formData, setFormData] = useState<RegisterFormData>({
     username: '',
     password: '',
     confirmPassword: '', // Добавляем поле подтверждения пароля
@@ -14,7 +21,8 @@ const RegisterForm = () => {
 
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  // Обработчик изменения полей формы
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -22,7 +30,8 @@ const RegisterForm = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  // Обработчик отправки формы
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Проверяем, совпадают ли пароли
@@ -41,8 +50,9 @@ const RegisterForm = () => {
       toast.success('Регистрация прошла успешно! Пожалуйста, войдите.'); // Успешное уведомление
       navigate('/login');
     } catch (error) {
-      if (error.response) {
-        toast.error(error.response.data.message); // Уведомление об ошибке
+      const err = error as AxiosError<{ message: string }>;
+      if (err.response) {
+        toast.error(err.response.data?.message || 'Ошибка при регистрации, попробуйте еще раз'); // Уведомление об ошибке
       } else {
         toast.error('Ошибка при регистрации, попробуйте еще раз');
       }

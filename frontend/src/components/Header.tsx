@@ -3,11 +3,20 @@ import { Link } from 'react-router-dom';
 import logo from '../assets/images/logo.svg';
 import userIcon from '../assets/images/user.svg';
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+// Компонент Header представляет собой верхнюю навигационную панель
+// Содержит ссылки на страницы, кнопку для авторизации и меню бургер
+const Header: React.FC = () => {
+  // Состояние для управления открытием/закрытием мобильного меню
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
+  // Обработчик нажатия на бургер-меню
   const handleBurgerClick = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Функция для проверки, авторизован ли пользователь
+  const isUserAuthenticated = (): boolean => {
+    return localStorage.getItem('token') !== null;
   };
 
   return (
@@ -27,8 +36,8 @@ const Header = () => {
           </ul>
         </nav>
         <div className="header__actions flex item-center">
-          <Link to="/edit-profile" className="user-icon">
-            <img src="/images/user.svg" alt="User Logo" />
+          <Link to={isUserAuthenticated() ? "/edit-profile" : "/login"} className="user-icon">
+            <img src={userIcon} alt="User Logo" />
           </Link>
           <div
             className={`burger-menu ${isMenuOpen ? 'active' : ''}`}
@@ -47,8 +56,8 @@ const Header = () => {
         <nav className="mobile-nav">
           <ul>
             <li>
-              <Link to="/edit-profile" className="user-icon">
-                <img src="/images/user.svg" alt="User Logo" />
+              <Link to={isUserAuthenticated() ? "/edit-profile" : "/login"} className="user-icon">
+                <img src={userIcon} alt="User Logo" />
               </Link>
             </li>
             <li><Link to="/">Главная</Link></li>
