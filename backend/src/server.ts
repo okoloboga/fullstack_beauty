@@ -14,11 +14,18 @@ import path from 'path';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Определяем параметры CORS для разных окружений
-const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' 
-        ? 'http://176.114.88.27'  // Разрешаем запросы только с вашего домена в production
-        : 'http://localhost:3000', // Разрешаем запросы с localhost в локальной разработке
+// Определяем параметры CORS
+const corsOptions: cors.CorsOptions = {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        // Разрешаем запросы с определенного домена в production
+        if (process.env.NODE_ENV === 'production' && origin && origin.includes('176.114.88.27')) {
+            callback(null, true);
+        } else if (process.env.NODE_ENV !== 'production') {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true // Если используются куки, разрешаем их включение в запросы
 };
@@ -48,12 +55,7 @@ AppDataSource.initialize()
 
         // Запуск сервера
         app.listen(PORT, () => {
-            if (process.env.NODE_ENV === 'production') {
-                console.log(`Server is running on http://${process.env.HOST || 'your-server-domain-or-ip'}:${PORT}`);
-            } else {
-                console.log(`Server is running on http://localhost:${PORT}`);
-            }
+            console.log(`Server is running on http://${process.env.HOST || 'localhost'}:${PORT}`);
         });
-
     })
     .catch((error) => console.log("Database connection error:", error));
