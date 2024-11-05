@@ -18,7 +18,6 @@ services:
 
   backend:
     build: ./backend
-    command: npm run start
     ports:
       - "4000:4000"
     environment:
@@ -33,7 +32,6 @@ services:
       - db
     networks:
       - beauty-network
-    # command: ["sh", "-c", "./wait-for.sh db 5432 -- npm run start"]  # Явно используем 'sh' для запуска wait-for.sh
 
   frontend:
     build:
@@ -52,7 +50,7 @@ services:
       - frontend
     networks:
       - beauty-network
-    command: ["sh", "-c", "./wait-for.sh frontend 80 -- nginx -g 'daemon off;'"]  # Явно используем 'sh' для запуска wait-for.sh
+    command: ["nginx", "-g", "daemon off;"]
 
 volumes:
   postgres_data:

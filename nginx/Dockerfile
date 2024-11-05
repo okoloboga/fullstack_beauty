@@ -8,8 +8,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Копируем файл конфигурации сервера (default.conf)
 COPY default.conf /etc/nginx/conf.d/default.conf
 
-# Копируем скрипт wait-for.sh в контейнер и назначаем права на выполнение
-COPY wait-for.sh /wait-for.sh
-RUN chmod +x /wait-for.sh
+# Копируем статические файлы, созданные фронтендом
+COPY --from=frontend /app/build /usr/share/nginx/html
 
 EXPOSE 80
