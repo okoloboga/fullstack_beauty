@@ -1,6 +1,5 @@
 # backend/Dockerfile
 
-# Используем Node.js для сборки
 FROM node:16 as build
 
 WORKDIR /app
@@ -12,7 +11,7 @@ RUN npm install
 # Копируем все файлы проекта в контейнер
 COPY . .
 
-# Копируем скрипт wait-for.sh в контейнер
+# Копируем скрипт wait-for.sh в контейнер и назначаем права на выполнение
 COPY wait-for.sh /wait-for.sh
 RUN chmod +x /wait-for.sh
 

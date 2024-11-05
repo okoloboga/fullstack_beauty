@@ -5,8 +5,8 @@ host="$1"
 shift
 cmd="$@"
 
-until nc -z "$host" 80; do
-  echo "Waiting for $host to become available..."
+until nc -z "$host" "$2"; do
+  echo "Waiting for $host:$2 to become available..."
   sleep 2
 done
 
