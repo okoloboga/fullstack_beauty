@@ -19,7 +19,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "5000:5000"
+      - "5000:5000"  # Убедись, что используешь порт, на котором работает backend
     environment:
       POSTGRES_USER: beauty
       POSTGRES_PASSWORD: password
