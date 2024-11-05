@@ -18,7 +18,6 @@ services:
 
   backend:
     build: ./backend
-    command: npm run start
     ports:
       - "4000:4000"
     environment:
@@ -52,7 +51,7 @@ services:
       - frontend
     networks:
       - beauty-network
-    command: ["./wait-for.sh", "frontend", "nginx", "-g", "daemon off;"] # Ждем пока контейнер frontend будет готов
+    command: ["./wait-for.sh", "frontend", "nginx", "-g", "daemon off;"]
 
 volumes:
   postgres_data:
