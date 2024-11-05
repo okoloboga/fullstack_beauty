@@ -28,6 +28,8 @@ services:
     build: ./frontend  # Используем Dockerfile из директории frontend
     ports:
       - "80:80"
+    environment:
+      REACT_APP_API_URL: "http://backend:4000" 
     depends_on:
       - backend
 
