@@ -37,6 +37,7 @@ services:
     build:
       context: ./frontend
       target: build
+    image: custom-frontend:1.0
     networks:
       - beauty-network
 
