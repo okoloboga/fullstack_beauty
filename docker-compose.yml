@@ -1,7 +1,7 @@
 version: '3'
 
 networks:
-  beauty-network:
+  beauty-network:  # Создаем общую сеть для всех контейнеров
     driver: bridge
 
 services:
