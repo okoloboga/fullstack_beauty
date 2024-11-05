@@ -1,8 +1,9 @@
-# Используем nginx из образа Alpine
 FROM nginx:alpine
 
-# Копируем файлы конфигурации Nginx
+# Копируем основной файл конфигурации Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Открываем порт 80
+# Копируем файл конфигурации сервера (default.conf)
+COPY default.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
