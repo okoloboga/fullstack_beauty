@@ -1,22 +1,22 @@
-# backend/Dockerfile
-
+# Используем Node.js для сборки
 FROM node:16 as build
 
 WORKDIR /app
 
 # Копируем package.json и устанавливаем зависимости
 COPY package*.json ./
-RUN npm install --only=production=false
+RUN npm install
 
 # Копируем все файлы проекта в контейнер
 COPY . .
 
+# Копируем скрипт wait-for.sh в контейнер
+COPY ../wait-for.sh /wait-for.sh
+RUN chmod +x /wait-for.sh
+
 # Компилируем TypeScript в JavaScript
 RUN npm run build
 
-# Устанавливаем NODE_ENV в production
-ENV NODE_ENV=production
-
-# Запуск приложения из скомпилированных файлов
+# Запускаем приложение из скомпилированных файлов
 EXPOSE 4000
 CMD ["npm", "run", "start"]
