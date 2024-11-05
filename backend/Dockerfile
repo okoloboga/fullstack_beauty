@@ -1,3 +1,5 @@
+# backend/Dockerfile
+
 # Используем Node.js для сборки
 FROM node:16 as build
 
@@ -11,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Копируем скрипт wait-for.sh в контейнер
-COPY ../wait-for.sh /wait-for.sh
+COPY wait-for.sh /wait-for.sh
 RUN chmod +x /wait-for.sh
 
 # Компилируем TypeScript в JavaScript
