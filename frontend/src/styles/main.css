@@ -400,7 +400,7 @@ footer p a{
 
 .search-input {
     flex: 1;
-    background-image: url("/home/user/code/work/fullstack_beauty/frontend/src/assets/images/search.svg");
+    background-image: url("../assets/images/search.svg");
     background-repeat: no-repeat;
     padding-left: 50px !important;
     background-position: 10px center;
