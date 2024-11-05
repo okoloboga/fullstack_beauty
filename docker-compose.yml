@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 networks:
   beauty-network:
@@ -19,7 +19,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "5000:5000"  # Убедись, что используешь порт, на котором работает backend
+      - "5000:5000"
     environment:
       POSTGRES_USER: beauty
       POSTGRES_PASSWORD: password
@@ -33,16 +33,10 @@ services:
     networks:
       - beauty-network
 
-  frontend:
-    build:
-      context: ./frontend
-      target: build
-    image: custom-frontend:1.0
-    networks:
-      - beauty-network
-
   nginx:
-    build: ./nginx
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
     ports:
       - "80:80"
     depends_on:
