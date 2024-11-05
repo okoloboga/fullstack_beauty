@@ -21,6 +21,8 @@ services:
       POSTGRES_DB: beauty_db
       POSTGRES_HOST: db
       NODE_ENV: production
+    env_file:
+      - ./backend/.env
     depends_on:
       - db
 

@@ -14,8 +14,17 @@ import path from 'path';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Поддержка CORS
-app.use(cors()); // Здесь включаем CORS
+// Определяем параметры CORS для разных окружений
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production' 
+        ? 'http://176.114.88.27'  // Разрешаем запросы только с вашего домена в production
+        : 'http://localhost:3000', // Разрешаем запросы с localhost в локальной разработке
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true // Если используются куки, разрешаем их включение в запросы
+};
+
+// Включаем CORS middleware с опциями
+app.use(cors(corsOptions));
 
 // Middleware для обработки JSON
 app.use(express.json());
@@ -39,7 +48,12 @@ AppDataSource.initialize()
 
         // Запуск сервера
         app.listen(PORT, () => {
-            console.log(`Server is running on http://localhost:${PORT}`);
+            if (process.env.NODE_ENV === 'production') {
+                console.log(`Server is running on http://${process.env.HOST || 'your-server-domain-or-ip'}:${PORT}`);
+            } else {
+                console.log(`Server is running on http://localhost:${PORT}`);
+            }
         });
+
     })
     .catch((error) => console.log("Database connection error:", error));
