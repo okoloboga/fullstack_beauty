@@ -15,23 +15,32 @@ const app = express();
 const PORT = parseInt(process.env.PORT as string, 10) || 5000;
 
 // Определяем параметры CORS
+const allowedOrigins = [
+  'http://localhost:3000', // Локальная среда разработки
+  'http://176.114.88.27',  // Ваш удаленный сервер в продакшн
+];
+
 const corsOptions: cors.CorsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
         console.log(`CORS Request from origin: ${origin}`); // Логируем запрос
-        if (process.env.NODE_ENV === 'production' && origin && origin.includes('176.114.88.27')) {
+        if (!origin) {
+            // Разрешаем запросы без заголовка Origin (например, Postman или внутренние запросы)
+            callback(null, true);
+        } else if (allowedOrigins.includes(origin)) {
+            // Разрешаем запросы с источников, которые в списке
             callback(null, true);
         } else if (process.env.NODE_ENV !== 'production') {
+            // В режиме разработки разрешаем все источники
             callback(null, true);
         } else {
+            // Все остальные отклоняются
             callback(new Error('Not allowed by CORS'));
         }
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
 };
-
-// Включаем CORS middleware с опциями
-app.use(cors(corsOptions));
 
 // Включаем CORS middleware с опциями
 app.use(cors(corsOptions));
