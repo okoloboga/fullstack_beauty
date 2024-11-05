@@ -1,5 +1,9 @@
 version: '3'
 
+networks:
+  beauty-network:
+    driver: bridge
+
 services:
   db:
     image: postgres:13
@@ -9,6 +13,8 @@ services:
       POSTGRES_USER: beauty
       POSTGRES_PASSWORD: password
       POSTGRES_DB: beauty_db
+    networks:
+      - beauty-network
 
   backend:
     build: ./backend
@@ -25,15 +31,26 @@ services:
       - ./backend/.env
     depends_on:
       - db
+    networks:
+      - beauty-network
+
+  frontend:
+    build:
+      context: ./frontend
+      target: build
+    image: frontend:latest
+    networks:
+      - beauty-network
 
   nginx:
-    build: ./frontend  # Используем Dockerfile из директории frontend
+    build: ./nginx
     ports:
       - "80:80"
-    env_file:
-      - ./frontend/.env
     depends_on:
       - backend
+      - frontend
+    networks:
+      - beauty-network
 
 volumes:
   postgres_data:

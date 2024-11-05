@@ -1,9 +1,8 @@
+# Используем nginx из образа Alpine
 FROM nginx:alpine
 
-# Копируем сборку из фронтенда, используя multi-stage build
-COPY --from=frontend /app/build /usr/share/nginx/html
-
-# Копируем файл конфигурации Nginx
+# Копируем файлы конфигурации Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# Открываем порт 80
 EXPOSE 80
