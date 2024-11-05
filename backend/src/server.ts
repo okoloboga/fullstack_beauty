@@ -12,12 +12,12 @@ import { AppDataSource } from "./config/db";
 import path from 'path';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = parseInt(process.env.PORT as string, 10) || 5000;
 
 // Определяем параметры CORS
 const corsOptions: cors.CorsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        // Разрешаем запросы с определенного домена в production
+        console.log(`CORS Request from origin: ${origin}`); // Логируем запрос
         if (process.env.NODE_ENV === 'production' && origin && origin.includes('176.114.88.27')) {
             callback(null, true);
         } else if (process.env.NODE_ENV !== 'production') {
@@ -27,8 +27,11 @@ const corsOptions: cors.CorsOptions = {
         }
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true // Если используются куки, разрешаем их включение в запросы
+    credentials: true
 };
+
+// Включаем CORS middleware с опциями
+app.use(cors(corsOptions));
 
 // Включаем CORS middleware с опциями
 app.use(cors(corsOptions));
@@ -54,7 +57,7 @@ AppDataSource.initialize()
         app.use("/api/notifications", notificationRoutes);
 
         // Запуск сервера
-        app.listen(PORT, () => {
+        app.listen(PORT, '0.0.0.0', () => {
             console.log(`Server is running on http://${process.env.HOST || 'localhost'}:${PORT}`);
         });
     })
