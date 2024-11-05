@@ -1,7 +1,7 @@
 version: '3'
 
 networks:
-  beauty-network:  # Создаем общую сеть для всех контейнеров
+  beauty-network:
     driver: bridge
 
 services:
@@ -33,6 +33,7 @@ services:
       - db
     networks:
       - beauty-network
+    command: ["./wait-for.sh", "db", "5432", "--", "npm", "run", "start"]
 
   frontend:
     build:
@@ -51,6 +52,7 @@ services:
       - frontend
     networks:
       - beauty-network
+    command: ["./wait-for.sh", "frontend", "nginx", "-g", "daemon off;"] # Ждем пока контейнер frontend будет готов
 
 volumes:
   postgres_data:
