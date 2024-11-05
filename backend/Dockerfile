@@ -12,8 +12,8 @@ RUN npm install
 COPY . .
 
 # Копируем скрипт wait-for.sh в контейнер и назначаем права на выполнение
-COPY wait-for.sh /wait-for.sh
-RUN chmod +x /wait-for.sh
+# COPY wait-for.sh /wait-for.sh
+# RUN chmod +x /wait-for.sh
 
 # Компилируем TypeScript в JavaScript
 RUN npm run build
