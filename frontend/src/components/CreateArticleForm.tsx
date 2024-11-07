@@ -132,19 +132,24 @@ const CreateArticleForm: React.FC = () => {
           ></textarea>
         </div>
 
-        <div className="form__field">
-          <p>Обложка</p>
-          <input
-            type="file"
-            name="coverImage"
-            accept="image/*"
-            onChange={handleCoverImageChange}
-            required
-          />
-        </div>
+        <input
+          id="coverImageInput"
+          type="file"
+          name="coverImage"
+          accept="image/*"
+          onChange={handleCoverImageChange}
+          style={{ display: 'none' }} // Скрываем input
+        />
+        {/* Кастомная кнопка */}
+        <button
+          className="button__without__bg"
+          onClick={() => document.getElementById('coverImageInput')?.click()}
+        >
+          Загрузить обложку
+        </button>
 
         <button
-          className="button__without__bg navigation__link logout__button"
+          className="button__with__bg"
           type="submit"
         >
           Создать статью
