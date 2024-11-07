@@ -230,7 +230,7 @@ const EditProfileForm: React.FC = () => {
           />
 
           <button
-            className="button__without__bg navigation__link logout__button"
+            className="button__without__bg"
             type="button"
           >
             <label htmlFor="profile-image">
@@ -503,27 +503,21 @@ const EditProfileForm: React.FC = () => {
           <div className="form__field form-portfolio">
             <div className="flex item-center gap-2">
               <p>Портфолио</p>
-              <button className="article-upload article-upload-md" type="button">
+              <button className="button__without__bg" type="button">
                 <label htmlFor="portfolio-files">
-                  <svg
-                    width="22"
-                    height="24"
-                    viewBox="0 0 22 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    {/* SVG path here */}
-                  </svg>
+                  Загрузить изображение
                 </label>
               </button>
-              <input
-                id="portfolio-files"
-                type="file"
-                multiple
-                accept="image/*"
-                hidden
-                onChange={handlePortfolioImagesChange}
-              />
+              <div className="form__input">
+                <input
+                  id="portfolio-files"
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  hidden
+                  onChange={handlePortfolioImagesChange}
+                />
+              </div>
             </div>
             <div className="images">
               {portfolioImages.map((image, index) => (
