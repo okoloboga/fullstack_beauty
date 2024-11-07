@@ -10,12 +10,12 @@ import fs from "fs";
 // Конфигурация хранения файлов
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, 'uploads/');
+        cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-${file.originalname}`);
+        cb(null, `${Date.now()}-${file.originalname}`);
     },
-  });
+});
 
 const upload = multer({ storage });
 
@@ -26,22 +26,26 @@ export const createNews = [
         const { title, content } = req.body;
         const userId = req.user?.userId;
 
+        console.log("Запрос на создание новости");
+
         try {
             const userRepository = AppDataSource.getRepository(User);
             const author = await userRepository.findOneBy({ id: userId });
 
             if (!author) {
+                console.warn(`Пользователь с id: ${userId} не найден`);
                 res.status(404).json({ message: "User not found" });
                 return;
             }
 
             if (author.role !== "admin") {
+                console.warn(`Пользователь с id: ${userId} не имеет прав для создания новостей`);
                 res.status(403).json({ message: "Only admins can create news" });
                 return;
             }
 
-            // Проверка на наличие файла обложки
             if (!req.file) {
+                console.warn("Обложка новости не предоставлена");
                 res.status(400).json({ message: "Cover image is required" });
                 return;
             }
@@ -54,6 +58,7 @@ export const createNews = [
 
             const newsRepository = AppDataSource.getRepository(News);
             await newsRepository.save(news);
+            console.log("Новость успешно создана:", news);
 
             // Создание уведомлений для всех пользователей
             const allUsers = await userRepository.find();
@@ -66,42 +71,51 @@ export const createNews = [
                 notification.recipient = user;
 
                 await notificationRepository.save(notification);
+                console.log(`Уведомление отправлено пользователю с id: ${user.id}`);
             }
 
             res.status(201).json({ message: "News created successfully", news });
         } catch (error) {
+            console.error("Ошибка при создании новости:", error);
             res.status(500).json({ message: "Internal server error" });
         }
     },
 ];
 
-
 // Получить все новости
 export const getAllNews = async (_req: Request, res: Response): Promise<void> => {
+    console.log("Запрос на получение всех новостей");
+
     try {
         const newsRepository = AppDataSource.getRepository(News);
         const newsList = await newsRepository.find({ relations: ["author"] });
+        console.log("Все новости успешно получены");
         res.status(200).json(newsList);
     } catch (error) {
+        console.error("Ошибка при получении новостей:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
 
-// Получить одну новость по id
+// Получить одну новость по ID
 export const getNewsById = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
+    console.log(`Запрос на получение новости с id: ${id}`);
 
     try {
         const newsRepository = AppDataSource.getRepository(News);
         const news = await newsRepository.findOne({ where: { id: parseInt(id) }, relations: ["author"] });
 
         if (!news) {
+            console.warn(`Новость с id: ${id} не найдена`);
             res.status(404).json({ message: "News not found" });
             return;
         }
 
+        console.log(`Новость с id: ${id} успешно получена`);
         res.status(200).json(news);
     } catch (error) {
+        console.error("Ошибка при получении новости:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
@@ -114,32 +128,34 @@ export const updateNews = [
         const { title, content } = req.body;
         const userId = req.user?.userId;
 
+        console.log(`Запрос на обновление новости с id: ${id}`);
+
         try {
             const newsRepository = AppDataSource.getRepository(News);
             const news = await newsRepository.findOne({ where: { id: parseInt(id) }, relations: ["author"] });
 
             if (!news) {
+                console.warn(`Новость с id: ${id} не найдена`);
                 res.status(404).json({ message: "News not found" });
                 return;
             }
 
-            // Проверка на права доступа: только админ может редактировать новость
             if (news.author.id !== userId) {
+                console.warn(`Пользователь с id: ${userId} не имеет прав для обновления новости с id: ${id}`);
                 res.status(403).json({ message: "Access denied" });
                 return;
             }
 
-            // Обновление заголовка и содержимого новости
             news.title = title;
             news.content = content;
 
-            // Обновление обложки новости, если загружен новый файл
             if (req.file) {
-                // Удаление старого файла, если он существует
                 if (news.coverImage) {
                     fs.unlink(news.coverImage, (err) => {
                         if (err) {
-                            console.error("Failed to delete old cover image:", err);
+                            console.error("Не удалось удалить старую обложку:", err);
+                        } else {
+                            console.log("Старая обложка успешно удалена");
                         }
                     });
                 }
@@ -147,24 +163,28 @@ export const updateNews = [
             }
 
             await newsRepository.save(news);
+            console.log(`Новость с id: ${id} успешно обновлена`);
             res.status(200).json({ message: "News updated successfully", news });
         } catch (error) {
+            console.error("Ошибка при обновлении новости:", error);
             res.status(500).json({ message: "Internal server error" });
         }
     },
 ];
-
 
 // Удалить новость
 export const deleteNews = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id } = req.params;
     const userId = req.user?.userId;
 
+    console.log(`Запрос на удаление новости с id: ${id}`);
+
     try {
         const userRepository = AppDataSource.getRepository(User);
         const author = await userRepository.findOneBy({ id: userId });
 
         if (!author || author.role !== "admin") {
+            console.warn(`Пользователь с id: ${userId} не имеет прав для удаления новостей`);
             res.status(403).json({ message: "Only admins can delete news" });
             return;
         }
@@ -173,13 +193,16 @@ export const deleteNews = async (req: AuthenticatedRequest, res: Response): Prom
         const news = await newsRepository.findOneBy({ id: parseInt(id) });
 
         if (!news) {
+            console.warn(`Новость с id: ${id} не найдена`);
             res.status(404).json({ message: "News not found" });
             return;
         }
 
         await newsRepository.remove(news);
+        console.log(`Новость с id: ${id} успешно удалена`);
         res.status(200).json({ message: "News deleted successfully" });
     } catch (error) {
+        console.error("Ошибка при удалении новости:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };

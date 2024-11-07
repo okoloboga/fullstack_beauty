@@ -22,7 +22,6 @@ const allowedOrigins = [
 
 const corsOptions: cors.CorsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        console.log(`CORS Request from origin: ${origin}`); // Логируем запрос
         if (!origin) {
             // Разрешаем запросы без заголовка Origin (например, Postman или внутренние запросы)
             callback(null, true);

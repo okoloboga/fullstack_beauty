@@ -18,8 +18,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Регистрация пользователя
 export const registerUser = async (req: Request, res: Response) => {
     const { username, password } = req.body;
+    console.log(`Запрос на регистрацию нового пользователя: ${username}`);
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -31,40 +33,48 @@ export const registerUser = async (req: Request, res: Response) => {
         const userRepository = AppDataSource.getRepository(User);
         await userRepository.save(user);
 
-        res.status(201).json({ message: "User registered successfully" });
+        console.log(`Пользователь ${username} успешно зарегистрирован`);
+        res.status(201).json({ message: "Регистрация успешно завершена" });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
+        console.error("Ошибка при регистрации пользователя:", error);
+        res.status(500).json({ message: "Внутренняя ошибка сервера" });
     }
 };
 
+// Вход пользователя
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const { username, password } = req.body;
+    console.log(`Запрос на вход для пользователя: ${username}`);
 
     try {
         const userRepository = AppDataSource.getRepository(User);
         const user = await userRepository.findOneBy({ username });
 
         if (!user) {
-            res.status(400).json({ message: "Invalid credentials" });
+            console.warn(`Попытка входа с несуществующим именем пользователя: ${username}`);
+            res.status(400).json({ message: "Неверные данные!" });
             return;
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            res.status(400).json({ message: "Invalid credentials" });
+            console.warn(`Неверный пароль для пользователя: ${username}`);
+            res.status(400).json({ message: "Неверные данные!" });
             return;
         }
 
         const token = jwt.sign({ userId: user.id, role: user.role }, "secret_key", { expiresIn: "1h" });
+        console.log(`Пользователь ${username} успешно вошел в систему`);
         res.status(200).json({ token });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error" });
+        console.error("Ошибка при входе пользователя:", error);
+        res.status(500).json({ message: "Внутренняя ошибка сервера" });
     }
 };
 
-// Используем multer для обработки загрузки изображения профиля
+// Обновление профиля пользователя
 export const updateUserProfile = [
-    upload.single('profileImage'), // Используем multer для загрузки одного файла
+    upload.single('profileImage'),
     async (req: Request, res: Response): Promise<void> => {
         const userId = req.params.id;
         const {
@@ -81,12 +91,15 @@ export const updateUserProfile = [
             receiveNewsletter,
         } = req.body;
 
+        console.log(`Запрос на обновление профиля пользователя с id: ${userId}`);
+
         try {
             const userRepository = AppDataSource.getRepository(User);
             const user = await userRepository.findOneBy({ id: Number(userId) });
 
             if (!user) {
-                res.status(404).json({ message: "User not found" });
+                console.warn(`Пользователь с id: ${userId} не найден`);
+                res.status(404).json({ message: "Пользователь не найден..." });
                 return;
             }
 
@@ -105,14 +118,17 @@ export const updateUserProfile = [
 
             // Если файл был загружен, добавляем путь к изображению профиля
             if (req.file) {
+                console.log(`Загрузка изображения профиля для пользователя с id: ${userId}`);
                 user.profileImage = path.join('uploads', req.file.filename);
             }
 
             await userRepository.save(user);
 
-            res.status(200).json({ message: "Profile updated successfully" });
+            console.log(`Профиль пользователя с id: ${userId} успешно обновлен`);
+            res.status(200).json({ message: "Профиль успешно обновлен" });
         } catch (error) {
-            res.status(500).json({ message: "Internal server error" });
+            console.error("Ошибка при обновлении профиля пользователя:", error);
+            res.status(500).json({ message: "Внутренняя ошибка сервера" });
         }
     }
 ];
