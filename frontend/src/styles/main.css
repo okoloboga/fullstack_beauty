@@ -215,6 +215,13 @@ button {
     opacity: 80%;
     font-size: 18px;
     width: fit-content;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Анимация фона и цвета текста */
+}
+
+.button__without__bg:hover {
+    background-color: rgba(198, 41, 37, 1); /* При наведении фон становится красным */
+    color: #ffffff; /* Цвет текста становится белым */
+    cursor: pointer; /* Добавим указатель для курсора */
 }
 
 
@@ -228,8 +235,13 @@ button {
     width: 100%;
     display: flex;
     justify-content: center;
+    transition: transform 0.3s ease; /* Анимация трансформации для увеличения кнопки */
 }
 
+.button__with__bg:hover {
+    transform: scale(1.05); /* Увеличение кнопки на 5% при наведении */
+    cursor: pointer; /* Добавим указатель для курсора */
+}
 
 .connect__section__social__media .flex{
     gap: 20px;

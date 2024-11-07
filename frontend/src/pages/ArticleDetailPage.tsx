@@ -52,7 +52,7 @@ const ArticleDetailPage: React.FC = () => {
     <main>
       <div className="article-detail-page container">
         <h1>{article.title}</h1>
-        {/* Изменено: корректный путь к изображению */}
+        {/* Изменено: добавлен класс "article-detail-image" */}
         <img src={`${apiUrl}/${article.coverImage}`} alt={article.title} className="article-detail-image" />
         <p>{article.content}</p>
       </div>
