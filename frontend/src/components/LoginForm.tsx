@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios, { AxiosError } from 'axios';
 import axiosInstance from '../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // Импортируем toast для уведомлений
+import { toast } from 'react-toastify';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 

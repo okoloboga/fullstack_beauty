@@ -1,6 +1,8 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios, { AxiosError } from 'axios';
 import axiosInstance from '../utils/axiosInstance';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -47,7 +49,7 @@ const EditProfileForm: React.FC = () => {
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.userId; // Предполагается, что `userId` закодирован в токене
+        return payload.userId;
       } catch (error) {
         console.error('Ошибка при декодировании токена:', error);
         return null;
@@ -61,7 +63,7 @@ const EditProfileForm: React.FC = () => {
   // Загрузка данных профиля при загрузке компонента
   useEffect(() => {
     if (!userId) {
-      console.error('Ошибка: ID пользователя не найден');
+      toast.error('Ошибка: ID пользователя не найден');
       return;
     }
 
@@ -69,7 +71,7 @@ const EditProfileForm: React.FC = () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          console.error('Ошибка: Токен авторизации отсутствует');
+          toast.error('Ошибка: Токен авторизации отсутствует');
           return;
         }
 
@@ -81,8 +83,10 @@ const EditProfileForm: React.FC = () => {
 
         console.log('Данные профиля:', response.data);
         setFormData(response.data);
+        toast.success('Данные профиля успешно загружены');
       } catch (error) {
         console.error('Ошибка при загрузке данных профиля:', error);
+        toast.error('Не удалось загрузить данные профиля');
       }
     };
 
@@ -111,7 +115,7 @@ const EditProfileForm: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        alert('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
+        toast.error('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
         return;
       }
 
@@ -120,11 +124,12 @@ const EditProfileForm: React.FC = () => {
 
       img.onload = () => {
         if (img.width > 1920 || img.height > 1080) {
-          alert('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
+          toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
           return;
         }
 
         setProfileImage(file);
+        toast.success('Изображение профиля успешно загружено');
       };
     }
   };
@@ -136,7 +141,7 @@ const EditProfileForm: React.FC = () => {
     const validFiles: File[] = [];
     files.forEach((file) => {
       if (file.size > 5 * 1024 * 1024) {
-        alert('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
+        toast.error('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
         return;
       }
 
@@ -145,47 +150,43 @@ const EditProfileForm: React.FC = () => {
 
       img.onload = () => {
         if (img.width > 1920 || img.height > 1080) {
-          alert('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
+          toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
           return;
         }
 
         validFiles.push(file);
         setPortfolioImages((prev) => [...prev, ...validFiles]);
+        toast.success('Изображения портфолио успешно добавлены');
       };
     });
   };
 
-
-  // Обработчик обновления профиля// Обработчик обновления профиля
+  // Обработчик обновления профиля
   const handleProfileUpdate = async () => {
     const token = localStorage.getItem('token');
 
     if (!userId) {
-      console.error('Ошибка: ID пользователя не найден');
+      toast.error('Ошибка: ID пользователя не найден');
       return;
     }
 
     try {
-      // Создаем FormData, чтобы отправить данные и файлы
       const formDataToSend = new FormData();
       Object.keys(formData).forEach((key) => {
         const value = formData[key as keyof ProfileData];
         if (value !== undefined && value !== null) {
-        formDataToSend.append(key, typeof value === 'boolean' ? String(value) : value);
+          formDataToSend.append(key, typeof value === 'boolean' ? String(value) : value);
         }
       });
 
-      // Добавляем изображение профиля, если оно есть
       if (profileImage) {
         formDataToSend.append('profileImage', profileImage);
       }
 
-      // Добавляем изображения портфолио
-      portfolioImages.forEach((file, index) => {
+      portfolioImages.forEach((file) => {
         formDataToSend.append(`portfolioImage`, file);
       });
 
-      // Отправляем запрос на сервер
       const response = await axiosInstance.put(`${apiUrl}/api/users/profile/${userId}`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -194,18 +195,17 @@ const EditProfileForm: React.FC = () => {
       });
 
       console.log('Профиль успешно обновлен:', response.data);
-
-      // Обновляем состояние с данными профиля после успешного сохранения
       setFormData((prev) => ({
         ...prev,
         ...response.data,
       }));
+      toast.success('Профиль успешно обновлен');
     } catch (error) {
       const err = error as AxiosError;
       console.error('Ошибка при обновлении профиля:', err.response?.data || err.message);
+      toast.error('Ошибка при обновлении профиля');
     }
   };
-
 
   // Обработчик отправки формы
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
