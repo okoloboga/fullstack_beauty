@@ -33,7 +33,7 @@ services:
     networks:
       - beauty-network
     volumes:
-      - ./backend/uploads:/uploads
+      - ./backend/uploads:/app/uploads
 
   nginx:
     build:
