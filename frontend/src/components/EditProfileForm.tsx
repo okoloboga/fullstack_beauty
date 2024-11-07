@@ -20,12 +20,12 @@ interface ProfileData {
   about: string | null;
   receiveNewsletter: boolean;
   profileImage?: string | null;
-  portfolioImages?: string | null;
+  portfolioImage?: string | null; // Изменено на одиночное изображение
 }
 
 const EditProfileForm: React.FC = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [portfolioImages, setPortfolioImages] = useState<File[]>([]);
+  const [portfolioImage, setPortfolioImage] = useState<File | null>(null); // Изменено на один файл
   const [formData, setFormData] = useState<ProfileData>({
     email: '',
     password: '',
@@ -40,7 +40,7 @@ const EditProfileForm: React.FC = () => {
     about: '',
     receiveNewsletter: false,
     profileImage: '',
-    portfolioImages: '',
+    portfolioImage: '',
   });
 
   // Функция для получения ID пользователя из токена
@@ -83,6 +83,7 @@ const EditProfileForm: React.FC = () => {
 
         console.log('Данные профиля:', response.data);
         setFormData(response.data);
+        setPortfolioImage(null); // Очищаем состояние для загруженного файла, если он был ранее
         toast.success('Данные профиля успешно загружены');
       } catch (error) {
         console.error('Ошибка при загрузке данных профиля:', error);
@@ -134,12 +135,10 @@ const EditProfileForm: React.FC = () => {
     }
   };
 
-  // Обработчик изменения изображений портфолио
-  const handlePortfolioImagesChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-
-    const validFiles: File[] = [];
-    files.forEach((file) => {
+  // Обработчик изменения изображения портфолио (только одно изображение)
+  const handlePortfolioImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
       if (file.size > 5 * 1024 * 1024) {
         toast.error('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
         return;
@@ -154,11 +153,10 @@ const EditProfileForm: React.FC = () => {
           return;
         }
 
-        validFiles.push(file);
-        setPortfolioImages((prev) => [...prev, ...validFiles]);
-        toast.success('Изображения портфолио успешно добавлены');
+        setPortfolioImage(file);
+        toast.success('Изображение портфолио успешно загружено');
       };
-    });
+    }
   };
 
   // Обработчик обновления профиля
@@ -183,9 +181,9 @@ const EditProfileForm: React.FC = () => {
         formDataToSend.append('profileImage', profileImage);
       }
 
-      portfolioImages.forEach((file) => {
-        formDataToSend.append(`portfolioImage`, file);
-      });
+      if (portfolioImage) {
+        formDataToSend.append('portfolioImage', portfolioImage);
+      }
 
       const response = await axiosInstance.put(`${apiUrl}/api/users/profile/${userId}`, formDataToSend, {
         headers: {
@@ -210,7 +208,7 @@ const EditProfileForm: React.FC = () => {
   // Обработчик отправки формы
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleProfileUpdate(); 
+    handleProfileUpdate();
   };
 
   return (
@@ -494,37 +492,41 @@ const EditProfileForm: React.FC = () => {
               name="about"
               rows={3}
               placeholder="Расскажите о себе"
+              className='default_input textarea_input' 
               value={formData.about ?? ''}
               onChange={handleChange}
             ></textarea>
           </div>
 
-          {/* Поле для портфолио */}
-          <div className="form__field form-portfolio">
-            <div className="flex item-center gap-2">
-              <p>Портфолио</p>
-              <button className="button__without__bg" type="button">
-                <label htmlFor="portfolio-files">
-                  Загрузить изображение
-                </label>
-              </button>
-              <div className="form__input">
-                <input
-                  id="portfolio-files"
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  hidden
-                  onChange={handlePortfolioImagesChange}
-                />
-              </div>
-            </div>
-            <div className="images">
-              {portfolioImages.map((image, index) => (
-                <img key={index} src={URL.createObjectURL(image)} alt={`Portfolio ${index}`} />
-              ))}
+        {/* Поле для портфолио (только одно изображение) */}
+        <div className="form__field form-portfolio">
+          <div className="flex item-center gap-2">
+            <p>Портфолио</p>
+            <button className="button__without__bg" type="button">
+              <label htmlFor="portfolio-file">
+                Загрузить изображение
+              </label>
+            </button>
+            <div className="form__input">
+              <input
+                id="portfolio-file"
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handlePortfolioImageChange}
+              />
             </div>
           </div>
+          <div className="images">
+            {formData.portfolioImage && (
+              <img
+                src={`${apiUrl}/${formData.portfolioImage}`}
+                alt="Portfolio"
+                className="portfolio-image"
+              />
+            )}
+          </div>
+        </div>
 
           {/* Поле для подписки на рассылку */}
           <div className="form__field">

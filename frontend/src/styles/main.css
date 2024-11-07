@@ -810,5 +810,33 @@ footer p a{
 	text-align: justify; /* Выравнивание по ширине для лучшего отображения */
 	padding: 0 10px; /* Внутренний отступ, чтобы текст не касался границ контейнера */
 }
+
+.form__input {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 10px; /* Примерный отступ между элементами внутри контейнера */
+}
+
+.default__input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: Inter, sans-serif;
+    outline: none;
+}
+
+.default__input:focus {
+    border-color: #c62925; /* Добавляем акцентный цвет при фокусе */
+}
+
+.textarea__input {
+    resize: none; /* Отключаем возможность изменения размера текстовой области */
+    min-height: 60px; /* Минимальная высота текстовой области, можно подогнать под размеры input */
+    padding: 10px; /* Добавляем отступы, чтобы текст внутри смотрелся аккуратно */
+}
+
   
   
