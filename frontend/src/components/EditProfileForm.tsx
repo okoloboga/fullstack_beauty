@@ -223,7 +223,7 @@ const EditProfileForm: React.FC = () => {
               profileImage
                 ? URL.createObjectURL(profileImage)
                 : formData.profileImage
-                ? `${apiUrl}/${formData.profileImage}`
+                ? `${apiUrl}/${formData.profileImage}?timestamp=${new Date().getTime()}`
                 : 'assets/images/no-photo.png'
             }
             alt="Profile"
