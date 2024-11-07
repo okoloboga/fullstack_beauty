@@ -69,6 +69,7 @@ const EditProfileForm: React.FC = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log('Данные профиля:', response.data);
         setFormData(response.data);
       } catch (error) {
         console.error('Ошибка при загрузке данных профиля:', error);
