@@ -19,7 +19,10 @@ const NewsCard: React.FC<NewsProps> = ({ news }) => {
   return (
     <div className="news__card">
       {/* Изображение обложки новости */}
-      <img src={news.coverImage} alt={news.title} className="news__card__image" />
+      <img 
+        src={news.coverImage} 
+        alt={news.title} 
+        className="news__card__image" />
       <div className="news__card__content">
         {/* Заголовок новости */}
         <h3 className="news__card__title">{news.title}</h3>
