@@ -2,6 +2,8 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -18,8 +20,6 @@ const CreateArticleForm: React.FC = () => {
     content: '',
   });
   const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [successMessage, setSuccessMessage] = useState<string>('');
   const navigate = useNavigate();
 
   // Обработчик изменения полей формы
@@ -37,12 +37,12 @@ const CreateArticleForm: React.FC = () => {
     if (file) {
       const validTypes = ['image/jpeg', 'image/png'];
       if (!validTypes.includes(file.type)) {
-        setErrorMessage('Разрешены только файлы формата JPG и PNG.');
+        toast.error('Разрешены только файлы формата JPG и PNG.');
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        setErrorMessage('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
+        toast.error('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
         return;
       }
 
@@ -51,12 +51,11 @@ const CreateArticleForm: React.FC = () => {
 
       img.onload = () => {
         if (img.width > 1920 || img.height > 1080) {
-          setErrorMessage('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
+          toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
           return;
         }
 
         setCoverImage(file);
-        setErrorMessage('');
       };
     }
   };
@@ -67,7 +66,7 @@ const CreateArticleForm: React.FC = () => {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      console.error('Пользователь не авторизован');
+      toast.error('Пользователь не авторизован');
       return;
     }
 
@@ -86,20 +85,20 @@ const CreateArticleForm: React.FC = () => {
         },
       });
       console.log('Статья успешно создана:', response.data);
-      setSuccessMessage('Статья успешно создана!');
+      toast.success('Статья успешно создана!');
       setTimeout(() => {
         navigate('/articles');
       }, 2000);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Ошибка при создании статьи:', error.response?.data?.message || error.message);
-        setErrorMessage(error.response?.data?.message || 'Ошибка при создании статьи. Пожалуйста, попробуйте еще раз.');
+        toast.error(error.response?.data?.message || 'Ошибка при создании статьи. Пожалуйста, попробуйте еще раз.');
       } else if (error instanceof Error) {
         console.error('Ошибка при создании статьи:', error.message);
-        setErrorMessage(error.message);
+        toast.error(error.message);
       } else {
         console.error('Неизвестная ошибка', error);
-        setErrorMessage('Произошла неизвестная ошибка. Пожалуйста, попробуйте еще раз.');
+        toast.error('Произошла неизвестная ошибка. Пожалуйста, попробуйте еще раз.');
       }
     }
   };
@@ -144,10 +143,10 @@ const CreateArticleForm: React.FC = () => {
           />
         </div>
 
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
-        {successMessage && <p className="success-message">{successMessage}</p>}
-
-        <button className="button__with__bg form__post" type="submit">
+        <button
+          className="button__without__bg navigation__link logout__button"
+          type="submit"
+        >
           Создать статью
         </button>
       </form>
