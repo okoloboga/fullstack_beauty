@@ -616,4 +616,209 @@ footer p a{
     margin-top: 20px;
     height: 51px;
     border-radius: 50px;
+
+
 }
+
+.article-detail-page {
+    max-width: 800px; /* Максимальная ширина страницы статьи */
+    margin: 0 auto; /* Центрируем страницу статьи */
+    padding: 20px; /* Внутренний отступ для всего контейнера */
+    background-color: #fff; /* Белый фон для контента */
+    border-radius: 15px; /* Закругленные углы для контейнера */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Добавляем тень для визуального выделения */
+}
+
+.article-detail-page h1 {
+    font-size: 28px; /* Размер заголовка */
+    font-weight: bold; /* Жирный шрифт */
+    margin-bottom: 20px; /* Отступ снизу заголовка */
+    text-align: center; /* Центрируем заголовок */
+    color: #C62925; /* Цвет заголовка */
+}
+
+.article-detail-image {
+    width: 100%; /* Изображение занимает всю ширину контейнера */
+    max-width: 400px; /* Максимальная ширина изображения */
+    height: auto; /* Высота изображения сохраняет пропорции */
+    object-fit: cover; /* Заполнение контейнера, сохраняя пропорции */
+    border-radius: 15px; /* Закругленные углы изображения */
+    margin-bottom: 20px; /* Отступ снизу изображения */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Легкая тень для изображения */
+    display: block; /* Ставим изображение блочным элементом для центрирования */
+    margin-left: auto; /* Центрируем изображение по горизонтали */
+    margin-right: auto; /* Центрируем изображение по горизонтали */
+}
+
+.article-detail-page p {
+    font-size: 18px; /* Размер текста статьи */
+    line-height: 1.6; /* Межстрочный интервал для лучшей читаемости */
+    color: #333; /* Цвет текста статьи */
+    margin-bottom: 20px; /* Отступ между параграфами */
+    text-align: justify; /* Выравнивание текста по ширине */
+}
+
+.article-detail-page .author-details {
+    font-size: 14px; /* Размер шрифта для информации об авторе */
+    color: #888; /* Более светлый цвет для менее важной информации */
+    margin-bottom: 20px; /* Отступ снизу для блока информации об авторе */
+    text-align: right; /* Выравнивание информации об авторе по правому краю */
+}
+
+.user-photo-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.user-photo {
+	width: 300px;  /* Ограничиваем ширину изображения */
+	height: 300px; /* Ограничиваем высоту изображения */
+	object-fit: cover; /* Заполняем пространство, сохраняя пропорции */
+	border-radius: 50%; /* Делаем изображение круглым (по желанию) */
+	border: 2px solid #ddd; /* Добавляем границу для эстетичного вида */
+}
+
+.articles__block__card {
+	border: 1px solid #ddd; /* Добавляем границу для карточки */
+	border-radius: 8px; /* Закругляем углы */
+	padding: 15px; /* Внутренний отступ */
+	margin: 10px; /* Внешний отступ */
+	width: 300px; /* Задаем фиксированную ширину карточки */
+	height: 300px; /* Задаем такую же высоту, чтобы карточка была квадратной */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Добавляем тень для карточки */
+	display: flex; /* Используем flex для более удобного выравнивания */
+	flex-direction: column; /* Размещаем содержимое по вертикали */
+	justify-content: space-between; /* Равномерное распределение пространства между элементами */
+	overflow: hidden; /* Скрываем все, что выходит за пределы карточки */
+	position: relative; /* Устанавливаем относительное позиционирование для удобной стилизации вложенных элементов */
+}
+
+.articles__block__card__img {
+    width: 100%; /* Изображение должно занимать всю ширину карточки */
+    height: 150px; /* Ограничиваем высоту изображения */
+    object-fit: cover; /* Делаем так, чтобы изображение полностью покрывало область, сохраняя пропорции */
+    border-radius: 8px; /* Закругляем углы изображения, чтобы совпадало с карточкой */
+}
+
+.articles__block__card h4 {
+    margin-top: 10px; /* Отступ сверху для заголовка */
+    font-size: 1.2rem; /* Размер текста */
+    font-weight: 600; /* Вес текста */
+}
+
+.articles__block__card__activities {
+    margin-top: 10px; /* Отступ сверху для блока с активностями */
+    font-size: 0.9rem; /* Размер текста активности */
+}
+
+.articles__block__card p {
+    margin-top: 10px; /* Отступ сверху для содержания */
+    font-size: 0.9rem; /* Размер текста */
+    flex-grow: 1; /* Расширяет текст на оставшееся место */
+    overflow: hidden; /* Скрывает излишки текста */
+}
+
+.articles__block__card .button__without__bg {
+    margin-top: 10px; /* Отступ сверху для кнопки */
+    align-self: flex-start; /* Выравниваем кнопку влево */
+}
+
+
+.news__card {
+  border: 1px solid #ddd; /* Легкая граница вокруг карточки */
+  border-radius: 8px; /* Закругленные углы карточки */
+  padding: 15px; /* Внутренний отступ карточки */
+  width: 300px; /* Устанавливаем фиксированную ширину карточки */
+  height: 300px; /* Устанавливаем такую же высоту, чтобы карточка была квадратной */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень для карточки */
+  margin: 10px; /* Внешний отступ карточки */
+  display: flex; /* Используем flex для удобного расположения элементов внутри карточки */
+  flex-direction: column; /* Размещаем элементы по вертикали */
+  justify-content: space-between; /* Равномерное распределение пространства между элементами */
+  overflow: hidden; /* Обрезка элементов, выходящих за пределы карточки */
+}
+
+.news__card__image {
+  width: 100%; /* Изображение занимает всю ширину карточки */
+  height: 150px; /* Фиксированная высота изображения */
+  object-fit: cover; /* Заполнение изображения, сохраняя пропорции */
+  border-radius: 8px; /* Закругленные углы изображения */
+  margin-bottom: 10px; /* Отступ снизу изображения */
+}
+
+.news__card__content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Раздвигаем контент на оставшееся пространство */
+}
+
+.news__card__title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.news__card__description {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #555;
+  overflow: hidden; /* Обрезаем текст, если он слишком длинный */
+  text-overflow: ellipsis; /* Добавляем многоточие, если текст не помещается */
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Ограничиваем текст тремя строками */
+  -webkit-box-orient: vertical;
+}
+
+.news__card__actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px; /* Отступ сверху для блока с действиями */
+}
+
+.news__card__likes {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+  
+.news-detail-page {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 20px;
+	background-color: #f9f9f9; /* Легкий серый фон для улучшения визуального восприятия */
+	border-radius: 15px; /* Закругленные углы для всего контейнера новости */
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Легкая тень для всего контейнера */
+	max-width: 800px; /* Ограничиваем максимальную ширину */
+	margin: 20px auto; /* Центрируем контейнер и добавляем отступы сверху и снизу */
+}
+
+.news-detail-page__title {
+	font-size: 32px; /* Размер заголовка */
+	font-weight: bold;
+	color: #333; /* Тёмно-серый цвет заголовка */
+	margin-bottom: 20px; /* Отступ снизу заголовка */
+	text-align: center; /* Выравнивание заголовка по центру */
+}
+
+.news-detail-page__image {
+	width: 100%; /* Изображение будет занимать всю ширину контейнера */
+	max-width: 400px; /* Максимальная ширина изображения */
+	height: auto; /* Высота изображения будет зависеть от ширины, чтобы сохранить пропорции */
+	object-fit: cover; /* Заполнение изображения в контейнере, сохраняя пропорции */
+	border-radius: 15px; /* Закругленные углы изображения */
+	margin-bottom: 20px; /* Отступ снизу изображения */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Добавляем тень для улучшения визуального восприятия */
+}
+  
+.news-detail-page__content {
+	font-size: 18px; /* Размер шрифта для основного содержания */
+	line-height: 1.6; /* Линейная высота для удобочитаемости */
+	color: #444; /* Тёмно-серый цвет текста */
+	text-align: justify; /* Выравнивание по ширине для лучшего отображения */
+	padding: 0 10px; /* Внутренний отступ, чтобы текст не касался границ контейнера */
+}
+  
+  

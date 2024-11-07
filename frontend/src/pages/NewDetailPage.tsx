@@ -58,7 +58,7 @@ const NewsDetailPage: React.FC = () => {
   return (
     <main>
       <div className="news-detail-page container">
-        <h1>{news.title}</h1>
+        <h1 className="news-detail-page__title">{news.title}</h1>
         {news.coverImage && (
           <img
             src={`${apiUrl}/${news.coverImage}`}
@@ -66,7 +66,7 @@ const NewsDetailPage: React.FC = () => {
             className="news-detail-page__image"
           />
         )}
-        <p>{news.content}</p>
+        <p className="news-detail-page__content">{news.content}</p>
       </div>
     </main>
   );
