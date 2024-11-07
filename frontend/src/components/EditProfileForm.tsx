@@ -492,7 +492,7 @@ const EditProfileForm: React.FC = () => {
               name="about"
               rows={3}
               placeholder="Расскажите о себе"
-              className='default_input textarea_input' 
+              className='default_input' 
               value={formData.about ?? ''}
               onChange={handleChange}
             ></textarea>

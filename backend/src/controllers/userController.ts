@@ -74,7 +74,10 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
 // Обновление профиля пользователя
 export const updateUserProfile = [
-    upload.single('profileImage'),
+    upload.fields([
+        { name: 'profileImage', maxCount: 1 },
+        { name: 'portfolioImage', maxCount: 1 }
+    ]),
     async (req: Request, res: Response): Promise<void> => {
         const userId = req.params.id;
         const {
@@ -116,14 +119,17 @@ export const updateUserProfile = [
             user.about = about ?? user.about;
             user.receiveNewsletter = receiveNewsletter ?? user.receiveNewsletter;
 
-            if (req.file) {
+            // Проверяем наличие загруженных файлов и обновляем соответствующие поля
+            const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
+            if (files?.profileImage && files.profileImage[0]) {
                 console.log(`Загрузка изображения профиля для пользователя с id: ${userId}`);
-                user.profileImage = path.join('uploads', req.file.filename);
+                user.profileImage = path.join('uploads', files.profileImage[0].filename);
             }
 
-            if (req.file) {
+            if (files?.portfolioImage && files.portfolioImage[0]) {
                 console.log(`Загрузка изображения портфолио для пользователя с id: ${userId}`);
-                user.portfolioImage = path.join('uploads', req.file.filename);
+                user.portfolioImage = path.join('uploads', files.portfolioImage[0].filename);
             }
 
             await userRepository.save(user);
@@ -136,6 +142,7 @@ export const updateUserProfile = [
         }
     }
 ];
+
 
 // Получить данные профиля пользователя
 export const getUserProfile = async (req: Request, res: Response): Promise<void> => {
