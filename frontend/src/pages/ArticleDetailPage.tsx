@@ -56,17 +56,7 @@ const ArticleDetailPage: React.FC = () => {
         <img 
           src={`${apiUrl}/${article.coverImage}`} 
           alt={article.title} 
-          className="article-detail-image" 
-          style={{
-            width: '100%',
-            maxWidth: '400px',
-            height: 'auto',
-            objectFit: 'cover',
-            borderRadius: '15px',
-            margin: '0 auto 20px',
-            display: 'block',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-          }}
+          className="article-detail-image"
         />
         <p style={{ lineHeight: '1.6', color: '#333' }}>{article.content}</p>
       </div>
