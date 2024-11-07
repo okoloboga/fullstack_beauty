@@ -5,18 +5,20 @@ import axiosInstance from '../utils/axiosInstance';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 interface ProfileData {
-  email: string;
-  password: string;
-  name: string;
-  city: string;
-  activity: string;
-  phone: string;
-  instagram: string;
-  vk: string;
-  telegram: string;
-  facebook: string;
-  about: string;
+  email: string | null;
+  password: string | null;
+  name: string | null;
+  city: string | null;
+  activity: string | null;
+  phone: string | null;
+  instagram: string | null;
+  vk: string | null;
+  telegram: string | null;
+  facebook: string | null;
+  about: string | null;
   receiveNewsletter: boolean;
+  profileImage?: string | null;
+  portfolioImages?: string | null;
 }
 
 const EditProfileForm: React.FC = () => {
@@ -35,6 +37,8 @@ const EditProfileForm: React.FC = () => {
     facebook: '',
     about: '',
     receiveNewsletter: false,
+    profileImage: '',
+    portfolioImages: '',
   });
 
   // Функция для получения ID пользователя из токена
@@ -60,7 +64,7 @@ const EditProfileForm: React.FC = () => {
       console.error('Ошибка: ID пользователя не найден');
       return;
     }
-  
+
     const fetchProfileData = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -68,23 +72,22 @@ const EditProfileForm: React.FC = () => {
           console.error('Ошибка: Токен авторизации отсутствует');
           return;
         }
-  
+
         const response = await axiosInstance.get(`${apiUrl}/api/users/profile/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         console.log('Данные профиля:', response.data);
         setFormData(response.data);
       } catch (error) {
         console.error('Ошибка при загрузке данных профиля:', error);
       }
     };
-  
+
     fetchProfileData();
   }, [userId]);
-  
 
   // Обработчик изменения полей формы
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -126,10 +129,11 @@ const EditProfileForm: React.FC = () => {
     }
   };
 
-    // Обработчик изменения изображений портфолио
+  // Обработчик изменения изображений портфолио
   const handlePortfolioImagesChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
 
+    const validFiles: File[] = [];
     files.forEach((file) => {
       if (file.size > 5 * 1024 * 1024) {
         alert('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
@@ -145,12 +149,14 @@ const EditProfileForm: React.FC = () => {
           return;
         }
 
-        setPortfolioImages((prev) => [...prev, file]);
+        validFiles.push(file);
+        setPortfolioImages((prev) => [...prev, ...validFiles]);
       };
     });
   };
 
-  // Обработчик обновления профиля
+
+  // Обработчик обновления профиля// Обработчик обновления профиля
   const handleProfileUpdate = async () => {
     const token = localStorage.getItem('token');
 
@@ -164,7 +170,9 @@ const EditProfileForm: React.FC = () => {
       const formDataToSend = new FormData();
       Object.keys(formData).forEach((key) => {
         const value = formData[key as keyof ProfileData];
+        if (value !== undefined && value !== null) {
         formDataToSend.append(key, typeof value === 'boolean' ? String(value) : value);
+        }
       });
 
       // Добавляем изображение профиля, если оно есть
@@ -172,9 +180,9 @@ const EditProfileForm: React.FC = () => {
         formDataToSend.append('profileImage', profileImage);
       }
 
-      // Добавляем изображения портфолио, если они есть
-      portfolioImages.forEach((file) => {
-        formDataToSend.append('portfolioImages', file);
+      // Добавляем изображения портфолио
+      portfolioImages.forEach((file, index) => {
+        formDataToSend.append(`portfolioImage`, file);
       });
 
       // Отправляем запрос на сервер
@@ -184,6 +192,7 @@ const EditProfileForm: React.FC = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
+
       console.log('Профиль успешно обновлен:', response.data);
 
       // Обновляем состояние с данными профиля после успешного сохранения
@@ -197,10 +206,11 @@ const EditProfileForm: React.FC = () => {
     }
   };
 
+
   // Обработчик отправки формы
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleProfileUpdate(); // Вызываем функцию обновления профиля
+    handleProfileUpdate(); 
   };
 
   return (
@@ -209,21 +219,22 @@ const EditProfileForm: React.FC = () => {
         <div className="user-photo-wrap">
           <img
             className="user-photo"
-            src={profileImage ? URL.createObjectURL(profileImage) : 'images/edit-profile.png'}
+            src={
+              profileImage
+                ? URL.createObjectURL(profileImage)
+                : formData.profileImage
+                ? `${apiUrl}/${formData.profileImage}`
+                : 'assets/images/no-photo.png'
+            }
             alt="Profile"
           />
 
-          <button className="change__image" type="button">
+          <button
+            className="button__without__bg navigation__link logout__button"
+            type="button"
+          >
             <label htmlFor="profile-image">
-              <svg
-                width="21"
-                height="21"
-                viewBox="0 0 21 21"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* SVG path here */}
-              </svg>
+              Загрузить Фото
             </label>
           </button>
           <input
@@ -245,7 +256,7 @@ const EditProfileForm: React.FC = () => {
                 name="email"
                 placeholder="E-mail"
                 className="default__input"
-                value={formData.email}
+                value={formData.email ?? ''}
                 onChange={handleChange}
               />
               <svg
@@ -269,7 +280,7 @@ const EditProfileForm: React.FC = () => {
                 name="password"
                 placeholder="Пароль"
                 className="default__input"
-                value={formData.password}
+                value={formData.password ?? ''}
                 onChange={handleChange}
               />
               <svg
@@ -293,7 +304,7 @@ const EditProfileForm: React.FC = () => {
                 name="name"
                 placeholder="ФИО"
                 className="default__input"
-                value={formData.name}
+                value={formData.name ?? ''}
                 onChange={handleChange}
               />
               <svg
@@ -317,7 +328,7 @@ const EditProfileForm: React.FC = () => {
                 name="city"
                 placeholder="Город"
                 className="default__input"
-                value={formData.city}
+                value={formData.city ?? ''}
                 onChange={handleChange}
               />
               <svg
@@ -341,7 +352,7 @@ const EditProfileForm: React.FC = () => {
                 name="activity"
                 placeholder="Деятельность"
                 className="default__input"
-                value={formData.activity}
+                value={formData.activity ?? ''}
                 onChange={handleChange}
               />
               <svg
@@ -365,7 +376,7 @@ const EditProfileForm: React.FC = () => {
                 name="phone"
                 placeholder="Phone-number"
                 className="default__input"
-                value={formData.phone}
+                value={formData.phone ?? ''}
                 onChange={handleChange}
               />
               <svg
@@ -389,7 +400,7 @@ const EditProfileForm: React.FC = () => {
                 name="instagram"
                 placeholder="Instagram"
                 className="default__input"
-                value={formData.instagram}
+                value={formData.instagram ?? ''}
                 onChange={handleChange}
               />
               <svg
@@ -413,7 +424,7 @@ const EditProfileForm: React.FC = () => {
                 name="vk"
                 placeholder="VK"
                 className="default__input"
-                value={formData.vk}
+                value={formData.vk ?? ''}
                 onChange={handleChange}
               />
               <svg
@@ -437,7 +448,7 @@ const EditProfileForm: React.FC = () => {
                 name="telegram"
                 placeholder="Telegram"
                 className="default__input"
-                value={formData.telegram}
+                value={formData.telegram ?? ''}
                 onChange={handleChange}
               />
               <svg
@@ -461,7 +472,7 @@ const EditProfileForm: React.FC = () => {
                 name="facebook"
                 placeholder="Facebook"
                 className="default__input"
-                value={formData.facebook}
+                value={formData.facebook ?? ''}
                 onChange={handleChange}
               />
               <svg
@@ -483,7 +494,7 @@ const EditProfileForm: React.FC = () => {
               name="about"
               rows={3}
               placeholder="Расскажите о себе"
-              value={formData.about}
+              value={formData.about ?? ''}
               onChange={handleChange}
             ></textarea>
           </div>

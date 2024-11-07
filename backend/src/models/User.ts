@@ -49,5 +49,8 @@ export class User {
     receiveNewsletter?: boolean;
 
     @Column({ nullable: true })
-    profileImage?: string;  // Новое поле для хранения пути к изображению профиля
+    profileImage?: string;
+
+    @Column({ nullable: true })
+    portfolioImage?: string;
 }

@@ -116,10 +116,14 @@ export const updateUserProfile = [
             user.about = about ?? user.about;
             user.receiveNewsletter = receiveNewsletter ?? user.receiveNewsletter;
 
-            // Если файл был загружен, добавляем путь к изображению профиля
             if (req.file) {
                 console.log(`Загрузка изображения профиля для пользователя с id: ${userId}`);
                 user.profileImage = path.join('uploads', req.file.filename);
+            }
+
+            if (req.file) {
+                console.log(`Загрузка изображения портфолио для пользователя с id: ${userId}`);
+                user.portfolioImage = path.join('uploads', req.file.filename);
             }
 
             await userRepository.save(user);
@@ -149,7 +153,7 @@ export const getUserProfile = async (req: Request, res: Response): Promise<void>
         }
 
         // Здесь можно выбрать только нужные данные профиля для ответа
-        const { id, username, email, name, city, activity, phone, instagram, vk, telegram, facebook, about, receiveNewsletter, profileImage } = user;
+        const { id, username, email, name, city, activity, phone, instagram, vk, telegram, facebook, about, receiveNewsletter, profileImage, portfolioImage } = user;
 
         console.log(`Профиль пользователя с id: ${userId} успешно получен`);
         res.status(200).json({
@@ -166,7 +170,8 @@ export const getUserProfile = async (req: Request, res: Response): Promise<void>
             facebook,
             about,
             receiveNewsletter,
-            profileImage
+            profileImage,
+            portfolioImage
         });
     } catch (error) {
         console.error("Ошибка при получении профиля пользователя:", error);
