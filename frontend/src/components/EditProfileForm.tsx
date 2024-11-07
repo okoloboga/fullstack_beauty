@@ -60,24 +60,31 @@ const EditProfileForm: React.FC = () => {
       console.error('Ошибка: ID пользователя не найден');
       return;
     }
-
+  
     const fetchProfileData = async () => {
       try {
         const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('Ошибка: Токен авторизации отсутствует');
+          return;
+        }
+  
         const response = await axiosInstance.get(`${apiUrl}/api/users/profile/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+  
         console.log('Данные профиля:', response.data);
         setFormData(response.data);
       } catch (error) {
         console.error('Ошибка при загрузке данных профиля:', error);
       }
     };
-
+  
     fetchProfileData();
   }, [userId]);
+  
 
   // Обработчик изменения полей формы
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

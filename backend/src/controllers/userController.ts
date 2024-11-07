@@ -132,3 +132,44 @@ export const updateUserProfile = [
         }
     }
 ];
+
+// Получить данные профиля пользователя
+export const getUserProfile = async (req: Request, res: Response): Promise<void> => {
+    const userId = req.params.id;
+    console.log(`Запрос на получение профиля пользователя с id: ${userId}`);
+
+    try {
+        const userRepository = AppDataSource.getRepository(User);
+        const user = await userRepository.findOneBy({ id: Number(userId) });
+
+        if (!user) {
+            console.warn(`Пользователь с id: ${userId} не найден`);
+            res.status(404).json({ message: "Пользователь не найден..." });
+            return;
+        }
+
+        // Здесь можно выбрать только нужные данные профиля для ответа
+        const { id, username, email, name, city, activity, phone, instagram, vk, telegram, facebook, about, receiveNewsletter, profileImage } = user;
+
+        console.log(`Профиль пользователя с id: ${userId} успешно получен`);
+        res.status(200).json({
+            id,
+            username,
+            email,
+            name,
+            city,
+            activity,
+            phone,
+            instagram,
+            vk,
+            telegram,
+            facebook,
+            about,
+            receiveNewsletter,
+            profileImage
+        });
+    } catch (error) {
+        console.error("Ошибка при получении профиля пользователя:", error);
+        res.status(500).json({ message: "Внутренняя ошибка сервера" });
+    }
+};
