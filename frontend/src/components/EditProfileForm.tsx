@@ -1,10 +1,9 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios, { AxiosError } from 'axios';
 import axiosInstance from '../utils/axiosInstance';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-// Определение интерфейса для данных профиля
 interface ProfileData {
   email: string;
   password: string;
@@ -38,6 +37,47 @@ const EditProfileForm: React.FC = () => {
     receiveNewsletter: false,
   });
 
+  // Функция для получения ID пользователя из токена
+  const getUserIdFromToken = (): string | null => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.userId; // Предполагается, что `userId` закодирован в токене
+      } catch (error) {
+        console.error('Ошибка при декодировании токена:', error);
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const userId = getUserIdFromToken();
+
+  // Загрузка данных профиля при загрузке компонента
+  useEffect(() => {
+    if (!userId) {
+      console.error('Ошибка: ID пользователя не найден');
+      return;
+    }
+
+    const fetchProfileData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axiosInstance.get(`${apiUrl}/api/users/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setFormData(response.data);
+      } catch (error) {
+        console.error('Ошибка при загрузке данных профиля:', error);
+      }
+    };
+
+    fetchProfileData();
+  }, [userId]);
+
   // Обработчик изменения полей формы
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -59,7 +99,6 @@ const EditProfileForm: React.FC = () => {
   const handleProfileImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Ограничиваем размер файла до 5MB
       if (file.size > 5 * 1024 * 1024) {
         alert('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
         return;
@@ -79,7 +118,7 @@ const EditProfileForm: React.FC = () => {
     }
   };
 
-  // Обработчик изменения изображений портфолио
+    // Обработчик изменения изображений портфолио
   const handlePortfolioImagesChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
 
@@ -103,25 +142,9 @@ const EditProfileForm: React.FC = () => {
     });
   };
 
-  // Функция для получения ID пользователя из токена (простой пример)
-  const getUserIdFromToken = (): string | null => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.userId; // Предполагается, что `userId` закодирован в токене
-      } catch (error) {
-        console.error('Ошибка при декодировании токена:', error);
-        return null;
-      }
-    }
-    return null;
-  };
-
   // Обработчик обновления профиля
   const handleProfileUpdate = async () => {
     const token = localStorage.getItem('token');
-    const userId = getUserIdFromToken();
 
     if (!userId) {
       console.error('Ошибка: ID пользователя не найден');
@@ -154,6 +177,12 @@ const EditProfileForm: React.FC = () => {
         },
       });
       console.log('Профиль успешно обновлен:', response.data);
+
+      // Обновляем состояние с данными профиля после успешного сохранения
+      setFormData((prev) => ({
+        ...prev,
+        ...response.data,
+      }));
     } catch (error) {
       const err = error as AxiosError;
       console.error('Ошибка при обновлении профиля:', err.response?.data || err.message);
