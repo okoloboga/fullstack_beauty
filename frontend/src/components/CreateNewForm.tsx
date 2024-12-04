@@ -1,23 +1,19 @@
+// src/components/CreateNewForm.tsx
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axiosInstance from '../utils/axiosInstance';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { createNews } from '../utils/apiService'; // Импортируем функцию из нового сервиса
+import type { FormData } from '../types'; // Импортируем тип FormData
 import 'react-toastify/dist/ReactToastify.css';
+import './CreateNewForm.css';
 
-const apiUrl = process.env.REACT_APP_API_URL;
-
-// Интерфейс для данных формы новости
-interface FormData {
-  title: string;
-  content: string;
-}
-
-// Компонент формы для создания новости
 const CreateNewForm: React.FC = () => {
+  const emptyFile = new File([], '');
   const [formData, setFormData] = useState<FormData>({
     title: '',
     content: '',
+    coverImage: emptyFile,
   });
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const navigate = useNavigate();
@@ -75,33 +71,31 @@ const CreateNewForm: React.FC = () => {
       return;
     }
 
-    const formDataToSend = new FormData();
-    formDataToSend.append('title', formData.title);
-    formDataToSend.append('content', formData.content);
-    if (coverImage) {
-      formDataToSend.append('coverImage', coverImage);
-    }
-
     try {
-      const response = await axiosInstance.post(`${apiUrl}/api/news`, formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('Новость успешно создана:', response.data);
+      // Используем функцию createNews из newsService
+      const response = await createNews(
+        { 
+          title: formData.title, 
+          content: formData.content, 
+          coverImage: formData.coverImage 
+        }, 
+        token);
+
+      console.log('Новость успешно создана:', response);
       toast.success('Новость успешно создана!');
       setTimeout(() => {
         navigate('/news'); // Перенаправление на страницу с новостями
       }, 2000);
-    } catch (error) {
+    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Ошибка при создании новости:', error.response?.data?.message || error.message);
         toast.error(error.response?.data?.message || 'Ошибка при создании новости. Пожалуйста, попробуйте еще раз.');
       } else if (error instanceof Error) {
+        // Обрабатываем общие ошибки, которые не связаны с axios
         console.error('Ошибка при создании новости:', error.message);
         toast.error(error.message);
       } else {
+        // Обработка случаев, когда ошибка не является объектом типа Error или AxiosError
         console.error('Неизвестная ошибка', error);
         toast.error('Произошла неизвестная ошибка. Пожалуйста, попробуйте еще раз.');
       }

@@ -1,0 +1,13 @@
+.header {
+    position: relative;
+  }
+
+.header {
+    background-color: rgba(46, 46, 46, 0.5);
+    padding: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+  }

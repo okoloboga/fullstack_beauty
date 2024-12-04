@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axiosInstance from '../utils/axiosInstance';
+import { fetchArticle } from '../utils/apiService'; // Импортируем функцию
+import { Article } from '../types';
+import './styles/ArticleDetailPage.css';
 
-// Определение типа для статьи
-interface Article {
-  id: number;
-  title: string;
-  coverImage: string; // Изменено на coverImage
-  content: string;
-}
-
-const apiUrl = process.env.REACT_APP_API_URL;
-
-// Основной компонент страницы детализации статьи
 const ArticleDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [article, setArticle] = useState<Article | null>(null);
@@ -20,21 +11,24 @@ const ArticleDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchArticle = async () => {
+    const getArticle = async () => {
       try {
-        const response = await axiosInstance.get<Article>(`${apiUrl}/api/articles/${id}`);
-        setArticle(response.data);
+        if (id) {
+          const data = await fetchArticle(id); // Вызов функции из articleService
+          setArticle(data);
+        } else {
+          setError('Невалидный идентификатор статьи');
+        }
       } catch (err) {
         setError('Ошибка при загрузке статьи');
       } finally {
         setLoading(false);
       }
     };
-
-    if (id) {
-      fetchArticle();
-    }
+  
+    getArticle(); // Вызываем getArticle без проверки id в зависимости
   }, [id]);
+  
 
   if (loading) {
     return <div>Загрузка статьи...</div>;
@@ -52,9 +46,8 @@ const ArticleDetailPage: React.FC = () => {
     <main>
       <div className="article-detail-page container" style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
         <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>{article.title}</h1>
-        {/* Изменено: добавлен класс "article-detail-image" и стили */}
         <img 
-          src={`${apiUrl}/${article.coverImage}`} 
+          src={`${process.env.REACT_APP_API_URL}/${article.coverImage}`} 
           alt={article.title} 
           className="article-detail-image"
         />

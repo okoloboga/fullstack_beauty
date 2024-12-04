@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axiosInstance from '../utils/axiosInstance';
+import { NewsItem } from '../types';
+import { fetchNews } from '../utils/apiService';
+import './styles/NewDetailPage.css';
 
-// URL API для получения данных
 const apiUrl = process.env.REACT_APP_API_URL;
-
-// Интерфейс для описания типа данных новости
-interface NewsItem {
-  id: number;
-  title: string;
-  content: string;
-  coverImage?: string;
-}
 
 // Основной компонент страницы детального просмотра новости
 const NewsDetailPage: React.FC = () => {
@@ -25,10 +18,14 @@ const NewsDetailPage: React.FC = () => {
 
   // useEffect для получения данных новости при изменении параметра id
   useEffect(() => {
-    const fetchNews = async () => {
+    const getNews = async () => {
       try {
-        const response = await axiosInstance.get<NewsItem>(`${apiUrl}/api/news/${id}`);
-        setNews(response.data);
+        if (id) {
+          const data = await fetchNews(id);
+          setNews(data);
+        } else {
+          setError('Невалидный идентификатор новости');
+        }
       } catch (err) {
         setError('Ошибка при загрузке новости');
       } finally {
@@ -36,7 +33,7 @@ const NewsDetailPage: React.FC = () => {
       }
     };
 
-    fetchNews(); // Вызов функции получения данных
+    getNews(); // Вызов функции получения данных
   }, [id]);
 
   // Отображение состояния загрузки

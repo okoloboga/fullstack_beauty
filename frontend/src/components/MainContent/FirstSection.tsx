@@ -1,5 +1,6 @@
 import React from 'react';
 import girlImage from '../../assets/images/girl.svg';
+import './FirstSection.css';
 
 // Компонент FirstSection - первый экран, который содержит заголовок и основные направления сайта
 const FirstSection: React.FC = () => {

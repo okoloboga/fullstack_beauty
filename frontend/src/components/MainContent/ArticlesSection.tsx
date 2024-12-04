@@ -1,37 +1,23 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import rightArrow from '../../assets/images/right-arrow.svg';
 import likeIcon from '../../assets/images/like.svg';
 import dislikeIcon from '../../assets/images/dislike.svg';
 import starIcon from '../../assets/images/star.svg';
 import commentsIcon from '../../assets/images/comments.svg';
-
-// Тип данных статьи, чтобы TypeScript понимал структуру каждого объекта статьи
-interface Article {
-  id: number;
-  coverImage: string;
-  title: string;
-  description: string;
-  author: {
-    name: string;
-  };
-  likes?: number;
-  dislikes?: number;
-  stars?: number;
-  comments?: number;
-}
-
-const apiUrl = process.env.REACT_APP_API_URL; // URL API, который используется для получения данных
+import { ArticleDetail } from '../../types';
+import { fetchPopularArticles } from '../../utils/apiService';
+import './ArticlesSection.css';
 
 const ArticlesSection: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   // Используем useRef для доступа к слайдеру
   const sliderRef = useRef<HTMLDivElement | null>(null);
   // Управление видимостью кнопок предыдущего и следующего слайдов
   const [showPrev, setShowPrev] = useState<boolean>(false);
   const [showNext, setShowNext] = useState<boolean>(true);
   // Состояние для хранения списка статей
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<ArticleDetail[]>([]);
 
   // Функция для обновления видимости кнопок слайдера
   const updateButtonVisibility = () => {
@@ -66,16 +52,18 @@ const ArticlesSection: React.FC = () => {
 
   // useEffect для получения данных статей с сервера
   useEffect(() => {
-    const fetchArticles = async () => {
+    const loadArticles = async () => {
       try {
-        const response = await axios.get<Article[]>(`${apiUrl}/api/articles?sort=popular&limit=3`); // Получаем популярные статьи, максимум 3
-        setArticles(response.data); // Сохраняем статьи в состояние
+        const popularArticles = await fetchPopularArticles(3); // Задаём лимит
+        setArticles(popularArticles); // Сохраняем статьи в состояние
       } catch (error) {
-        console.error('Ошибка при загрузке статей:', error);
+        console.error('Ошибка при загрузке популярных статей:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchArticles(); // Вызов функции получения статей
+    loadArticles(); // Вызываем функцию загрузки популярных статей
   }, []);
 
   // useEffect для добавления слушателя события скроллинга на слайдер
@@ -89,6 +77,10 @@ const ArticlesSection: React.FC = () => {
       };
     }
   }, []);
+  
+  if (loading) {
+    return <div>Загрузка популярных статей...</div>;
+  }
 
   return (
     <section className="articles__section">

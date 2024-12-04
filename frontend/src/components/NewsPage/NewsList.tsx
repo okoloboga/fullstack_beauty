@@ -1,31 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import axios, { AxiosError } from 'axios';
-import axiosInstance from '../utils/axiosInstance';
+import { fetchFilteredNews } from '../../utils/apiService';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import NewsCard from './NewsCard';
-
-const apiUrl = process.env.REACT_APP_API_URL;
-
-// Интерфейс для описания объекта новости
-interface NewsItem {
-  id: number;
-  title: string;
-  description: string;
-  coverImage: string;
-  likes: number;
-  date: string;
-}
-
-// Интерфейс для props компонента NewsList
-interface NewsListProps {
-  type: 'newest' | 'best'; // Тип новостей: самые новые или лучшие
-}
-
-// Интерфейс для токена авторизации
-interface DecodedToken {
-  role: string;
-}
+import NewsCard from '../NewsCard';
+import { NewsItem, NewsListProps, DecodedToken } from '../../types';
+import './NewsList.css';
 
 const NewsList: React.FC<NewsListProps> = ({ type }) => {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
@@ -48,30 +27,19 @@ const NewsList: React.FC<NewsListProps> = ({ type }) => {
   
   // Получаем новости с сервера и фильтруем их в зависимости от типа
   useEffect(() => {
-    const fetchNews = async () => {
+    const loadNews = async () => {
       try {
-        const response = await axiosInstance.get<NewsItem[]>(`${apiUrl}/api/news`);
-        let newsData = response.data;
-
-        // Фильтруем новости в зависимости от типа
-        if (type === 'newest') {
-          newsData = newsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        } else if (type === 'best') {
-          newsData = newsData.sort((a, b) => b.likes - a.likes);
-        }
-
-        setNewsItems(newsData);
+        const filteredNews = await fetchFilteredNews(type); // Получаем новости с учётом типа
+        setNewsItems(filteredNews); // Устанавливаем новости в состояние
       } catch (error) {
-        const err = error as AxiosError;
-        console.error('Ошибка при загрузке новостей:', err.message);
         setError('Ошибка при загрузке новостей');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchNews();
-  }, [type]);
+    loadNews(); // Вызываем функцию загрузки новостей
+  }, [type]); // Перезагружаем новости при изменении типа
 
   if (loading) {
     return <p>Загрузка новостей...</p>;

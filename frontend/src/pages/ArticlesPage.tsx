@@ -1,6 +1,7 @@
 import React from 'react';
-import ArticlesList from '../components/ArticlesList';
-import ConnectSection from '../components/sections/ConnectSection';
+import ArticlesList from '../components/ArticlesPage/ArticlesList';
+import ConnectSection from '../components/MainContent/ConnectSection';
+import './styles/ArticlesPage.css';
 
 // Компонент страницы со статьями
 const ArticlesPage: React.FC = () => {

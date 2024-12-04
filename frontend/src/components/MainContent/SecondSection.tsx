@@ -4,6 +4,7 @@ import girlImage2 from '../../assets/images/second__section__girl2.png';
 import girlImage3 from '../../assets/images/second__section__girl3.png';
 import girlImage4 from '../../assets/images/second__section__girl4.png';
 import girlsImage from '../../assets/images/second__section__girls.png';
+import './SecondSection.css';
 
 // Компонент SecondSection - секция "О проекте", которая описывает платформу
 const SecondSection: React.FC = () => {

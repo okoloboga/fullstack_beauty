@@ -1,40 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../utils/axiosInstance';
 import { Link } from 'react-router-dom';
 import ArticleCard from './ArticleCard';
-import filterIcon from '../assets/images/filter-icon.svg';
-import topArrowIcon from '../assets/images/top-arrow.svg';
+import filterIcon from '../../assets/images/filter-icon.svg';
+import topArrowIcon from '../../assets/images/top-arrow.svg';
+import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode'; // Правильный импорт без фигурных скобок
-
-// URL API для получения данных
-const apiUrl = process.env.REACT_APP_API_URL;
-
-// Интерфейс для типа статьи
-interface Article {
-  id: number;
-  title: string;
-  coverImage?: string;
-  author: {
-    name: string;
-  };
-  likes?: number;
-  dislikes?: number;
-  stars?: number;
-  comments?: number;
-  content: string;
-}
-
-// Интерфейс для типа токена
-interface DecodedToken {
-  role: string;
-}
+import { ArticleDetail, DecodedToken } from '../../types'
+import { fetchArticles } from '../../utils/apiService';
+import './ArticlesList.css';
 
 // Компонент списка статей
 const ArticlesList: React.FC = () => {
   // Состояния для управления поиском, фильтрами и popup
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<ArticleDetail[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [userRole, setUserRole] = useState<string | null>(null); // Для хранения роли пользователя
 
@@ -53,18 +33,18 @@ const ArticlesList: React.FC = () => {
 
   // Запрос на сервер для получения всех статей
   useEffect(() => {
-    const fetchArticles = async () => {
+    const loadArticles = async () => {
       try {
-        const response = await axiosInstance.get<Article[]>(`${apiUrl}/api/articles`);
-        setArticles(response.data);
+        const articlesData = await fetchArticles(); // Используем вынесенную функцию
+        setArticles(articlesData);
       } catch (error) {
-        console.error('Ошибка при загрузке статей:', error);
+        toast.error('Не удалось загрузить статьи');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchArticles();
+    loadArticles();
   }, []);
 
   // Фильтрация статей на основе поиска

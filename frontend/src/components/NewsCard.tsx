@@ -1,17 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import likeIcon from '../assets/images/like.svg';
-
-// Интерфейс для props компонента NewsCard
-interface NewsProps {
-  news: {
-    id: number;
-    title: string;
-    description: string;
-    coverImage: string;
-    likes: number;
-  };
-}
+import { NewsProps } from '../types';
+import './NewsCard.css';
 
 // Компонент NewsCard представляет карточку с новостью
 // Отображает изображение, заголовок, описание и количество лайков новости

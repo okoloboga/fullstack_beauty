@@ -1,7 +1,8 @@
 import React from 'react';
 import ProfileNavigation from '../components/ProfileNavigation';
 import EditProfileForm from '../components/EditProfileForm';
-import ConnectSection from '../components/sections/ConnectSection';
+import ConnectSection from '../components/MainContent/ConnectSection';
+import './styles/EditProfilePage.css';
 
 // Компонент страницы редактирования профиля пользователя
 const EditProfilePage: React.FC = () => {

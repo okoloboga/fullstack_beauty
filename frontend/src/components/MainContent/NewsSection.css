@@ -1,0 +1,27 @@
+.news__section {
+    margin-top: 100px;
+  }
+
+.news__block__title div {
+    flex: 1 1;
+  }
+
+.news__block__title h1 {
+    flex: 1 1;
+  }
+
+.news__block__cards {
+    flex: 1 0 30%;
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+.news__block__cards2 {
+    display: flex;
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+.news__block__card__btn {
+    margin-top: 60px;
+  }

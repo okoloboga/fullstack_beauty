@@ -1,10 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-
-// Определение интерфейса для props
-interface ProtectedRouteProps {
-  allowedRoles: string[]; // Список разрешенных ролей
-}
+import { ProtectedRouteProps } from '../types';
+import './ProtectedRoute.css';
 
 // Функция декодирования токена, чтобы получить информацию о пользователе
 const decodeToken = (token: string) => {

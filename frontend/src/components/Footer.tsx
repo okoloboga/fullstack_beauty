@@ -1,4 +1,5 @@
 import React from 'react';
+import './Footer.css';
 
 // Компонент Footer представляет футер сайта
 // Отображает копирайт и информацию о правах

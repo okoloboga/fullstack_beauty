@@ -1,9 +1,10 @@
 import React from 'react';
-import FirstSection from './sections/FirstSection';
-import SecondSection from './sections/SecondSection';
-import NewsSection from './sections/NewsSection';
-import ArticlesSection from './sections/ArticlesSection';
-import ConnectSection from './sections/ConnectSection';
+import FirstSection from '../components/MainContent/FirstSection';
+import SecondSection from '../components/MainContent/SecondSection';
+import NewsSection from '../components/MainContent/NewsSection';
+import ArticlesSection from '../components/MainContent/ArticlesSection';
+import ConnectSection from '../components/MainContent/ConnectSection';
+import './styles/MainContent.css';
 
 // Компонент MainContent представляет главную содержимую часть страницы
 // Содержит разные секции, такие как новости, статьи и контактную информацию

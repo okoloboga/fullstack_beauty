@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/images/logo.svg';
 import userIcon from '../assets/images/user.svg';
+import './Header.css';
 
 // Компонент Header представляет собой верхнюю навигационную панель
 // Содержит ссылки на страницы, кнопку для авторизации и меню бургер

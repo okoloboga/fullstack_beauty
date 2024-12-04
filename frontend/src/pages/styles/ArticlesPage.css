@@ -1,0 +1,70 @@
+.articles__title {
+    margin-top: 50px;
+}
+
+.articles__controls {
+    display: flex;
+    width: 100%;
+    position: relative;
+    gap: 20px;
+  }
+
+.articles__controls button {
+    font-family: "Playfair Display", sans-serif;
+    font-size: 20px;
+  }
+
+.write-article-btn {
+    flex: 0 0 20%;
+  }
+
+.articles__types {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+
+.articles__types button {
+    font-family: "Playfair Display", sans-serif;
+    width: 100%;
+    padding: 9px 12px;
+    opacity: 100%;
+  }
+
+.articles__types button a {
+    font-size: 20px;
+    color: #1F1F1F !important;
+    font-weight: 500;
+  }
+
+.articles__controls button {
+    font-family: "Playfair Display", sans-serif;
+    font-size: 20px;
+  }
+
+.articles__block__cards {
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    flex: 1 1;
+    display: flex;
+    gap: 20px;
+  }
+
+.articles__block__cards__div {
+    position: relative;
+  }
+
+.articles__top__button {
+    height: 65px;
+    width: 65px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 1px solid rgba(198, 41, 37, 1);
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

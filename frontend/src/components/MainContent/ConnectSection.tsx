@@ -4,9 +4,8 @@ import instagramIcon from '../../assets/images/instagram.svg';
 import vkIcon from '../../assets/images/vk.svg';
 import telegramIcon from '../../assets/images/telegram.svg';
 import facebookIcon from '../../assets/images/facebook.svg';
-
-// URL API, используемый для отправки данных
-const apiUrl = process.env.REACT_APP_API_URL;
+import { sendContactMessage } from '../../utils/apiService';
+import './ConnectSection.css';
 
 const ConnectSection: React.FC = () => {
   // Состояния для управления значениями полей ввода
@@ -14,8 +13,8 @@ const ConnectSection: React.FC = () => {
   const [email, setEmail] = useState<string>(''); // Состояние для хранения email
 
   // Обработчик отправки формы
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Предотвращаем перезагрузку страницы при отправке формы
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
     // Проверка, что оба поля не пустые
     if (!email || !message) {
@@ -24,34 +23,17 @@ const ConnectSection: React.FC = () => {
     }
 
     // Формируем данные для отправки
-    const formData = {
-      email: email,
-      message: message,
-    };
+    const formData = { email, message };
 
-    // Отправляем данные на сервер с использованием fetch API
-    fetch(`${apiUrl}/api/contact`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-      body: JSON.stringify(formData), // Преобразуем данные в формат JSON
-    })
-      .then((response) => {
-        if (response.ok) {
-          // Успешная отправка данных
-          alert('Ваше сообщение отправлено!');
-          setEmail(''); // Очищаем поле email
-          setMessage(''); // Очищаем поле message
-        } else {
-          // Обработка ошибки
-          alert('Произошла ошибка при отправке сообщения.');
-        }
-      })
-      .catch((error) => {
-        console.error('Ошибка:', error); // Логируем ошибку в консоль для отладки
-        alert('Произошла ошибка при отправке сообщения.');
-      });
+    try {
+      // Отправляем сообщение на сервер
+      await sendContactMessage(formData);
+      alert('Ваше сообщение отправлено!');
+      setEmail(''); // Очищаем поле email
+      setMessage(''); // Очищаем поле message
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Произошла ошибка при отправке сообщения.');
+    }
   };
 
   return (

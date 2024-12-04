@@ -1,10 +1,7 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-
-// Определяем типы для props компонента
-interface ProfileNavigationProps {
-  active: string; // Активная вкладка, например: 'edit-profile', 'my-articles', и т.д.
-}
+import { useNavigate } from 'react-router-dom';
+import { ProfileNavigationProps } from '../types';
+import './ProfileNavigation.css';
 
 const ProfileNavigation: React.FC<ProfileNavigationProps> = ({ active }) => {
   const navigate = useNavigate();

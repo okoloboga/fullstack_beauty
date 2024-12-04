@@ -1,7 +1,8 @@
 import React from 'react';
-import LoginForm from '../components/LoginForm';
-import ConnectSection from '../components/sections/ConnectSection';
-import { Link } from 'react-router-dom'; // Импортируем Link для переходов на другие страницы
+import LoginForm from '../components/LoginPage/LoginForm';
+import ConnectSection from '../components/MainContent/ConnectSection';
+import { Link } from 'react-router-dom';
+import './styles/LoginPage.css';
 
 // Компонент страницы авторизации
 const LoginPage: React.FC = () => {

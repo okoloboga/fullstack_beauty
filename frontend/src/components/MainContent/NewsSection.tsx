@@ -1,36 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-
-// URL API, используемый для получения данных
-const apiUrl = process.env.REACT_APP_API_URL;
-
-// Определение интерфейса для новостей
-interface NewsItem {
-  id: number;
-  title: string;
-  description: string;
-  coverImage: string;
-}
+import { fetchLatestNews } from '../../utils/apiService';
+import { NewsItem } from '../../types';
+import './NewsSection.css';
 
 const NewsSection: React.FC = () => {
   // Состояние для хранения новостей
   const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // Хук useEffect для получения новостей при монтировании компонента
   useEffect(() => {
-    const fetchNews = async () => {
+    const loadNews = async () => {
       try {
-        // Получаем новости с сервера
-        const response = await axios.get<NewsItem[]>(`${apiUrl}/api/news?sort=newest&limit=6`); // Получаем самые свежие новости, максимум 6
-        setNews(response.data); // Устанавливаем полученные данные в состояние
+        const latestNews = await fetchLatestNews(6); // Задаём лимит 6 новостей
+        setNews(latestNews); // Сохраняем новости в состояние
       } catch (error) {
         console.error('Ошибка при загрузке новостей:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchNews(); // Вызов функции получения новостей
+    loadNews(); // Вызываем функцию загрузки новостей
   }, []);
+
+  if (loading) {
+    return <div>Загрузка новостей...</div>;
+  }
 
   return (
     <section className="news__section">

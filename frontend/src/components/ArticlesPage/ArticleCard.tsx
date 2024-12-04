@@ -1,29 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import likeIcon from '../assets/images/like.svg';
-import dislikeIcon from '../assets/images/dislike.svg';
-import starIcon from '../assets/images/star.svg';
-import commentsIcon from '../assets/images/comments.svg';
-
-// Интерфейс для типа статьи
-interface Article {
-  id: number;
-  title: string;
-  coverImage?: string;
-  author: {
-    name: string;
-  };
-  likes?: number;
-  dislikes?: number;
-  stars?: number;
-  comments?: number;
-  content: string;
-}
-
-// Интерфейс для пропсов компонента ArticleCard
-interface ArticleCardProps {
-  article: Article;
-}
+import likeIcon from '../../assets/images/like.svg';
+import dislikeIcon from '../../assets/images/dislike.svg';
+import starIcon from '../../assets/images/star.svg';
+import commentsIcon from '../../assets/images/comments.svg';
+import { ArticleCardProps } from '../../types';
+import './ArticleCard.css';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 

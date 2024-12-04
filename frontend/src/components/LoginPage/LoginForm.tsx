@@ -1,16 +1,13 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axios, { AxiosError } from 'axios';
-import axiosInstance from '../utils/axiosInstance';
+import { AxiosError } from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { LoginFormData } from '../../types';
+import { loginUser } from '../../utils/apiService';
+import './LoginForm.css';
 
 const apiUrl = process.env.REACT_APP_API_URL;
-
-// Интерфейс для данных формы авторизации
-interface LoginFormData {
-  username: string;
-  password: string;
-}
 
 // Компонент LoginForm представляет собой форму для авторизации пользователей
 const LoginForm: React.FC = () => {
@@ -40,6 +37,7 @@ const LoginForm: React.FC = () => {
       // Отправляем запрос на backend для авторизации
       const response = await axiosInstance.post(`${apiUrl}/api/users/login`, formData);
       console.log('Успешная авторизация:', response.data);
+      const token = await loginUser(formData);
 
       // Сохраняем токен в localStorage
       localStorage.setItem('token', response.data.token);

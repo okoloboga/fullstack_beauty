@@ -1,17 +1,9 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axios, { AxiosError } from 'axios';
-import axiosInstance from '../utils/axiosInstance';
+import { registerUser } from '../../utils/apiService';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify'; // Импортируем toast
-
-const apiUrl = process.env.REACT_APP_API_URL;
-
-// Определение интерфейса для данных формы регистрации
-interface RegisterFormData {
-  username: string;
-  password: string;
-  confirmPassword: string;
-}
+import { RegisterFormData } from '../../types';
+import './RegisterForm.css';
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -37,26 +29,17 @@ const RegisterForm: React.FC = () => {
 
     // Проверяем, совпадают ли пароли
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Пароли не совпадают'); // Уведомление об ошибке
+      toast.error('Пароли не совпадают');
       return;
     }
 
     try {
-      // Отправляем запрос на backend для регистрации
-      const response = await axiosInstance.post(`${apiUrl}/api/users/register`, {
-        username: formData.username,
-        password: formData.password,
-      });
-      console.log('Успешная регистрация:', response.data);
-      toast.success('Регистрация прошла успешно! Пожалуйста, войдите.'); // Успешное уведомление
+      // Отправляем запрос на сервер для регистрации
+      await registerUser(formData.username, formData.password);
+      toast.success('Регистрация прошла успешно! Пожалуйста, войдите.');
       navigate('/login');
     } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      if (err.response) {
-        toast.error(err.response.data?.message || 'Ошибка при регистрации, попробуйте еще раз'); // Уведомление об ошибке
-      } else {
-        toast.error('Ошибка при регистрации, попробуйте еще раз');
-      }
+      toast.error(error instanceof Error ? error.message : 'Ошибка при регистрации');
     }
   };
 

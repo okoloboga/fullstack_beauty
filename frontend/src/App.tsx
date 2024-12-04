@@ -4,7 +4,7 @@ import { ToastContainer } from 'react-toastify'; // Импортируем Toast
 import 'react-toastify/dist/ReactToastify.css'; // Стили для уведомлений
 
 import Header from './components/Header'; // Заголовок (возможно, навигационная панель)
-import MainContent from './components/MainContent'; // Главный контент, отображаемый на главной странице
+import MainContent from './pages/MainContent'; // Главный контент, отображаемый на главной странице
 import Footer from './components/Footer'; // Футер, который добавляем внизу страницы
 import ArticlesPage from './pages/ArticlesPage'; // Страница со списком статей
 import ArticleDetailPage from './pages/ArticleDetailPage'; // Страница с детальной информацией о статье

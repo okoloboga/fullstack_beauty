@@ -1,7 +1,8 @@
 import React from 'react';
-import NewsList from '../components/NewsList';
-import ConnectSection from '../components/sections/ConnectSection';
+import NewsList from '../components/NewsPage/NewsList';
+import ConnectSection from '../components/MainContent/ConnectSection';
 import { Link } from 'react-router-dom';
+import './styles/NewsBestPage.css';
 
 // Компонент страницы с лучшими новостями
 const NewsBestPage: React.FC = () => {

@@ -1,6 +1,7 @@
 import React from 'react';
-import RegisterForm from '../components/RegisterForm';
-import ConnectSection from '../components/sections/ConnectSection';
+import RegisterForm from '../components/RegisterForm/RegisterForm';
+import ConnectSection from '../components/MainContent/ConnectSection';
+import './styles/RegisterPage.css';
 
 // Компонент страницы регистрации
 const RegisterPage: React.FC = () => {

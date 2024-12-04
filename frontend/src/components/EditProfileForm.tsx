@@ -1,27 +1,11 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import axios, { AxiosError } from 'axios';
-import axiosInstance from '../utils/axiosInstance';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ProfileData } from '../types';
+import { fetchUserProfile, updateUserProfile } from '../utils/apiService';
+import './EditProfileForm.css';
 
 const apiUrl = process.env.REACT_APP_API_URL;
-
-interface ProfileData {
-  email: string | null;
-  password: string | null;
-  name: string | null;
-  city: string | null;
-  activity: string | null;
-  phone: string | null;
-  instagram: string | null;
-  vk: string | null;
-  telegram: string | null;
-  facebook: string | null;
-  about: string | null;
-  receiveNewsletter: boolean;
-  profileImage?: string | null;
-  portfolioImage?: string | null; // Изменено на одиночное изображение
-}
 
 const EditProfileForm: React.FC = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -67,31 +51,20 @@ const EditProfileForm: React.FC = () => {
       return;
     }
 
-    const fetchProfileData = async () => {
+    const loadProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          toast.error('Ошибка: Токен авторизации отсутствует');
-          return;
-        }
-
-        const response = await axiosInstance.get(`${apiUrl}/api/users/profile/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log('Данные профиля:', response.data);
-        setFormData(response.data);
+        const profileData = await fetchUserProfile(userId); // Используем функцию из сервиса
+        console.log('Данные профиля:', profileData);
+        setFormData(profileData);
         setPortfolioImage(null); // Очищаем состояние для загруженного файла, если он был ранее
         toast.success('Данные профиля успешно загружены');
       } catch (error) {
         console.error('Ошибка при загрузке данных профиля:', error);
-        toast.error('Не удалось загрузить данные профиля');
+        toast.error(error instanceof Error ? error.message : 'Не удалось загрузить данные профиля');
       }
     };
 
-    fetchProfileData();
+    loadProfile();
   }, [userId]);
 
   // Обработчик изменения полей формы
@@ -161,47 +134,22 @@ const EditProfileForm: React.FC = () => {
 
   // Обработчик обновления профиля
   const handleProfileUpdate = async () => {
-    const token = localStorage.getItem('token');
-
     if (!userId) {
       toast.error('Ошибка: ID пользователя не найден');
       return;
     }
 
     try {
-      const formDataToSend = new FormData();
-      Object.keys(formData).forEach((key) => {
-        const value = formData[key as keyof ProfileData];
-        if (value !== undefined && value !== null) {
-          formDataToSend.append(key, typeof value === 'boolean' ? String(value) : value);
-        }
-      });
-
-      if (profileImage) {
-        formDataToSend.append('profileImage', profileImage);
-      }
-
-      if (portfolioImage) {
-        formDataToSend.append('portfolioImage', portfolioImage);
-      }
-
-      const response = await axiosInstance.put(`${apiUrl}/api/users/profile/${userId}`, formDataToSend, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      console.log('Профиль успешно обновлен:', response.data);
+      const response = await updateUserProfile(userId, formData, profileImage, portfolioImage);
+      console.log('Профиль успешно обновлен:', response);
       setFormData((prev) => ({
         ...prev,
-        ...response.data,
+        ...response, // Обновляем данные профиля в компоненте
       }));
       toast.success('Профиль успешно обновлен');
     } catch (error) {
-      const err = error as AxiosError;
-      console.error('Ошибка при обновлении профиля:', err.response?.data || err.message);
-      toast.error('Ошибка при обновлении профиля');
+      console.error('Ошибка при обновлении профиля:', error);
+      toast.error(error instanceof Error ? error.message : 'Ошибка при обновлении профиля');
     }
   };
 

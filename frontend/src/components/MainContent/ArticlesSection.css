@@ -1,0 +1,24 @@
+.articles__block {
+    margin-top: 90px;
+  }
+
+.articles__block__title {
+    justify-content: space-between;
+  }
+
+.articles__block__title * {
+    flex: 1 1;
+  }
+
+.articles__block__cards {
+    scroll-behavior: smooth;
+    flex: 1 1;
+    gap: 20px;
+    margin-top: 60px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+.articles__block__card__btn {
+    margin-top: 40px;
+  }

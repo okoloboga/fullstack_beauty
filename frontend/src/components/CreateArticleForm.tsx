@@ -1,28 +1,22 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axiosInstance from '../utils/axiosInstance';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import { createArticle } from '../utils/apiService'; // Импортируем функцию
+import type { FormData } from '../types'; // Импортируем тип FormData из types.ts
 import 'react-toastify/dist/ReactToastify.css';
+import './CreateArticleForm.css';
 
-const apiUrl = process.env.REACT_APP_API_URL;
-
-// Интерфейс для данных формы статьи
-interface FormData {
-  title: string;
-  content: string;
-}
-
-// Компонент формы для создания статьи
 const CreateArticleForm: React.FC = () => {
+  const emptyFile = new File([], '');
   const [formData, setFormData] = useState<FormData>({
     title: '',
     content: '',
+    coverImage: emptyFile,
   });
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const navigate = useNavigate();
 
-  // Обработчик изменения полей формы
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -31,7 +25,6 @@ const CreateArticleForm: React.FC = () => {
     }));
   };
 
-  // Обработчик изменения обложки
   const handleCoverImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -60,7 +53,6 @@ const CreateArticleForm: React.FC = () => {
     }
   };
 
-  // Обработчик отправки формы
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -70,33 +62,30 @@ const CreateArticleForm: React.FC = () => {
       return;
     }
 
-    const formDataToSend = new FormData();
-    formDataToSend.append('title', formData.title);
-    formDataToSend.append('content', formData.content);
-    if (coverImage) {
-      formDataToSend.append('coverImage', coverImage);
-    }
-
     try {
-      const response = await axiosInstance.post(`${apiUrl}/api/articles`, formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('Статья успешно создана:', response.data);
+      const response = await createArticle(
+        { 
+          title: formData.title, 
+          content: formData.content, 
+          coverImage: formData.coverImage 
+        }, 
+          token);
+          
+      console.log('Статья успешно создана:', response);
       toast.success('Статья успешно создана!');
       setTimeout(() => {
         navigate('/articles');
       }, 2000);
-    } catch (error) {
+    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Ошибка при создании статьи:', error.response?.data?.message || error.message);
         toast.error(error.response?.data?.message || 'Ошибка при создании статьи. Пожалуйста, попробуйте еще раз.');
       } else if (error instanceof Error) {
+        // Обрабатываем общие ошибки, которые не связаны с axios
         console.error('Ошибка при создании статьи:', error.message);
         toast.error(error.message);
       } else {
+        // Обработка случаев, когда ошибка не является объектом типа Error или AxiosError
         console.error('Неизвестная ошибка', error);
         toast.error('Произошла неизвестная ошибка. Пожалуйста, попробуйте еще раз.');
       }
@@ -140,7 +129,6 @@ const CreateArticleForm: React.FC = () => {
           onChange={handleCoverImageChange}
           style={{ display: 'none' }} // Скрываем input
         />
-        {/* Кастомная кнопка */}
         <button
           className="button__without__bg"
           onClick={() => document.getElementById('coverImageInput')?.click()}
