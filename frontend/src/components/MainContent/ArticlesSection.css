@@ -1,16 +1,16 @@
-.articles__block {
+.articles__section__block {
     margin-top: 90px;
   }
 
-.articles__block__title {
+.articles__section__block__title {
     justify-content: space-between;
   }
 
-.articles__block__title * {
+.articles__section__block__title * {
     flex: 1 1;
   }
 
-.articles__block__cards {
+.articles__section__block__cards {
     scroll-behavior: smooth;
     flex: 1 1;
     gap: 20px;
@@ -19,6 +19,14 @@
     justify-content: space-around;
   }
 
-.articles__block__card__btn {
+.articles__section__block__card__btn {
     margin-top: 40px;
+  }
+
+.slider-button {
+    display: none;
+  }
+
+.slider-button.show {
+    display: block; /* Показывается, если добавлен класс 'show' */
   }

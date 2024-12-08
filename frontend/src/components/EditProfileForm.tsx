@@ -1,6 +1,9 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import noPhoto from '../assets/images/no-image.png';
+import star from '../assets/images/star.svg';
+import addFile from '../assets/images/add-file.svg';
 import { ProfileData } from '../types';
 import { fetchUserProfile, updateUserProfile } from '../utils/apiService';
 import './EditProfileForm.css';
@@ -160,7 +163,7 @@ const EditProfileForm: React.FC = () => {
   };
 
   return (
-    <section className="container edit__profile-form">
+    <section className="edit-profile-container edit__profile-form">
       <form onSubmit={handleSubmit}>
         <div className="user-photo-wrap">
           <img
@@ -170,7 +173,7 @@ const EditProfileForm: React.FC = () => {
                 ? URL.createObjectURL(profileImage)
                 : formData.profileImage
                 ? `${apiUrl}/${formData.profileImage}?timestamp=${new Date().getTime()}`
-                : 'assets/images/no-photo.png'
+                : noPhoto
             }
             alt="Profile"
           />
@@ -193,7 +196,7 @@ const EditProfileForm: React.FC = () => {
         </div>
         
         {/* Поле для E-mail */}
-        <div>
+        <div className="container">
           <div className="form__field">
             <p>E-Mail</p>
             <div className="form__input">
@@ -448,11 +451,11 @@ const EditProfileForm: React.FC = () => {
 
         {/* Поле для портфолио (только одно изображение) */}
         <div className="form__field form-portfolio">
-          <div className="flex item-center gap-2">
+          <div className="flex-profile item-center gap-2">
             <p>Портфолио</p>
-            <button className="button__without__bg" type="button">
+            <button className="article-upload article-upload-md" type="button">
               <label htmlFor="portfolio-file">
-                Загрузить изображение
+                <img src={addFile} alt="Добавить файл" />
               </label>
             </button>
             <div className="form__input">
@@ -493,19 +496,23 @@ const EditProfileForm: React.FC = () => {
             Сохранить
           </button>
         </div>
-      </form>
-
-      {/* Рейтинг пользователя */}
-      <div className="user__stars">
-        <div className="flex item-center gap-2">
-          {[...Array(5)].map((_, index) => (
-            <svg key={index} width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* SVG path for star here */}
-            </svg>
-          ))}
+        {/* Рейтинг пользователя */}
+        <div className="user__stars">
+          <div className="flex-profile item-center gap-2">
+            {/* Отображение звезд рейтинга пользователя */}
+            {[...Array(5)].map((_, index) => (
+              <img
+                key={index}
+                src={star}
+                alt="Star"
+                width={30}
+                height={30}
+              />
+            ))}
+          </div>
+          <p>4.0</p>
         </div>
-        <p>4.0</p>
-      </div>
+      </form>
     </section>
   );
 };

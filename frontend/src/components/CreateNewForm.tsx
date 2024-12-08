@@ -4,13 +4,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { createNews } from '../utils/apiService'; // Импортируем функцию из нового сервиса
-import type { FormData } from '../types'; // Импортируем тип FormData
+import { ArticleFormData } from '../types'; // Импортируем тип FormData
 import 'react-toastify/dist/ReactToastify.css';
 import './CreateNewForm.css';
 
 const CreateNewForm: React.FC = () => {
   const emptyFile = new File([], '');
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<ArticleFormData>({
     title: '',
     content: '',
     coverImage: emptyFile,
@@ -71,15 +71,21 @@ const CreateNewForm: React.FC = () => {
       return;
     }
 
+    if (formData.content.length < 50) { 
+      toast.error('Текст статьи должен содержать не менее 50 символов.'); 
+      return;
+    }
+
+    const data = new FormData();
+    data.append('title', formData.title);
+    data.append('content', formData.content);
+    if (formData.coverImage instanceof File && formData.coverImage.name) {
+      data.append('coverImage', formData.coverImage);
+    }
+
     try {
       // Используем функцию createNews из newsService
-      const response = await createNews(
-        { 
-          title: formData.title, 
-          content: formData.content, 
-          coverImage: formData.coverImage 
-        }, 
-        token);
+      const response = await createNews(data, token);
 
       console.log('Новость успешно создана:', response);
       toast.success('Новость успешно создана!');

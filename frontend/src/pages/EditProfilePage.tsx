@@ -16,27 +16,8 @@ const EditProfilePage: React.FC = () => {
       </section>
 
       {/* Секция с формой редактирования профиля */}
-      <section className="container edit__profile-form">
-        <EditProfileForm />
-
-        {/* Рейтинг пользователя */}
-        <div className="user__stars">
-          <div className="flex item-center gap-2">
-            {/* Отображение звезд рейтинга пользователя */}
-            {[...Array(5)].map((_, index) => (
-              <img
-                key={index}
-                src="/images/star-filled.svg"
-                alt="Star"
-                width={30}
-                height={30}
-              />
-            ))}
-          </div>
-          <p>4.0</p>
-        </div>
-      </section>
-
+      <EditProfileForm />
+      
       {/* Секция для связи с пользователями */}
       <ConnectSection />
     </main>

@@ -5,7 +5,6 @@ import dislikeIcon from '../../assets/images/dislike.svg';
 import starIcon from '../../assets/images/star.svg';
 import commentsIcon from '../../assets/images/comments.svg';
 import { ArticleCardProps } from '../../types';
-import './ArticleCard.css';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 

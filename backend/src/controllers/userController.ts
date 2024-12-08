@@ -22,6 +22,17 @@ const upload = multer({ storage });
 export const registerUser = async (req: Request, res: Response) => {
     const { username, password } = req.body;
     console.log(`Запрос на регистрацию нового пользователя: ${username}`);
+    
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOneBy({ username });
+
+    console.log('User:', user);
+    
+    if (user) {
+        console.warn(`Пользователь с именем: ${username} уже зарегистрирован`);
+        res.status(400).json({ message: "Пользователь с таким именем уже зарегистрирован" });
+        return;
+    }
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);

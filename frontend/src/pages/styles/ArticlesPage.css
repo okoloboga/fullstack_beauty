@@ -9,6 +9,10 @@
     gap: 20px;
   }
 
+.articles__controls__child {
+    flex: 1;
+  }
+
 .articles__controls button {
     font-family: "Playfair Display", sans-serif;
     font-size: 20px;
@@ -43,16 +47,48 @@
     font-size: 20px;
   }
 
-.articles__block__cards {
-    overflow-x: scroll;
-    scroll-behavior: smooth;
-    flex: 1 1;
+.articles__block__card {
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+.articles__block__cards {
+    scroll-behavior: smooth;
+    flex: 1;
     gap: 20px;
+    margin-top: 60px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+.articles__block__cards 
+.articles__block__card {
+    flex: 0 0 calc(33.33% - 20px);
+    user-select: none;
+    cursor: default;
+  }
+
+.articles__block__card 
+.button__without__bg {
+    margin: 20px 0;
+  }
+
+.articles__block__cards 
+.articles__block__card__img {
+    width: 100%;
   }
 
 .articles__block__cards__div {
     position: relative;
+  }
+
+.articles__block__card__activities {
+    gap: 25px;
+  }  
+
+.articles__block__card__activities img {
+    margin-right: 5px;
   }
 
 .articles__top__button {

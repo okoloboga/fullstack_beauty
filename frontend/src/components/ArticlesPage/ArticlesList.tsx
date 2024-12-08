@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 import { jwtDecode } from 'jwt-decode'; // Правильный импорт без фигурных скобок
 import { ArticleDetail, DecodedToken } from '../../types'
 import { fetchArticles } from '../../utils/apiService';
-import './ArticlesList.css';
 
 // Компонент списка статей
 const ArticlesList: React.FC = () => {
@@ -113,6 +112,21 @@ const ArticlesList: React.FC = () => {
           {/* Добавьте категории */}
           <button className="button__without__bg">
             <Link to="">Косметика</Link>
+          </button>
+          <button className="button__without__bg">
+            <Link to="">Одежда</Link>
+          </button>
+          <button className="button__without__bg">
+            <Link to="">Украшения</Link>
+          </button>
+          <button className="button__without__bg">
+            <Link to="">Причёски</Link>
+          </button>
+          <button className="button__without__bg">
+            <Link to="">Питание</Link>
+          </button>
+          <button className="button__without__bg">
+            <Link to="">Спорт</Link>
           </button>
           {/* Другие категории */}
         </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import NewsList from '../components/NewsPage/NewsList';
 import ConnectSection from '../components/MainContent/ConnectSection';
 import { Link } from 'react-router-dom';
-import './styles/NewsNewestPage.css';
+import './styles/NewsPage.css';
 
 // Компонент страницы с самыми свежими новостями
 const NewsNewestPage: React.FC = () => {

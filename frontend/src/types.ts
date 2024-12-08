@@ -25,7 +25,7 @@ export interface NewsProps {
     };
   }
 
-export interface FormData {
+export interface ArticleFormData {
     title: string;
     content: string;
     coverImage: File;

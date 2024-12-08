@@ -29,7 +29,8 @@
     flex: 1 1;
   }
 
-.connect__section__form div input, textarea {
+.connect__section__form input, 
+.connect__section__form textarea {
     border: 1px solid #1F1F1F;
     background-color: #fff;
     outline: none;

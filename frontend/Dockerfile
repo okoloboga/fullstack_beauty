@@ -1,7 +1,6 @@
 # frontend/Dockerfile
 
-# Этап сборки фронтенда
-FROM node:16 as build
+FROM node:16
 
 WORKDIR /app
 
@@ -9,18 +8,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Копируем исходный код и выполняем сборку
+# Копируем исходный код
 COPY . .
-RUN npm run build
 
-# Этап для Nginx
-FROM nginx:alpine
+# Открываем порт для доступа
+EXPOSE 3000
 
-# Копируем собранные файлы фронтенда в директорию Nginx
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Порт для Nginx
-EXPOSE 80
-
-# Запуск Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Запуск сервер для разработки (например, React)
+CMD ["npm", "start"]  # Запускаем сервер разработки React

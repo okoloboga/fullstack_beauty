@@ -20,7 +20,6 @@ import CreateArticleForm from './components/CreateArticleForm'; // Форма с
 import CreateNewForm from './components/CreateNewForm'; // Форма создания новости
 
 import './styles/main.css'; // Основные стили
-import './styles/index.css'; // Дополнительные стили
 import './styles/media.css'; // Медиа стили для адаптивного дизайна
 
 // Основной компонент приложения

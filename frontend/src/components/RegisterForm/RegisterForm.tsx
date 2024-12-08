@@ -45,9 +45,8 @@ const RegisterForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="form__field">
-        <p>Имя пользователя</p>
-        <div className="form__input">
+      <div className="form__field centered-input-wrapper">
+        <div className="form__input centered-input">
           <input
             type="text"
             name="username"
@@ -60,9 +59,8 @@ const RegisterForm: React.FC = () => {
         </div>
       </div>
 
-      <div className="form__field">
-        <p>Пароль</p>
-        <div className="form__input">
+      <div className="form__field centered-input-wrapper">
+        <div className="form__input centered-input">
           <input
             type="password"
             name="password"
@@ -75,9 +73,8 @@ const RegisterForm: React.FC = () => {
         </div>
       </div>
 
-      <div className="form__field">
-        <p>Подтвердите пароль</p>
-        <div className="form__input">
+      <div className="form__field centered-input-wrapper">
+        <div className="form__input centered-input">
           <input
             type="password"
             name="confirmPassword"

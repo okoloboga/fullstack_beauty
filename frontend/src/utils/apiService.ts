@@ -3,8 +3,7 @@ import axios from 'axios';
 import { AxiosError } from 'axios';
 import { Article, NewsItem } from '../types';
 import { toast } from 'react-toastify';
-import type { FormData, ArticleDetail, LoginFormData, ContactFormData } from '../types';
-
+import { ArticleFormData, ArticleDetail, LoginFormData, ContactFormData } from '../types';
 const apiUrl = process.env.REACT_APP_API_URL; // Получаем URL из переменных окружения
 
 // Функция для получения статьи
@@ -40,13 +39,10 @@ export const fetchNews = async (id: string): Promise<NewsItem> => {
 
 // Функция для создания статьи
 export const createArticle = async (formData: FormData, token: string) => {
-  const formDataToSend = new FormData();
-  formDataToSend.append('title', formData.title);
-  formDataToSend.append('content', formData.content);
-  formDataToSend.append('coverImage', formData.coverImage);
+  console.log('Публикуем статью:', formData)
 
   try {
-    const response = await axiosInstance.post(`${apiUrl}/api/articles`, formDataToSend, {
+    const response = await axiosInstance.post(`${apiUrl}/api/articles`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
@@ -55,6 +51,7 @@ export const createArticle = async (formData: FormData, token: string) => {
 
     return response.data; // Возвращаем данные ответа
   } catch (error) {
+    console.log('Ошибка при создании статьи:', error)
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.message || 'Ошибка при создании статьи');
     } else {
@@ -112,13 +109,10 @@ export const fetchPopularArticles = async (limit: number = 3): Promise<ArticleDe
 
 // Функция для создания новости
 export const createNews = async (formData: FormData, token: string) => {
-    const formDataToSend = new FormData();
-    formDataToSend.append('title', formData.title);
-    formDataToSend.append('content', formData.content);
-    formDataToSend.append('coverImage', formData.coverImage);
+    console.log('Публикуем новость:', formData)
   
     try {
-      const response = await axiosInstance.post(`${apiUrl}/api/news`, formDataToSend, {
+      const response = await axiosInstance.post(`${apiUrl}/api/news`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

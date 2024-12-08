@@ -24,6 +24,10 @@ const upload = multer({ storage });
 export const createArticle = [
     upload.single("coverImage"),
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+
+        console.log("Тело запроса:", req.body); // Логируем тело запроса
+        console.log("Полученный файл:", req.file); // Логируем файл
+        
         const { title, content } = req.body;
         const userId = req.user?.userId;
 

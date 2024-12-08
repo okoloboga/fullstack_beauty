@@ -26,14 +26,54 @@ a {
     color: #fff;
   }
 
+li {
+    list-style-type: none;
+  }
+
+.connect__section__form div input, textarea {
+    border: 1px solid #1F1F1F;
+    background-color: #fff;
+    outline: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding: 20px 10px;
+    font-size: 18px;
+  }
+
+.header {
+    position: relative;
+  }
+
 .container {
     max-width: 95%;
     margin: 0 auto;
   }
 
+.centered-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;  
+  }
+  
+.centered-input {
+    width: 46%; /* Можно настроить ширину поля */
+    max-width: 500px; /* Ограничение максимальной ширины */
+    border-radius: 4px;
+  }
+  
+
 .justify-between {
     justify-content: space-between;
   }
+
+.justify-center {
+    justify-content: center;
+  }
+
+.mobile__filters {
+    display: none;
+  }  
 
 .next {
     right: 33%;
@@ -45,6 +85,10 @@ a {
 
 .flex-column {
     flex-direction: column;
+  }
+
+.text-left {
+    text-align: left;
   }
 
 .text-right {
@@ -65,6 +109,15 @@ a {
 
 .base-text-color {
     color: #C62925;
+  }
+
+.popup-content {
+    padding: 20px;
+    text-align: center;
+  }
+
+.relative {
+    position: relative;
   }
 
 .title {
@@ -99,6 +152,14 @@ a {
     transform: rotate(180deg);
   }
 
+.slider-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+  }
+
 .button__with__bg {
     padding: 15px 12px;
     background: #C62925;
@@ -112,9 +173,36 @@ a {
     transition: transform 0.3s ease;
   }
 
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+  }
+
+.popup-content div {
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+.button__without__bg {
+    padding: 5px 12px;
+    border: 1px solid rgba(198, 41, 37, 1);
+    background-color: transparent;
+    border-radius: 20px;
+    color: rgba(198, 41, 37, 1);
+    font-family: Inter;
+    opacity: 80%;
+    font-size: 18px;
+    width: fit-content;
+  }
+
 .search-input {
     flex: 1 1;
-    background-image: url(http://localhost:3000/static/media/search.ae22ead11d0f3f83c365.svg);
+    background-image: url(../assets/images/search.svg);
     background-repeat: no-repeat;
     padding-left: 50px !important;
     background-position: 10px center;

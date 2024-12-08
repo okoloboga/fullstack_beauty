@@ -19,7 +19,7 @@ const LoginPage: React.FC = () => {
         {/* Кнопка перехода на страницу регистрации, стилизована как кнопка "Войти" */}
         <div className="text-center" style={{ marginTop: '20px' }}>
           <Link to="/register">
-            <button className="button__with__bg" style={{ marginTop: '20px' }}>
+            <button className="button__with__bg form__post" style={{ marginTop: '20px' }}>
               Регистрация
             </button>
           </Link>

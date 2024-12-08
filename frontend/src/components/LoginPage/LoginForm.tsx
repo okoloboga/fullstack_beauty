@@ -57,14 +57,13 @@ const LoginForm: React.FC = () => {
   return (
     <form onSubmit={handleSubmit}>
       {/* Поле для имени пользователя */}
-      <div className="form__field">
-        <p>Имя пользователя</p>
-        <div className="form__input">
+      <div className="form__field centered-input-wrapper">
+        <div className="form__input centered-input">
           <input
             type="text"
             name="username"
             placeholder="Имя пользователя"
-            className="default__input"
+            className="default__input form__post"
             value={formData.username}
             onChange={handleChange}
             required
@@ -73,14 +72,13 @@ const LoginForm: React.FC = () => {
       </div>
 
       {/* Поле для пароля */}
-      <div className="form__field">
-        <p>Пароль</p>
-        <div className="form__input">
+      <div className="form__field centered-input-wrapper">
+        <div className="form__input centered-input">
           <input
             type="password"
             name="password"
             placeholder="Пароль"
-            className="default__input"
+            className="default__input form__post"
             value={formData.password}
             onChange={handleChange}
             required

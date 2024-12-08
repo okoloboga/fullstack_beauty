@@ -70,12 +70,14 @@ const ArticlesSection: React.FC = () => {
   useEffect(() => {
     const slider = sliderRef.current;
     if (slider) {
-      slider.addEventListener('scroll', updateButtonVisibility); // Добавляем слушателя события скроллинга для обновления видимости кнопок
-      updateButtonVisibility(); // Инициализация видимости кнопок при загрузке
-      return () => {
-        slider.removeEventListener('scroll', updateButtonVisibility); // Убираем слушателя при размонтировании компонента
-      };
+      slider.addEventListener('scroll', updateButtonVisibility);
+      updateButtonVisibility();  // Начальная проверка видимости кнопок
     }
+    return () => {
+      if (slider) {
+        slider.removeEventListener('scroll', updateButtonVisibility);
+      }
+    };
   }, []);
   
   if (loading) {
@@ -85,16 +87,16 @@ const ArticlesSection: React.FC = () => {
   return (
     <section className="articles__section">
       <div className="container">
-        <div className="articles__block">
-          <div className="articles__block__title flex">
+        <div className="articles__section__block">
+          <div className="articles__section__block__title flex">
             <div></div>
             <h1 className="title">популярные <br /> статьи</h1>
           </div>
           <div className="slider-container">
-            <div className="articles__block__cards flex" ref={sliderRef}>
+            <div className="articles__section__block__cards flex" ref={sliderRef}>
               {/* Кнопка для прокрутки влево */}
               <button
-                className="slider-button prev"
+                className={`slider-button prev ${showPrev ? 'show' : ''}`}
                 onClick={handlePrevClick}
                 style={{ display: showPrev ? 'block' : 'none' }}
               >
@@ -103,12 +105,12 @@ const ArticlesSection: React.FC = () => {
 
               {/* Карточки статей */}
               {articles.map((article) => (
-                <div className="articles__block__card" key={article.id}>
+                <div className="articles__section__block__card" key={article.id}>
                   <div>
                     <img
                       src={article.coverImage}
                       alt={article.title}
-                      className="articles__block__card__img"
+                      className="articles__section__block__card__img"
                     />
                     <h4>{article.author.name}</h4>
                     <div className="articles__block__card__activities flex">
@@ -139,7 +141,7 @@ const ArticlesSection: React.FC = () => {
 
               {/* Кнопка для прокрутки вправо */}
               <button
-                className="slider-button next"
+                className={`slider-button next ${showNext ? 'show' : ''}`}
                 onClick={handleNextClick}
                 style={{ display: showNext ? 'block' : 'none' }}
               >

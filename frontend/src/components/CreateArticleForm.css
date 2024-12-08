@@ -1,0 +1,139 @@
+form .article-input {
+    background-color: white;
+    opacity: 100%;
+    border-radius: 20px;
+  }
+
+form .article-btn {
+    margin-top: 40px;
+    width: 233px;
+  }
+
+.create__article {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.cover-image-preview {
+  padding-left: 10px;
+  padding-top: 10px;
+  border-radius: 10px; /* Скругление контейнера */
+  overflow: hidden; /* Убирает части изображения, выходящие за пределы контейнера */
+  width: max-content; /* Чтобы контейнер не был слишком широким */
+}
+
+.cover-image-preview img {
+  border-radius: 10px; /* Скругление самого изображения */
+  max-width: 100%; /* Чтобы изображение не выходило за пределы контейнера */
+  height: auto; /* Поддержка пропорций */
+}
+
+.imageThumb {
+    max-width: 233px;
+    opacity: 60%;
+    width: 100%;
+  }
+  
+  .pip {
+    display: inline-block;
+    margin: 10px 10px 0 0;
+  }
+  
+  .remove {
+    display: block;
+    background: #444;
+    border: 1px solid black;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  .remove:hover {
+    background: white;
+    color: black;
+  }
+  
+  .myInput {
+    display: flex;
+    padding-top: 30px;
+  }
+  
+  .myInput > .label {
+    flex-basis: 20%;
+  }
+  
+  .myInput > input, .myInput > textarea {
+    flex-basis: 60%;
+  }
+  
+  .article-upload {
+    border: 1px solid #C62925;
+    border-radius: 100%;
+    width: 43px;
+    height: 43px;
+    background-color: transparent;
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+  
+  .article-upload svg {
+    cursor: pointer;
+  }
+  
+  .article-upload label {
+    cursor: pointer;
+  }
+  
+  .uploaded__file {
+    position: relative;
+  }
+  
+  .images {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 30px;
+  }
+  
+  .removeButton{
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    background-color: transparent;
+  }
+  
+  .article-upload-sm {
+    display: none;
+  }
+  
+  @media (max-width: 1000px) {
+    .images {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+  
+  @media (max-width: 800px) {
+    .images {
+      grid-template-columns: 1fr 1fr;
+    }
+    .desc__label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .myInput .label {
+      padding-bottom: 10px;
+    }
+    .myInput {
+      flex-direction: column;
+    }
+    .myInput:first-child {
+      align-items: start;
+    }
+    .article-upload-md {
+      display: none;
+    }
+    .article-upload-sm{
+      display: block;
+    }
+  }

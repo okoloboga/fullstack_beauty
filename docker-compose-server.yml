@@ -33,22 +33,23 @@ services:
     networks:
       - beauty-network
     volumes:
-      - uploads_data:/app/uploads
+      - uploads_data:/app/uploads  # Изменено для использования volume, доступного на хосте
 
-  frontend:
-    build: ./frontend
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
     ports:
-      - "3000:3000"  # Порт для разработки React
-    environment:
-      - NODE_ENV=development
-    volumes:
-      - ./frontend:/app  # Монтируем код, чтобы изменения на хосте автоматически отражались в контейнере
+      - "80:80"
     depends_on:
       - backend
     networks:
       - beauty-network
-    command: npm start  # Запуск серверa разработки React
+    command: ["nginx", "-g", "daemon off;"]
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - uploads_data:/uploads  # Изменено для использования того же volume, что и backend
 
 volumes:
   postgres_data:
-  uploads_data:
+  uploads_data:  # Добавлен новый volume для хранения данных папки uploads

@@ -47,6 +47,21 @@
     margin: 0 auto;
   }
 
+.first__block__nav > div:nth-child(2n)::after {
+    background-color: #fff;
+  }
+
+.first__block__nav > div::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0px;
+    right: 0px;
+    height: 3px;
+    background-color: #C62925;
+    z-index: 0;
+  }
+
 .first__block__nav__small-block {
     width: 1%;
   }

@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import NewsCard from '../NewsCard';
 import { NewsItem, NewsListProps, DecodedToken } from '../../types';
-import './NewsList.css';
 
 const NewsList: React.FC<NewsListProps> = ({ type }) => {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
