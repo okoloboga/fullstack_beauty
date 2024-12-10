@@ -13,6 +13,8 @@ import NewDetailPage from './pages/NewDetailPage'; // Страница с под
 import NewsNewestPage from './pages/NewsNewestPage'; // Страница с самыми новыми новостями
 import EditProfilePage from './pages/EditProfilePage'; // Страница для редактирования профиля
 import RegisterPage from './pages/RegisterPage'; // Страница регистрации
+import UserFavorites from './pages/UserFavorites'; // Страница избранных статей
+import UserArticles from './pages/UserArticles'; // Страница статей пользователя
 import LoginPage from './pages/LoginPage'; // Страница входа
 import ProtectedRoute from './components/ProtectedRoute'; // Компонент для защиты маршрутов
 import AuthenticatedRoute from './components/AuthenticatedRoute'; // Компонент для проверки авторизации пользователя
@@ -37,6 +39,8 @@ const App: React.FC = () => {
         <Route path="/news-best" element={<NewsBestPage />} /> {/* Страница лучших новостей */}
         <Route path="/news/:id" element={<NewDetailPage />} /> {/* Детальная страница новости, доступ к которой осуществляется через ID новости */}
         <Route path="/news-newest" element={<NewsNewestPage />} /> {/* Страница последних новостей */}
+        <Route path="/favorite" element={<UserFavorites />} /> {/* Страница избранных статей */}
+        <Route path="/my-articles" element={<UserArticles />} />  {/* Страница моих статей */}
         <Route path="/register" element={<RegisterPage />} /> {/* Страница регистрации пользователя */}
         <Route path="/login" element={<LoginPage />} /> {/* Страница входа в систему */}
 

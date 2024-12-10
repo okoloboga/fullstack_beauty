@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/db";
 import { Notification } from "../models/Notification";
-import { User } from "../models/User";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 
 // Получить все уведомления пользователя

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../config/db";
 import { User } from "../models/User";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
-import { Article } from "../models/Article";
+import { Article } from "../models/ContentEntity";
 import { Comment } from "../models/Comment";
 
 // Получить всех пользователей

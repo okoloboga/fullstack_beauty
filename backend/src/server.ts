@@ -4,7 +4,8 @@ import cors from "cors"; // Импортируем CORS
 import userRoutes from "./routes/userRoutes";
 import articleRoutes from "./routes/articleRoutes";
 import commentRoutes from "./routes/commentRoutes";
-import ratingRoutes from "./routes/ratingRoutes";
+import favoriteRoutes from "./routes/favoriteRoutes";
+import likeDislokeRoutes from "./routes/likeDislikeRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import newsRoutes from "./routes/newsRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
@@ -60,7 +61,8 @@ AppDataSource.initialize()
         app.use("/api/users", userRoutes);
         app.use("/api/articles", articleRoutes);
         app.use("/api/comments", commentRoutes);
-        app.use("/api/ratings", ratingRoutes);
+        app.use("/api/favorite", favoriteRoutes);
+        app.use("/api/likedislike", likeDislokeRoutes);
         app.use("/api/admin", adminRoutes);
         app.use("/api/news", newsRoutes);
         app.use("/api/notifications", notificationRoutes);

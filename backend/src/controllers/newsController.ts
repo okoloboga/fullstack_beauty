@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/db";
-import { News } from "../models/News";
+import { News } from "../models/ContentEntity";
 import { User } from "../models/User";
 import { Notification } from "../models/Notification";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import multer from "multer";
+import path from 'path';
 import fs from "fs";
 
 // Конфигурация хранения файлов
@@ -21,9 +22,12 @@ const upload = multer({ storage });
 
 // Создать новость с обязательной обложкой
 export const createNews = [
-    upload.single("coverImage"),
+    upload.array("images"),
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-        const { title, content } = req.body;
+        console.log("Тело запроса:", req.body); // Логируем тело запроса
+        console.log("Полученные файлы:", req.files); // Логируем файлы
+
+        const { title, content, images } = req.body;
         const userId = req.user?.userId;
 
         console.log("Запрос на создание новости");
@@ -44,17 +48,24 @@ export const createNews = [
                 return;
             }
 
-            if (!req.file) {
-                console.warn("Обложка новости не предоставлена");
+            if (!req.files || (Array.isArray(req.files) && req.files.length === 0)) {
+                console.warn("Обложка не была предоставлена");
                 res.status(400).json({ message: "Cover image is required" });
                 return;
             }
+
+            // Преобразование images в массив URL-ов (если переданы изображения)
+            const imageUrls: string[] = (req.files as Express.Multer.File[]).map((file) => `uploads/${file.filename}`);
+
+            // Преобразуем images, если они переданы в запросе
+            const articleImages = images ? JSON.parse(images) : [];
 
             const news = new News();
             news.title = title;
             news.content = content;
             news.author = author;
-            news.coverImage = `uploads/${req.file.filename}`;
+            news.coverImage = `uploads/${(req.files as Express.Multer.File[])[0].filename}`; // Первое изображение как coverImage
+            news.images = [...articleImages, ...imageUrls]; // Объединяем переданные изображения с теми, что были загружены
 
             const newsRepository = AppDataSource.getRepository(News);
             await newsRepository.save(news);
@@ -122,10 +133,10 @@ export const getNewsById = async (req: Request, res: Response): Promise<void> =>
 
 // Обновить новость с возможностью изменить обложку
 export const updateNews = [
-    upload.single("coverImage"),
+    upload.array("images"),
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         const { id } = req.params;
-        const { title, content } = req.body;
+        const { title, content, images } = req.body;
         const userId = req.user?.userId;
 
         console.log(`Запрос на обновление новости с id: ${id}`);
@@ -149,9 +160,11 @@ export const updateNews = [
             news.title = title;
             news.content = content;
 
-            if (req.file) {
+            if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+                // Удаляем старую обложку, если есть
                 if (news.coverImage) {
-                    fs.unlink(news.coverImage, (err) => {
+                    const oldCoverImagePath = path.join(__dirname, "../../uploads", news.coverImage);
+                    fs.unlink(oldCoverImagePath, (err) => {
                         if (err) {
                             console.error("Не удалось удалить старую обложку:", err);
                         } else {
@@ -159,7 +172,14 @@ export const updateNews = [
                         }
                     });
                 }
-                news.coverImage = `uploads/${req.file.filename}`;
+
+                // Сохраняем новое изображение как coverImage
+                news.coverImage = `uploads/${(req.files as Express.Multer.File[])[0].filename}`;
+
+                // Добавляем новые изображения в массив images
+                const imageUrls: string[] = (req.files as Express.Multer.File[]).map((file) => `uploads/${file.filename}`);
+                const existingImages = images ? JSON.parse(images) : [];
+                news.images = [...existingImages, ...imageUrls];
             }
 
             await newsRepository.save(news);

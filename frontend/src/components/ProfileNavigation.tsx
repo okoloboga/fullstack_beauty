@@ -29,14 +29,8 @@ const ProfileNavigation: React.FC<ProfileNavigationProps> = ({ active }) => {
           МОИ СТАТЬИ
         </button>
         <button
-          className={`button__without__bg navigation__link ${active === 'my-reviews' ? 'active' : ''}`}
-          onClick={() => handleNavigation('/my-reviews')}
-        >
-          ОТЗЫВЫ ОБО МНЕ
-        </button>
-        <button
           className={`button__without__bg navigation__link ${active === 'my-favorites' ? 'active' : ''}`}
-          onClick={() => handleNavigation('/my-favorites')}
+          onClick={() => handleNavigation('/favorite')}
         >
           ИЗБРАННОЕ
         </button>

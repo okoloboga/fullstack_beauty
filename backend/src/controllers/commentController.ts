@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../config/db";
 import { Comment } from "../models/Comment";
 import { User } from "../models/User";
-import { Article } from "../models/Article";
+import { Article } from "../models/ContentEntity";
 import { Notification } from "../models/Notification";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 
@@ -34,8 +34,8 @@ export const createComment = async (req: AuthenticatedRequest, res: Response): P
 
         const comment = new Comment();
         comment.content = content;
-        comment.author = author;
-        comment.article = article;
+        comment.user = author;
+        comment.content = article;
 
         const commentRepository = AppDataSource.getRepository(Comment);
         await commentRepository.save(comment);

@@ -28,7 +28,8 @@ export interface NewsProps {
 export interface ArticleFormData {
     title: string;
     content: string;
-    coverImage: File;
+    coverImage: File | null;
+    contentImages: File[];
   }
 
 export interface ProfileData {
@@ -48,6 +49,15 @@ export interface ProfileData {
     portfolioImage?: string | null; // Изменено на одиночное изображение
   }
 
+export interface Comment {
+    id: number;
+    user: {
+      name: string;
+    };
+    contentText: string;
+    createdAt: string; // Или тип Date, если хочется использовать даты в формате объекта
+  }
+
 export interface ArticleDetail {
     id: number;
     coverImage: string;
@@ -58,9 +68,11 @@ export interface ArticleDetail {
     };
     likes?: number;
     dislikes?: number;
-    stars?: number;
-    comments?: number;
+    favoriteCount?: number;
+    comments?: Comment[];
     content: string;
+    createdAt: string;
+    views: string;
   }
 
 export interface ArticleCardProps {

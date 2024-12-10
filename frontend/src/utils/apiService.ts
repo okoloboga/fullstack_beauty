@@ -1,15 +1,14 @@
 import axiosInstance from './axiosInstance'; // Импортируем экземпляр axios
 import axios from 'axios';
 import { AxiosError } from 'axios';
-import { Article, NewsItem } from '../types';
 import { toast } from 'react-toastify';
-import { ArticleFormData, ArticleDetail, LoginFormData, ContactFormData } from '../types';
+import { ArticleFormData, NewsItem, ArticleDetail, LoginFormData, ContactFormData } from '../types';
 const apiUrl = process.env.REACT_APP_API_URL; // Получаем URL из переменных окружения
 
 // Функция для получения статьи
-export const fetchArticle = async (id: string): Promise<Article> => {
+export const fetchArticle = async (id: string): Promise<ArticleDetail> => {
   try {
-    const response = await axiosInstance.get<Article>(`${apiUrl}/api/articles/${id}`);
+    const response = await axiosInstance.get<ArticleDetail>(`${apiUrl}/api/articles/${id}`);
     return response.data; // Возвращаем данные статьи
   } catch (error) {
     throw new Error('Ошибка при загрузке статьи');
@@ -26,6 +25,25 @@ export const fetchArticles = async (): Promise<ArticleDetail[]> => {
       throw error; // Прокидываем ошибку, чтобы её можно было обработать в компоненте
     }
   };
+
+  // Функция для увеличения количества просмотров статьи
+export const incrementArticleViews = async (id: string): Promise<void> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      throw new Error('Токен авторизации отсутствует');
+    }
+
+    await axiosInstance.post(`${apiUrl}/api/articles/${id}/views`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.error('Ошибка при увеличении просмотров:', error);
+  }
+};
 
 // Функция для получения новости
 export const fetchNews = async (id: string): Promise<NewsItem> => {
@@ -59,6 +77,7 @@ export const createArticle = async (formData: FormData, token: string) => {
     }
   }
 };
+
 
 // Функция для получения новостей с фильтрацией по типу
 export const fetchFilteredNews = async (type: string): Promise<NewsItem[]> => {
@@ -153,6 +172,60 @@ export const fetchUserProfile = async (userId: string): Promise<any> => {
       }
     }
   };
+
+// Функция для получения избранных статей и новостей пользователя
+export const fetchUserFavorites = async (userId: string): Promise<any> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      throw new Error('Токен авторизации отсутствует');
+    }
+
+    const response = await axiosInstance.get(`${apiUrl}/api/favorite`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data.favorites; // Возвращаем список избранных
+  } catch (error) {
+    console.error('Ошибка при загрузке списка избранных:', error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Не удалось загрузить избранные');
+    } else {
+      throw new Error('Неизвестная ошибка при загрузке избранных');
+    }
+  }
+};
+
+// Функция для получения избранных статей и новостей пользователя
+export const fetchUserArticles = async (): Promise<any> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      throw new Error('Токен авторизации отсутствует');
+    }
+
+    // Отправляем GET-запрос на сервер
+    const response = await axiosInstance.get(`${apiUrl}/api/articles/my-articles`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data; // Возвращаем список статей
+  } catch (error) {
+    console.error('Ошибка при загрузке статей пользователя:', error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Не удалось загрузить статьи');
+    } else {
+      throw new Error('Неизвестная ошибка при загрузке статей');
+    }
+  }
+};
+
 
 // Функция для обновления профиля пользователя
 export const updateUserProfile = async (
