@@ -25,6 +25,11 @@
   }
 
 .connect__section__social__media__form 
+.connect__section__form {
+    flex: 1;
+  }
+
+.connect__section__social__media__form 
 .connect__section__social__media {
     flex: 1 1;
   }

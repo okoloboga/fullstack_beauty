@@ -327,3 +327,55 @@ export const sendContactMessage = async (formData: ContactFormData): Promise<voi
       throw new Error('Произошла ошибка при отправке сообщения.');
     }
   };
+
+// Функция для добавления лайка
+export const toggleLike = async (contentId: number, contentType: 'article' | 'news'): Promise<void> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      throw new Error('Токен авторизации отсутствует');
+    }
+
+    const response = await axiosInstance.post(
+      `${apiUrl}/api/likedislike/like`,
+      { contentId, contentType },  // Отправляем в теле запроса
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    toast.success(response.data.message);
+  } catch (error) {
+    console.error('Ошибка при добавлении лайка:', error);
+    toast.error('Ошибка при добавлении лайка');
+  }
+};
+
+// Функция для добавления дизлайка
+export const toggleDislike = async (contentId: number, contentType: 'article' | 'news'): Promise<void> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      throw new Error('Токен авторизации отсутствует');
+    }
+
+    const response = await axiosInstance.post(
+      `${apiUrl}/api/likedislike/dislike`,
+      { contentId, contentType },  // Отправляем в теле запроса
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    toast.success(response.data.message);
+  } catch (error) {
+    console.error('Ошибка при добавлении дизлайка:', error);
+    toast.error('Ошибка при добавлении дизлайка');
+  }
+};

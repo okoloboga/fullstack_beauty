@@ -19,7 +19,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
           alt={article.title}
           className="articles__block__card__img"
         />
-        <h4>{article.author.name}</h4>
+        <h4>{article.author?.name || article.author?.username}</h4>
         {/* Активности статьи: лайки, дизлайки, звезды, комментарии */}
         <div className="articles__block__card__activities flex">
           <div className="flex">

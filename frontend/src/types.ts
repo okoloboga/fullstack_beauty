@@ -25,12 +25,18 @@ export interface NewsProps {
     };
   }
 
+export interface ContentImage {
+    file: File;
+    previewUrl: string;
+  }
+  
 export interface ArticleFormData {
     title: string;
     content: string;
     coverImage: File | null;
-    contentImages: File[];
+    contentImages: ContentImage[];
   }
+  
 
 export interface ProfileData {
     email: string | null;
@@ -61,13 +67,15 @@ export interface Comment {
 export interface ArticleDetail {
     id: number;
     coverImage: string;
+    contentImages: string[];
     title: string;
     description: string;
     author: {
       name: string;
+      username: string;
     };
-    likes?: number;
-    dislikes?: number;
+    likes: number;
+    dislikes: number;
     favoriteCount?: number;
     comments?: Comment[];
     content: string;

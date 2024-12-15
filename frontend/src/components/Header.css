@@ -17,6 +17,11 @@
     font-size: 20px;
   }
 
+.header a:hover {
+    color: #1F1F1F;
+    text-decoration: underline;
+  }
+
 .burger-menu {
     display: none;
     cursor: pointer;

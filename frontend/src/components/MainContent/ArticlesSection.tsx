@@ -124,11 +124,16 @@ const ArticlesSection: React.FC = () => {
                       </div>
                       <div className="flex">
                         <img src={starIcon} alt="Звезда" />
-                        <p>{article.stars || 0}</p> {/* Если stars нет, показываем 0 */}
+                        <p>{article.favoriteCount || 0}</p> {/* Если stars нет, показываем 0 */}
                       </div>
                       <div className="flex">
                         <img src={commentsIcon} alt="Комментарии" />
-                        <p>{article.comments || 0}</p> {/* Если comments нет, показываем 0 */}
+                        <p>{article.comments && article.comments.length === 0 ? (
+                          '0'
+                          ) : (
+                            article.comments?.length
+                            )}
+                        </p>
                       </div>
                     </div>
                     <p>{article.description}</p>

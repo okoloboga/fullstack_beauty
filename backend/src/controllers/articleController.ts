@@ -31,7 +31,7 @@ export const createArticle = [
         console.log("Тело запроса:", req.body); // Логируем тело запроса
         console.log("Полученные файлы:", req.files); // Логируем файлы
 
-        const { title, content, images } = req.body;
+        const { title, content } = req.body;
         const userId = req.user?.userId;
 
         console.log("Запрос на создание новой статьи");
@@ -40,6 +40,24 @@ export const createArticle = [
             // Поиск пользователя (автора)
             const userRepository = AppDataSource.getRepository(User);
             const author = await userRepository.findOneBy({ id: userId });
+            const files = req.files as { [key: string]: Express.Multer.File[] } | undefined;
+
+            if (!files) {
+                console.warn("Нет файлов в запросе");
+                res.status(400).json({ message: "No files uploaded" });
+                return;
+              }
+
+            const coverImage = files.coverImage?.[0]
+            ? `uploads/${files.coverImage[0].filename}`
+            : null;
+
+
+            if (!coverImage) {
+                console.warn("Обложка не была предоставлена");
+                res.status(400).json({ message: "Cover image is required" });
+                return;
+            }
 
             if (!author) {
                 console.warn("Пользователь не найден");
@@ -60,17 +78,18 @@ export const createArticle = [
             }
 
             // Преобразование images в массив URL-ов (если переданы изображения)
-            const imageUrls: string[] = (req.files as Express.Multer.File[]).map((file) => `uploads/${file.filename}`);
+            const contentImages: string[] = files.contentImages
+                ? (files.contentImages as Express.Multer.File[]).map(file => `uploads/${file.filename}`)
+                : [];
 
-            // Преобразуем images, если они переданы в запросе
-            const articleImages = images ? JSON.parse(images) : [];
+            console.log("URL-ы изображений:", );
 
             const article = new Article();
             article.title = title;
             article.content = content;
             article.author = author;
-            article.coverImage = `uploads/${(req.files as Express.Multer.File[])[0].filename}`; // Первое изображение как coverImage
-            article.images = [...articleImages, ...imageUrls]; // Объединяем переданные изображения с теми, что были загружены
+            article.coverImage = coverImage
+            article.images = contentImages
 
             const articleRepository = AppDataSource.getRepository(Article);
             await articleRepository.save(article);
