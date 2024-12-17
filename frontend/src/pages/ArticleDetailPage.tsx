@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
-import { fetchArticle, toggleDislike, toggleLike, createComment, fetchComments, toggleFavorite } from '../utils/apiService'; // Импортируем функцию
+import { fetchContent, toggleDislike, toggleLike, createComment, fetchComments, toggleFavorite } from '../utils/apiService'; // Импортируем функцию
 import { ArticleDetail, ContentComment } from '../types';
 import './styles/ArticleDetailPage.css';
 import eyeIcon from '../assets/images/eye-icon.svg';
@@ -28,7 +28,7 @@ const ArticleDetailPage: React.FC = () => {
   const getArticle = async () => {
     try {
       if (id) {
-        const data = await fetchArticle(id); // Вызов функции из articleService
+        const data = await fetchContent(id); // Вызов функции из articleService
         setArticle(data);
         setLiked(data.likes > 0); // Устанавливаем состояние лайка
         setDisliked(data.dislikes > 0); // Устанавливаем состояние дизлайка

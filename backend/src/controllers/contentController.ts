@@ -105,14 +105,31 @@ export const createContent = [
 ];
 
 // Получить все статьи
-export const getContent = async (req: Request, res: Response): Promise<void> => {
+export const getArticles = async (req: Request, res: Response): Promise<void> => {
     console.log("Запрос на получение всех статей");
-    const contentType = req.body;
 
     try {
         const contentRepository = AppDataSource.getRepository(Content);
         const content = await contentRepository.find({
-            where: { type: contentType },
+            where: { type: 'article' },
+            relations: ["author"] });
+
+        console.log("Статьи успешно получены");
+        res.status(200).json(content);
+    } catch (error) {
+        console.error("Ошибка при получении статей:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// Получить все новости
+export const getNews = async (req: Request, res: Response): Promise<void> => {
+    console.log("Запрос на получение всех статей");
+
+    try {
+        const contentRepository = AppDataSource.getRepository(Content);
+        const content = await contentRepository.find({
+            where: { type: 'new' },
             relations: ["author"] });
 
         console.log("Статьи успешно получены");

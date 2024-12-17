@@ -1,72 +1,157 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
-import { NewsItem } from '../types';
-import { fetchNews } from '../utils/apiService';
-import './styles/NewDetailPage.css';
+import { fetchContent } from '../utils/apiService'; // Импортируем функцию
+import { NewDetail, ContentComment } from '../types';
+import './styles/ArticleDetailPage.css';
+import eyeIcon from '../assets/images/eye-icon.svg';
+import rightArrow from '../assets/images/right-arrow.svg';
+import likes from '../assets/images/like.svg';
+import dislikes from '../assets/images/dislike.svg';
+import star from '../assets/images/star.svg';
+import commentsIcon from '../assets/images/comments.svg';
+import ConnectSection from '../components/MainContent/ConnectSection';
 
-const apiUrl = process.env.REACT_APP_API_URL;
-
-// Основной компонент страницы детального просмотра новости
-const NewsDetailPage: React.FC = () => {
-  // Получаем параметр id из URL
+const ArticleDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-
-  // Состояние для хранения данных новости, загрузки и ошибки
-  const [news, setNews] = useState<NewsItem | null>(null);
+  const [newContent, setNew] = useState<NewDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
-  // useEffect для получения данных новости при изменении параметра id
-  useEffect(() => {
-    const getNews = async () => {
-      try {
-        if (id) {
-          const data = await fetchNews(id);
-          setNews(data);
-        } else {
-          setError('Невалидный идентификатор новости');
-        }
-      } catch (err) {
-        setError('Ошибка при загрузке новости');
-      } finally {
-        setLoading(false);
+  // Функция для получения данных о Новосте
+  const getNew = async () => {
+    try {
+      if (id) {
+        const data = await fetchContent(id); // Вызов функции из articleService
+        setNew(data);
+      } else {
+        setError('Невалидный идентификатор новости');
       }
-    };
+    } catch (err) {
+      setError('Ошибка при загрузке новости');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    getNews(); // Вызов функции получения данных
+  useEffect(() => {
+    getNew(); // Загружаем статью при монтировании компонента
   }, [id]);
 
-  // Отображение состояния загрузки
   if (loading) {
     return <div>Загрузка новости...</div>;
   }
 
-  // Отображение ошибки, если она произошла
   if (error) {
     return <div>{error}</div>;
   }
 
-  // Отображение, если новость не найдена
-  if (!news) {
+  if (!newContent) {
     return <div>Новость не найдена</div>;
   }
 
-  // Основной рендер компонента детальной новости
+  // Логика для разбивки текста
+  const contentLength = newContent.content.length;
+  let contentPart1 = newContent.content;
+  let contentPart2 = '';
+
+  if (contentLength > 600) {
+    const middleIndex = Math.floor(contentLength / 2); // Находим середину текста
+    contentPart1 = newContent.content.slice(0, middleIndex); // Первая половина
+    contentPart2 = newContent.content.slice(middleIndex); // Вторая половина
+  }
+
+  // Функции для переключения изображений в слайдере
+  const prevImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? newContent.contentImages.length - 1 : prevIndex - 1
+    );
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === newContent.contentImages.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
   return (
     <main>
-      <div className="news-detail-page container">
-        <h1 className="news-detail-page__title">{news.title}</h1>
-        {news.coverImage && (
-          <img
-            src={`${apiUrl}/${news.coverImage}`}
-            alt={news.title}
-            className="news-detail-page__image"
+      <section className="product__section container">
+        <div className="product__img relative">
+          <p>{newContent.title}</p>
+          <img 
+            src={`${process.env.REACT_APP_API_URL}/${newContent.coverImage}`} 
+            alt={newContent.title} 
+            className="article-detail-image"
           />
+        </div>
+
+        {/* Описание статьи и основная информация - автор, просмотры, дата создания */}
+        <div className="product__description flex">
+          <div>
+           <p>Добавлено {new Date(newContent.createdAt).toLocaleDateString('ru-RU')}</p>
+          </div>
+          {contentPart2 ? (
+            <>
+              <div className="content-column">
+                <p style={{ lineHeight: '1.6', color: '#333' }}>{contentPart1}</p>
+              </div>
+              <div className="content-column">
+                <p style={{ lineHeight: '1.6', color: '#333' }}>{contentPart2}</p>
+              </div>
+            </>
+          ) : (
+            <div>
+              <p style={{ lineHeight: '1.6', color: '#333' }}>{newContent.content}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Слайдер с изображениями из article.contentImages */}
+        {newContent.contentImages && newContent.contentImages.length > 0 && (
+          <div className="product__slider">
+            <div className="product__slider__left">
+              <button className="slider-button prev" onClick={prevImage}>
+                <img src={rightArrow} alt="prev" />
+              </button>
+            </div>
+            <div className="product__slider__right articles__section">
+              <div className="articles__block">
+                <div className="slider-container">
+                  <div className="articles__block__cards flex">
+                    {newContent.contentImages.map((image, index) => (
+                      <div
+                        key={index}
+                        className={`articles__block__card ${
+                          index === currentImageIndex ? 'active' : ''
+                        }`}
+                      >
+                        <div>
+                          <img
+                            src={`${process.env.REACT_APP_API_URL}/${image}`}
+                            alt={`article-image-${index}`}
+                            className="articles__block__card__img"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="product__slider__right">
+              <button className="slider-button next" onClick={nextImage}>
+                <img src={rightArrow} alt="next" />
+              </button>
+            </div>
+          </div>
         )}
-        <p className="news-detail-page__content">{news.content}</p>
-      </div>
+
+      </section>
+      <ConnectSection />
     </main>
   );
 };
 
-export default NewsDetailPage;
+export default ArticleDetailPage;

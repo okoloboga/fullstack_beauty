@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticateToken } from "../middlewares/authMiddleware";
 import { 
-    createContent, getContent, getContentById, getContentByUser, updateContent, deleteContent, incrementContentViews
+    createContent, getArticles, getNews, getContentById, getContentByUser, updateContent, deleteContent, incrementContentViews
 } from "../controllers/contentController";
 
 const router = Router();
@@ -10,7 +10,10 @@ const router = Router();
 router.post("/", authenticateToken, createContent);
 
 // Получить все статьи (доступно всем)
-router.get("/", getContent);
+router.get("/article", getArticles);
+
+// Получить все новости (доступно всем)
+router.get("/news", getNews);
 
 // Получить статьи пользователя (доступно всем)
 router.get("/my-articles", getContentByUser);

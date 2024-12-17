@@ -60,8 +60,8 @@ const NewsList: React.FC<NewsListProps> = ({ type }) => {
       </div>
       <div className="news__cards flex flex-column">
         {/* Отображаем карточки новостей */}
-        {newsItems.map((news) => (
-          <NewsCard key={news.id} news={news} />
+        {newsItems.map((newContent) => (
+          <NewsCard key={newContent.id} news={newContent} />
         ))}
       </div>
     </div>

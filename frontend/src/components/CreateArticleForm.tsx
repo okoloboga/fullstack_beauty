@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { createArticle } from '../utils/apiService'; // Импортируем функцию
-import { ArticleFormData, ContentImage } from '../types'; // Импортируем тип FormData из types.ts
+import { ContentFormData, ContentImage } from '../types'; // Импортируем тип FormData из types.ts
 import addFile from '../assets/images/add-file.svg';
 import deleteFile from '../assets/images/delete.png';
 import 'react-toastify/dist/ReactToastify.css';
 import './CreateArticleForm.css';
 
 const CreateArticleForm: React.FC = () => {
-  const [formData, setFormData] = useState<ArticleFormData>({
+  const [formData, setFormData] = useState<ContentFormData>({
     title: '',
     content: '',
     coverImage: null as File | null,

@@ -7,8 +7,6 @@ import { LoginFormData } from '../../types';
 import { loginUser } from '../../utils/apiService';
 import './LoginForm.css';
 
-const apiUrl = process.env.REACT_APP_API_URL;
-
 // Компонент LoginForm представляет собой форму для авторизации пользователей
 const LoginForm: React.FC = () => {
   // Состояние для данных формы авторизации
@@ -35,12 +33,10 @@ const LoginForm: React.FC = () => {
 
     try {
       // Отправляем запрос на backend для авторизации
-      const response = await axiosInstance.post(`${apiUrl}/api/users/login`, formData);
-      console.log('Успешная авторизация:', response.data);
       const token = await loginUser(formData);
 
       // Сохраняем токен в localStorage
-      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('token', token);
       toast.success('Авторизация успешна!'); // Успешное уведомление
       navigate('/edit-profile');
     } catch (error) {

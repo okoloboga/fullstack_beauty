@@ -1,7 +1,6 @@
 import React from 'react';
 import LoginForm from '../components/LoginPage/LoginForm';
 import ConnectSection from '../components/MainContent/ConnectSection';
-import { Link } from 'react-router-dom';
 import './styles/LoginPage.css';
 
 // Компонент страницы авторизации
@@ -16,13 +15,16 @@ const LoginPage: React.FC = () => {
       {/* Секция с формой логина */}
       <section className="container login__form">
         <LoginForm />
-        {/* Кнопка перехода на страницу регистрации, стилизована как кнопка "Войти" */}
         <div className="text-center" style={{ marginTop: '20px' }}>
-          <Link to="/register">
-            <button className="button__with__bg form__post" style={{ marginTop: '20px' }}>
-              Регистрация
-            </button>
-          </Link>
+          <a href="/restore" style={{ marginTop: '20px' }}>
+            Забыли пароль?
+          </a>
+        </div>
+
+        <div className="text-center" style={{ marginTop: '20px' }}>
+          <a href="/register" style={{ marginTop: '20px' }}>
+            Нет Аккаунта? Зарегистрироваться
+          </a>
         </div>
       </section>
 

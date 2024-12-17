@@ -1,67 +1,53 @@
-// src/components/CreateNewForm.tsx
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { createNews } from '../utils/apiService'; // Импортируем функцию из нового сервиса
-import { ArticleFormData, ContentImage } from '../types'; // Импортируем тип FormData
+import axios from 'axios';
+import { createNew } from '../utils/apiService'; // Импортируем функцию
+import { ContentFormData, ContentImage } from '../types'; // Импортируем тип FormData из types.ts
 import addFile from '../assets/images/add-file.svg';
+import deleteFile from '../assets/images/delete.png';
 import 'react-toastify/dist/ReactToastify.css';
-import './CreateNewForm.css';
+import './CreateArticleForm.css';
 
-const CreateNewForm: React.FC = () => {
-  const emptyFile = new File([], '');
-  const [formData, setFormData] = useState<ArticleFormData>({
+const CreateArticleForm: React.FC = () => {
+  const [formData, setFormData] = useState<ContentFormData>({
     title: '',
     content: '',
-    coverImage: null,
-    contentImages: [] as ContentImage[]
+    coverImage: null as File | null,
+    contentImages: [] as ContentImage[],
+    contentType: 'new'
   });
   const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
   const [contentImagesPreviews, setContentImagesPreviews] = useState<string[]>([]);  
   const navigate = useNavigate();
 
-  // Обработчик изменения полей формы
+  // useEffect будет отслеживать изменения в formData
+  useEffect(() => {
+    if (formData.contentImages.length > 0) {
+      // Когда contentImages обновляется, можно отправить данные на сервер
+      const formDataToSend = new FormData();
+      formData.contentImages.forEach((contentImages) => {
+        formDataToSend.append("files", contentImages.file);
+      });
+
+      // Например, отправка запроса на сервер
+      fetch('/upload', {
+        method: 'POST',
+        body: formDataToSend,
+      })
+        .then(response => response.json())
+        .then(data => console.log('Файлы успешно загружены', data))
+        .catch(error => console.error('Ошибка при загрузке файлов', error));
+    }
+  }, [formData.contentImages]); // Этот эффект будет срабатывать при изменении contentImages
+
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  // Обработчик изменения обложки
-  const handleCoverImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const validTypes = ['image/jpeg', 'image/png'];
-      if (!validTypes.includes(file.type)) {
-        toast.error('Разрешены только файлы формата JPG и PNG.');
-        return;
-      }
-  
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
-        return;
-      }
-  
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-  
-      img.onload = () => {
-        if (img.width > 1920 || img.height > 1920) {
-          toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1920.');
-          return;
-        }
-  
-        // Обновляем coverImage в formData
-        setFormData((prev) => ({
-          ...prev,
-          coverImage: file,  // Одно изображение для обложки
-        }));
-        setCoverImagePreview(URL.createObjectURL(file));
-      };
-    }
   };
 
   const handleImagesChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -96,8 +82,8 @@ const CreateNewForm: React.FC = () => {
           img.src = fileUrl;
           img.onload = () => {
             console.log('Размер изображения:', img.width, img.height);
-            if (img.width > 1920 || img.height > 1080) {
-              toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
+            if (img.width > 1920 || img.height > 1920) {
+              toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1920.');
               console.log('Разрешение изображения слишком велико');
               return;
             }
@@ -134,8 +120,76 @@ const CreateNewForm: React.FC = () => {
       }
     }
   };
-
-  // Обработчик отправки формы
+  
+  // Обработчик выбора обложки
+  const handleCoverImageSelect = (imageFile: File) => {
+    console.log('Выбрано изображение: ', imageFile);  // Логирование выбранного файла
+    setCoverImagePreview(URL.createObjectURL(imageFile));  // Сохраняем превью
+    setFormData((prev) => ({
+      ...prev,
+      coverImage: imageFile,  // Обновляем coverImage в состоянии
+    }));
+  };
+  
+  // Обработчик удаления изображения
+  const handleImageRemove = (image: string, e: React.MouseEvent<HTMLButtonElement>) => {
+    // Останавливаем стандартное поведение кнопки
+    e.preventDefault();
+    e.stopPropagation();
+  
+    console.log('Попытка удалить изображение:', image);
+  
+    // Получаем индекс удаляемого превью
+    const indexToRemove = contentImagesPreviews.findIndex((preview) => preview === image);
+    console.log('Индекс изображения в contentImagesPreviews:', indexToRemove);
+  
+    if (indexToRemove !== -1) {
+      // Удаляем изображение из списка превью
+      const updatedPreviews = [...contentImagesPreviews];
+      updatedPreviews.splice(indexToRemove, 1);
+      setContentImagesPreviews(updatedPreviews);
+      console.log('Обновленные превью после удаления:', updatedPreviews);
+    } else {
+      console.log('Не удалось найти изображение в contentImagesPreviews для удаления.');
+    }
+  
+    // Находим файл для удаления по сохраненной ссылке
+    const imageFileToRemove = formData.contentImages.find(
+      (contentImage) => contentImage.previewUrl === image // Сравниваем по URL
+    );
+  
+    console.log('Ищем файл для удаления в formData.contentImages...');
+    if (imageFileToRemove) {
+      console.log('Найден файл для удаления:', imageFileToRemove.file.name);
+  
+      // Удаляем файл из массива contentImages
+      const updatedContentImages = formData.contentImages.filter(
+        (contentImage) => contentImage !== imageFileToRemove
+      );
+  
+      setFormData((prev) => ({
+        ...prev,
+        contentImages: updatedContentImages,
+      }));
+      console.log('Обновленные contentImages после удаления:', updatedContentImages);
+    } else {
+      console.log('Файл не найден в formData.contentImages.');
+    }
+  
+    // Если удалили выбранную обложку, сбрасываем обложку
+    if (coverImagePreview === image) {
+      setCoverImagePreview(null);
+      setFormData((prev) => ({
+        ...prev,
+        coverImage: null,
+      }));
+      console.log('Обложка удалена');
+    } else {
+      console.log('Удаление обложки не требуется');
+    }
+  };
+  
+  
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
@@ -145,13 +199,13 @@ const CreateNewForm: React.FC = () => {
       return;
     }
   
-    if (formData.title.length < 5) {
-      toast.error('Заголовок должен содержать не менее 5 символов.');
+    if (formData.title.length < 5 || formData.title.length > 100) {
+      toast.error('Заголовок должен содержать не менее 5 символов и не более 100.');
       return;
     }
   
     if (formData.content.length < 50) {
-      toast.error('Текст новости должен содержать не менее 50 символов.');
+      toast.error('Текст статьи должен содержать не менее 50 символов.');
       return;
     }
   
@@ -172,18 +226,18 @@ const CreateNewForm: React.FC = () => {
     }
   
     try {
-      const response = await createNews(data, token);
-      console.log('Новость успешно написана:', response);
-      toast.success('Новость успешно сохранена!');
+      const response = await createNew(data, token);
+      console.log('Статья успешно написана:', response);
+      toast.success('Статья успешно сохранена!');
       setTimeout(() => {
         navigate('/articles');
       }, 2000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        console.error('Ошибка при создании новости:', error.response?.data?.message || error.message);
-        toast.error(error.response?.data?.message || 'Ошибка при сохранении новости. Пожалуйста, попробуйте еще раз.');
+        console.error('Ошибка при создании статьи:', error.response?.data?.message || error.message);
+        toast.error(error.response?.data?.message || 'Ошибка при сохранении статьи. Пожалуйста, попробуйте еще раз.');
       } else if (error instanceof Error) {
-        console.error('Ошибка при создании новости:', error.message);
+        console.error('Ошибка при создании статьи:', error.message);
         toast.error(error.message);
       } else {
         console.error('Неизвестная ошибка', error);
@@ -191,29 +245,30 @@ const CreateNewForm: React.FC = () => {
       }
     }
   };
+  
   return (
     <section className="container">
-      <div className="create__new flex justify-center container">
-        <div className="create__new__title">
+      <div className="create__article flex justify-center container">
+        <div className="create__article__title">
           <h1 className="title main__title">НАПИСАТЬ СТАТЬЮ</h1>
         </div>
       </div>
       <form onSubmit={handleSubmit}>
-        {/* Заголовок статьи */}
+        {/* Заголовок новости */}
         <div className="flex pt-2 item-center myInput">
           <label className="label">Заголовок</label>
           <input
             id="title"
             type="text"
             name="title"
-            className="default__input new-input"
+            className="default__input article-input"
             value={formData.title}
             onChange={handleChange}
             required
           />
         </div>
   
-        {/* Содержание статьи */}
+        {/* Содержание новости */}
         <div className="pt-2 myInput">
           <div className="label desc__label">
             <label className="label">Содержание</label>
@@ -221,7 +276,7 @@ const CreateNewForm: React.FC = () => {
           <textarea
             id="content"
             name="content"
-            className="default__input new-input"
+            className="default__input article-input"
             rows={20}
             value={formData.content}
             onChange={handleChange}
@@ -229,63 +284,91 @@ const CreateNewForm: React.FC = () => {
           ></textarea>
         </div>
   
-        {/* Загрузка обложки */}
-        <div className="field">
-          <input
-            id="coverImageInput"
-            type="file"
-            name="coverImage"
-            accept="image/*"
-            onChange={handleCoverImageChange}
-            style={{ display: 'none' }}
-          />
-          <button className="new-upload new-upload-md" type="button">
-            <label htmlFor="coverImageInput">
-              <img src={addFile} alt="Добавить обложку" />
-            </label>
-          </button>
-          {coverImagePreview && (
-            <div className="cover-image-preview">
-              <img src={coverImagePreview} alt="Preview Cover" style={{ maxWidth: '200px', maxHeight: '200px' }} />
-            </div>
-          )}
-        </div>
-  
-        {/* Загрузка дополнительных изображений */}
-        <div className="field">
-          <input
-            id="contentImagesInput"
-            type="file"
-            name="contentImages"
-            accept="image/*"
-            multiple
-            onChange={handleImagesChange}
-            style={{ display: 'none' }}
-          />
-          <button className="new-upload new-upload-md" type="button">
-            <label htmlFor="contentImagesInput">
-              <img src={addFile} alt="Добавить изображения" />
-            </label>
-          </button>
-          {contentImagesPreviews.length > 0 && (
-            <div className="content-images-preview">
-              {contentImagesPreviews.map((preview, index) => (
-                <img
-                  key={index}
-                  src={preview}
-                  alt={`Preview Content ${index}`}
-                  style={{ maxWidth: '200px', maxHeight: '200px', margin: '5px' }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <form>
+          {/* Загрузка изображений */}
+          <div className="field">
+            <input
+              id="imagesInput"
+              type="file"
+              name="images"
+              accept="image/*"
+              multiple
+              onChange={handleImagesChange}
+              style={{ display: 'none' }}
+            />
+            <button className="article-upload article-upload-md" type="button">
+              <label htmlFor="imagesInput">
+                <img src={addFile} alt="Добавить изображения" />
+              </label>
+            </button>
+
+            {/* Превью изображений */}
+            {contentImagesPreviews.length > 0 && (
+              <div className="images-preview" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                {contentImagesPreviews.map((imagePreview, index) => {
+                  const contentImage = formData.contentImages[index];  // Получаем сам объект ContentImage
+                  const imageFile = contentImage.file;  // Извлекаем сам файл из объекта ContentImage
+                  const isCover = formData.coverImage?.name === imageFile.name;  // Сравниваем только имя файла
+
+                  return (
+                    <div
+                      key={index}
+                      style={{
+                        margin: '10px',
+                        display: 'inline-block',
+                        background: 'transparent',
+                        cursor: 'pointer',
+                        position: 'relative',
+                      }}
+                    >
+                      <img
+                        src={imagePreview}
+                        alt={`Preview ${index}`}
+                        style={{
+                          maxWidth: '200px',
+                          maxHeight: '200px',
+                          filter: 'opacity(0.5)',
+                        }}
+                        onClick={() => handleCoverImageSelect(imageFile)} // Передаем сам файл для обложки
+                      />
+                      {/* Кнопка удаления */}
+                      <button
+                        onClick={(e) => handleImageRemove(imagePreview, e)}
+                        style={{
+                          position: 'absolute',
+                          background: 'transparent',
+                          borderRadius: '50%',
+                          padding: '5px',
+                          cursor: 'pointer',
+                          transform: 'translate(-45px, -45px) scale(0.5)',
+                        }}
+                      >
+                        <img src={deleteFile} alt="Удалить" />
+                      </button>
+
+                      {/* Отображаем метку для выбранной обложки */}
+                      {isCover && (
+                        <div style={{
+                          textAlign: 'center',
+                          marginTop: '5px',
+                          color: '#000000',
+                        }}>
+                          <span>Главное и превью</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </form>
   
         {/* Кнопка отправки формы */}
         <div className="flex pt-2 item-stretch myInput">  
           <div className="label"></div>
           <button
-            className="button__with__bg new-btn"
+            className="button__with__bg article-btn"
             type="submit"
           >
             Опубликовать
@@ -296,5 +379,4 @@ const CreateNewForm: React.FC = () => {
   );  
 };
 
-
-export default CreateNewForm;
+export default CreateArticleForm;

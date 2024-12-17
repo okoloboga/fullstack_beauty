@@ -1,10 +1,10 @@
 import React from 'react';
-import RegisterForm from '../components/RegisterForm/RegisterForm';
+import ChangePasswordForm from '../components/ChangePasswordForm';
 import ConnectSection from '../components/MainContent/ConnectSection';
 import './styles/RegisterPage.css';
 
 // Компонент страницы регистрации
-const RegisterPage: React.FC = () => {
+const RestorePage: React.FC = () => {
   return (
     <main>
       {/* Секция с заголовком страницы */}
@@ -14,14 +14,8 @@ const RegisterPage: React.FC = () => {
 
       {/* Секция с формой регистрации */}
       <section className="container register__form">
-        <RegisterForm />
+        <ChangePasswordForm />
       </section>
-
-      <div className="text-center" style={{ marginTop: '20px' }}>
-        <a href="/login" style={{ marginTop: '20px' }}>
-          Зарегистрированы? Войти
-        </a>
-      </div>
 
       {/* Секция для связи с пользователями */}
       <ConnectSection />
@@ -29,4 +23,4 @@ const RegisterPage: React.FC = () => {
   );
 };
 
-export default RegisterPage;
+export default RestorePage;

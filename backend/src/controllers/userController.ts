@@ -156,8 +156,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-// Запрос на восстановление пароля
-export const requestPasswordReset = async (req: Request, res: Response) => {
+export const requestPasswordReset = async (req: Request, res: Response): Promise<void> => {
     const { email } = req.body;
     console.log('Запрос на восстановление пароля:', email);
   
@@ -165,10 +164,11 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
     const user = await userRepository.findOneBy({ email });
 
     if (!user) {
-    return res.status(400).json({ message: 'Пользователь с таким email не найден' });
+        res.status(400).json({ message: 'Пользователь с таким email не найден' });
+        return
     }
-    
-    try{
+
+    try {
         // Генерация токена для восстановления пароля
         const resetToken = uuidv4();
         user.resetToken = resetToken;
@@ -178,36 +178,38 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
     
         // Отправка ссылки на почту
         const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
         });
     
         const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}`;
     
         const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Восстановление пароля',
-        text: `Для восстановления пароля перейдите по следующей ссылке: ${resetUrl}`,
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Восстановление пароля',
+            text: `Для восстановления пароля перейдите по следующей ссылке: ${resetUrl}`,
         };
     
         transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error('Ошибка при отправке письма:', error);
-            return res.status(500).json({ message: 'Ошибка при отправке письма' });
-        } else {
-            console.log('Письмо отправлено: ' + info.response);
-            return res.status(200).json({ message: 'Ссылка для восстановления пароля отправлена на ваш email' });
-        }
+            if (error) {
+                console.error('Ошибка при отправке письма:', error);
+                return res.status(500).json({ message: 'Ошибка при отправке письма' });
+            } else {
+                console.log('Письмо отправлено: ' + info.response);
+                return res.status(200).json({ message: 'Ссылка для восстановления пароля отправлена на ваш email' });
+            }
         });
     } catch (error) {
         console.error("Ошибка при восстановлении пароля:", error);
         res.status(500).json({ message: "Внутренняя ошибка сервера" });
+        return
     }
-  };
+};
+
 
 // Восстановление пароля
 export const resetPassword = async (req: Request, res: Response): Promise<void> => {

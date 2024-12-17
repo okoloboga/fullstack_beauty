@@ -30,7 +30,7 @@ export interface ContentImage {
     previewUrl: string;
   }
   
-export interface ArticleFormData {
+export interface ContentFormData {
     title: string;
     content: string;
     coverImage: File | null;
@@ -38,7 +38,6 @@ export interface ArticleFormData {
     contentType: string;
   }
   
-
 export interface ProfileData {
     password: string | null;
     name: string | null;
@@ -70,7 +69,7 @@ export interface ArticleDetail {
     coverImage: string;
     contentImages: string[];
     title: string;
-    description: string;
+    content: string;
     author: {
       name: string;
       username: string;
@@ -79,14 +78,26 @@ export interface ArticleDetail {
     dislikes: number;
     favoritesCount: number;
     comments: number;
-    content: string;
     createdAt: string;
     views: string;
+  }
+
+  export interface NewDetail {
+    id: number;
+    coverImage: string;
+    contentImages: string[];
+    title: string;
+    content: string;
+    createdAt: string;
   }
 
 export interface ArticleCardProps {
     article: ArticleDetail;
   }
+
+export interface NewCardProps {
+  newContent: NewDetail;
+}
 
 export interface ProtectedRouteProps {
     allowedRoles: string[]; // Список разрешенных ролей
@@ -109,6 +120,10 @@ export interface RegisterFormData {
     email: string;
     password: string;
     confirmPassword: string;
+  }
+
+export interface RestoreFormData {
+    email: string;
   }
   
 export interface NewsListProps {

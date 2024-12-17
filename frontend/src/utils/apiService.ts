@@ -2,13 +2,13 @@ import axiosInstance from './axiosInstance'; // Импортируем экзе�
 import axios from 'axios';
 import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
-import { ArticleFormData, NewsItem, ArticleDetail, LoginFormData, ContactFormData } from '../types';
+import { NewsItem, ArticleDetail, LoginFormData, ContactFormData } from '../types';
 const apiUrl = process.env.REACT_APP_API_URL; // Получаем URL из переменных окружения
 
 // Функция для получения статьи
-export const fetchArticle = async (id: string): Promise<ArticleDetail> => {
+export const fetchContent = async (id: string): Promise<ArticleDetail> => {
   try {
-    const response = await axiosInstance.get<ArticleDetail>(`${apiUrl}/api/articles/${id}`);
+    const response = await axiosInstance.get<ArticleDetail>(`${apiUrl}/api/content/${id}`);
     return response.data; // Возвращаем данные статьи
   } catch (error) {
     throw new Error('Ошибка при загрузке статьи');
@@ -18,7 +18,7 @@ export const fetchArticle = async (id: string): Promise<ArticleDetail> => {
 // Функция для получения статей
 export const fetchArticles = async (): Promise<ArticleDetail[]> => {
     try {
-      const response = await axiosInstance.get<ArticleDetail[]>(`${apiUrl}/api/articles`);
+      const response = await axiosInstance.get<ArticleDetail[]>(`${apiUrl}/api/content/articles`);
       return response.data;
     } catch (error) {
       console.error('Ошибка при загрузке статей:', error);
@@ -35,7 +35,7 @@ export const incrementArticleViews = async (id: string): Promise<void> => {
       throw new Error('Токен авторизации отсутствует');
     }
 
-    await axiosInstance.post(`${apiUrl}/api/articles/${id}/views`, {}, {
+    await axiosInstance.post(`${apiUrl}/api/content/${id}/views`, {}, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -47,12 +47,12 @@ export const incrementArticleViews = async (id: string): Promise<void> => {
 
 // Функция для получения новости
 export const fetchNews = async (id: string): Promise<NewsItem> => {
-    try {
-      const response = await axiosInstance.get<NewsItem>(`${apiUrl}/api/news/${id}`);
-      return response.data;
-    } catch (err) {
-      throw new Error('Ошибка при загрузке новости');
-    }
+  try {
+    const response = await axiosInstance.get<NewsItem>(`${apiUrl}/api/content/news`);
+    return response.data;
+  } catch (err) {
+    throw new Error('Ошибка при загрузке новости');
+  }
 }
 
 // Функция для создания статьи
@@ -60,7 +60,7 @@ export const createArticle = async (formData: FormData, token: string) => {
   console.log('Публикуем статью:', formData)
 
   try {
-    const response = await axiosInstance.post(`${apiUrl}/api/articles`, formData, {
+    const response = await axiosInstance.post(`${apiUrl}/api/content`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
@@ -82,7 +82,7 @@ export const createArticle = async (formData: FormData, token: string) => {
 // Функция для получения новостей с фильтрацией по типу
 export const fetchFilteredNews = async (type: string): Promise<NewsItem[]> => {
     try {
-      const response = await axiosInstance.get<NewsItem[]>(`${apiUrl}/api/news`);
+      const response = await axiosInstance.get<NewsItem[]>(`${apiUrl}/api/content`);
   
       let newsData = response.data;
   
@@ -103,7 +103,7 @@ export const fetchFilteredNews = async (type: string): Promise<NewsItem[]> => {
 // Функция для получения свежих новостей
 export const fetchLatestNews = async (limit: number = 6): Promise<NewsItem[]> => {
     try {
-      const response = await axiosInstance.get<NewsItem[]>(`${apiUrl}/api/news`, {
+      const response = await axiosInstance.get<NewsItem[]>(`${apiUrl}/api/content`, {
         params: { sort: 'newest', limit },
       });
       return response.data;
@@ -116,7 +116,7 @@ export const fetchLatestNews = async (limit: number = 6): Promise<NewsItem[]> =>
 // Функция для получения популярных статей
 export const fetchPopularArticles = async (limit: number = 3): Promise<ArticleDetail[]> => {
     try {
-      const response = await axiosInstance.get<ArticleDetail[]>(`${apiUrl}/api/articles`, {
+      const response = await axiosInstance.get<ArticleDetail[]>(`${apiUrl}/api/content`, {
         params: { sort: 'popular', limit },
       });
       return response.data;
@@ -127,11 +127,11 @@ export const fetchPopularArticles = async (limit: number = 3): Promise<ArticleDe
   };
 
 // Функция для создания новости
-export const createNews = async (formData: FormData, token: string) => {
+export const createNew = async (formData: FormData, token: string) => {
     console.log('Публикуем новость:', formData)
   
     try {
-      const response = await axiosInstance.post(`${apiUrl}/api/news`, formData, {
+      const response = await axiosInstance.post(`${apiUrl}/api/content`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
@@ -211,7 +211,7 @@ export const fetchUserArticles = async (): Promise<any> => {
     }
 
     // Отправляем GET-запрос на сервер
-    const response = await axiosInstance.get(`${apiUrl}/api/articles/my-articles`, {
+    const response = await axiosInstance.get(`${apiUrl}/api/content/my-articles`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -293,7 +293,7 @@ export const updateUserProfile = async (
 // Функция для регистрации пользователя
 export const registerUser = async (email: string, password: string): Promise<void> => {
     try {
-      const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/users/register`, {
+      const response = await axiosInstance.post(`${apiUrl}/api/users/register`, {
         email,
         password,
       });
@@ -310,7 +310,7 @@ export const registerUser = async (email: string, password: string): Promise<voi
 
   export const confirmEmail = async (token: string): Promise<any> => {
     try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/users/confirm-email?token=${token}`);
+      const response = await axiosInstance.get(`${apiUrl}/api/users/confirm-email?token=${token}`);
       return response.data; // Возвращаем ответ от сервера
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
@@ -323,19 +323,24 @@ export const registerUser = async (email: string, password: string): Promise<voi
   };
 
 // Функция для запроса на восстановление пароля
-export const requestPasswordReset = async (email: string): Promise<void> => {
+export const requestPasswordReset = async (formData: FormData): Promise<string> => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/request-password-reset`, { email });
+    const response = await axios.post(`${apiUrl}/api/users/request-password-reset`, formData);
     console.log(response.data.message);
+    // Если сервер вернул успешный ответ
+    return 'Письмо с инструкциями отправлено на ваш email';
   } catch (error) {
     console.error('Ошибка при запросе на восстановление пароля:', error);
+    
+    // В случае ошибки возвращаем стандартное сообщение
+    return 'Произошла ошибка при запросе восстановления пароля';
   }
 };
 
 // Функция для обновления пароля
 export const resetPassword = async (token: string, newPassword: string): Promise<void> => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/reset-password`, {
+    const response = await axios.post(`${apiUrl}/api/users/reset-password`, {
       token,
       newPassword,
     });
@@ -348,7 +353,7 @@ export const resetPassword = async (token: string, newPassword: string): Promise
   // Функция отправки контактных данных на сервер
 export const sendContactMessage = async (formData: ContactFormData): Promise<void> => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/contact`, {
+      const response = await fetch(`${apiUrl}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=utf-8',

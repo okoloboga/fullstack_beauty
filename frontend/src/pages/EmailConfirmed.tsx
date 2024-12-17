@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { confirmEmail } from './../utils/apiService'; // Путь к функции
 import { toast } from 'react-toastify'; // Импорт toast для уведомлений
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate, useLocation } from 'react-router-dom'; 
 
 const ConfirmEmailPage = () => {
   const [status, setStatus] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const location = useLocation(); // Получаем location через хук
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
+    const queryParams = new URLSearchParams(location.search); // Используем location.search для парсинга URL
     const token = queryParams.get('token');
 
     if (!token) {
@@ -34,7 +35,7 @@ const ConfirmEmailPage = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [location]); // Добавляем location в зависимости, чтобы хук срабатывал при изменении URL
 
   if (loading) {
     return <p>Загрузка...</p>;
