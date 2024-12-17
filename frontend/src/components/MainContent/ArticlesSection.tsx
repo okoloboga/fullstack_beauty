@@ -8,8 +8,10 @@ import commentsIcon from '../../assets/images/comments.svg';
 import { ArticleDetail } from '../../types';
 import { fetchPopularArticles } from '../../utils/apiService';
 import './ArticlesSection.css';
+import ArticleCard from '../ArticlesPage/ArticleCard';
 
 const ArticlesSection: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   // Используем useRef для доступа к слайдеру
   const sliderRef = useRef<HTMLDivElement | null>(null);
@@ -18,6 +20,12 @@ const ArticlesSection: React.FC = () => {
   const [showNext, setShowNext] = useState<boolean>(true);
   // Состояние для хранения списка статей
   const [articles, setArticles] = useState<ArticleDetail[]>([]);
+
+
+  // Фильтрация статей на основе поиска
+  const filteredArticles = articles.filter((article) =>
+    article.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Функция для обновления видимости кнопок слайдера
   const updateButtonVisibility = () => {
@@ -103,46 +111,15 @@ const ArticlesSection: React.FC = () => {
                 <img src={rightArrow} alt="Предыдущий" />
               </button>
 
-              {/* Карточки статей */}
-              {articles.map((article) => (
-                <div className="articles__section__block__card" key={article.id}>
-                  <div>
-                    <img
-                      src={article.coverImage}
-                      alt={article.title}
-                      className="articles__section__block__card__img"
-                    />
-                    <h4>{article.author.name}</h4>
-                    <div className="articles__block__card__activities flex">
-                      <div className="flex">
-                        <img src={likeIcon} alt="Лайк" />
-                        <p>{article.likes || 0}</p> {/* Если likes нет, показываем 0 */}
-                      </div>
-                      <div className="flex">
-                        <img src={dislikeIcon} alt="Дизлайк" />
-                        <p>{article.dislikes || 0}</p> {/* Если dislikes нет, показываем 0 */}
-                      </div>
-                      <div className="flex">
-                        <img src={starIcon} alt="Звезда" />
-                        <p>{article.favoriteCount || 0}</p> {/* Если stars нет, показываем 0 */}
-                      </div>
-                      <div className="flex">
-                        <img src={commentsIcon} alt="Комментарии" />
-                        <p>{article.comments && article.comments.length === 0 ? (
-                          '0'
-                          ) : (
-                            article.comments?.length
-                            )}
-                        </p>
-                      </div>
-                    </div>
-                    <p>{article.description}</p>
-                  </div>
-                  <Link className="button__without__bg" to={`/articles/${article.id}`}>
-                    Читать далее
-                  </Link>
-                </div>
-              ))}
+              <div className="articles__block__cards flex">
+                {loading ? (
+                  <p>Загрузка статей...</p>
+                ) : (
+                  filteredArticles.map((article) => (
+                    <ArticleCard key={article.id} article={article} />
+                  ))
+                )}
+              </div>
 
               {/* Кнопка для прокрутки вправо */}
               <button

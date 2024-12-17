@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getAllUsers, promoteToPartner, blockUser, deleteUser } from "../controllers/adminController";
-import { updateArticleAsAdmin, deleteArticleAsAdmin, deleteCommentAsAdmin } from "../controllers/adminController";
+import { updateContentAsAdmin, deleteContentAsAdmin, deleteCommentAsAdmin } from "../controllers/adminController";
 import { authenticateToken } from "../middlewares/authMiddleware";
 import { checkAdmin } from "../middlewares/roleMiddleware";
 
@@ -19,10 +19,10 @@ router.put("/users/:id/block", authenticateToken, checkAdmin, blockUser);
 router.delete("/users/:id", authenticateToken, checkAdmin, deleteUser);
 
 // Обновить статью (только админ)
-router.put("/articles/:id", authenticateToken, checkAdmin, updateArticleAsAdmin);
+router.put("/articles/:id", authenticateToken, checkAdmin, updateContentAsAdmin);
 
 // Удалить статью (только админ)
-router.delete("/articles/:id", authenticateToken, checkAdmin, deleteArticleAsAdmin);
+router.delete("/articles/:id", authenticateToken, checkAdmin, deleteContentAsAdmin);
 
 // Удалить комментарий (только админ)
 router.delete("/comments/:id", authenticateToken, checkAdmin, deleteCommentAsAdmin);

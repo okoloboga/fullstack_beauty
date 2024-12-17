@@ -35,11 +35,11 @@ export interface ArticleFormData {
     content: string;
     coverImage: File | null;
     contentImages: ContentImage[];
+    contentType: string;
   }
   
 
 export interface ProfileData {
-    email: string | null;
     password: string | null;
     name: string | null;
     city: string | null;
@@ -55,10 +55,11 @@ export interface ProfileData {
     portfolioImage?: string | null; // Изменено на одиночное изображение
   }
 
-export interface Comment {
+export interface ContentComment {
     id: number;
     user: {
       name: string;
+      username: string;
     };
     contentText: string;
     createdAt: string; // Или тип Date, если хочется использовать даты в формате объекта
@@ -76,8 +77,8 @@ export interface ArticleDetail {
     };
     likes: number;
     dislikes: number;
-    favoriteCount?: number;
-    comments?: Comment[];
+    favoritesCount: number;
+    comments: number;
     content: string;
     createdAt: string;
     views: string;
@@ -100,12 +101,12 @@ export interface DecodedToken {
   }
 
 export interface LoginFormData {
-    username: string;
+    email: string;
     password: string;
   }
 
 export interface RegisterFormData {
-    username: string;
+    email: string;
     password: string;
     confirmPassword: string;
   }

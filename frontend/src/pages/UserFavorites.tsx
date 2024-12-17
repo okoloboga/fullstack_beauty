@@ -18,6 +18,7 @@ const UserFavorites: React.FC = () => {
 
       try {
         const favoritesData = await fetchUserFavorites(token); // Получаем избранные статьи
+        console.log('Статьи пользователя:', favoritesData);
         setFavorites(favoritesData); // Сохраняем в состояние
       } catch (error) {
         toast.error('Не удалось загрузить избранные записи');

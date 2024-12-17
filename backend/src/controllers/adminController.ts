@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../config/db";
 import { User } from "../models/User";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
-import { Article } from "../models/ContentEntity";
+import { Content } from "../models/Content";
 import { Comment } from "../models/Comment";
 
 // Получить всех пользователей
@@ -94,26 +94,26 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response): Prom
 };
 
 // Обновить статью как администратор
-export const updateArticleAsAdmin = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const updateContentAsAdmin = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id } = req.params;
-    const { title, content } = req.body;
+    const { title, contentText } = req.body;
     console.log(`Запрос на обновление статьи с id: ${id}`);
 
     try {
-        const articleRepository = AppDataSource.getRepository(Article);
-        const article = await articleRepository.findOneBy({ id: parseInt(id) });
+        const contentRepository = AppDataSource.getRepository(Content);
+        const content = await contentRepository.findOneBy({ id: parseInt(id) });
 
-        if (!article) {
+        if (!content) {
             console.warn(`Статья с id: ${id} не найдена`);
             res.status(404).json({ message: "Article not found" });
             return;
         }
 
-        article.title = title;
-        article.content = content;
-        await articleRepository.save(article);
+        content.title = title;
+        content.content = contentText;
+        await contentRepository.save(content);
         console.log(`Статья с id: ${id} успешно обновлена`);
-        res.status(200).json({ message: "Article updated successfully", article });
+        res.status(200).json({ message: "Article updated successfully", content });
     } catch (error) {
         console.error("Ошибка при обновлении статьи:", error);
         res.status(500).json({ message: "Internal server error" });
@@ -121,21 +121,21 @@ export const updateArticleAsAdmin = async (req: AuthenticatedRequest, res: Respo
 };
 
 // Удалить статью как администратор
-export const deleteArticleAsAdmin = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const deleteContentAsAdmin = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id } = req.params;
     console.log(`Запрос на удаление статьи с id: ${id}`);
 
     try {
-        const articleRepository = AppDataSource.getRepository(Article);
-        const article = await articleRepository.findOneBy({ id: parseInt(id) });
+        const contentRepository = AppDataSource.getRepository(Content);
+        const content = await contentRepository.findOneBy({ id: parseInt(id) });
 
-        if (!article) {
+        if (!content) {
             console.warn(`Статья с id: ${id} не найдена`);
             res.status(404).json({ message: "Article not found" });
             return;
         }
 
-        await articleRepository.remove(article);
+        await contentRepository.remove(content);
         console.log(`Статья с id: ${id} успешно удалена`);
         res.status(200).json({ message: "Article deleted successfully" });
     } catch (error) {

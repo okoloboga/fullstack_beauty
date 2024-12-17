@@ -49,8 +49,8 @@ const CreateNewForm: React.FC = () => {
       img.src = URL.createObjectURL(file);
   
       img.onload = () => {
-        if (img.width > 1920 || img.height > 1080) {
-          toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
+        if (img.width > 1920 || img.height > 1920) {
+          toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1920.');
           return;
         }
   

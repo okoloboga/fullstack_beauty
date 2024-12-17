@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, JoinColumn } from "typeorm";
 import { User } from "./User";
-import { ContentEntity } from "./ContentEntity";
 
 @Entity()
 export class LikeDislike {
@@ -10,8 +9,9 @@ export class LikeDislike {
     @ManyToOne(() => User, (user) => user.id)
     user!: User;
 
-    @ManyToOne(() => ContentEntity, (content) => content.id)
-    content!: ContentEntity;  // Связь с любым контентом (статья или новость)
+    // Одно поле contentId, которое будет указывать на контент (статья или новость)
+    @Column({ nullable: true })
+    contentId?: number;  // Здесь хранится id контента
 
     @Column()
     type!: 'like' | 'dislike';  // Лайк или дизлайк

@@ -6,17 +6,13 @@ export class User {
     id!: number;
 
     @Column({ unique: true })
-    username!: string;
+    email!: string;
 
     @Column()
     password!: string;
 
     @Column()
     role!: string; // 'user', 'partner', 'admin'
-
-    // Дополнительные поля профиля (все необязательные)
-    @Column({ nullable: true })
-    email?: string;
 
     @Column({ nullable: true })
     name?: string;
@@ -53,4 +49,19 @@ export class User {
 
     @Column({ nullable: true })
     portfolioImage?: string;
+
+    @Column({ nullable: true })
+    confirmationToken?: string | null;
+  
+    @Column({ type: 'timestamp', nullable: true })
+    confirmationTokenExpiration?: Date | null;
+
+    @Column({ default: false })
+    isConfirmed?: boolean;
+
+    @Column({ nullable: true })
+    resetToken?: string | null;
+  
+    @Column({ type: 'timestamp', nullable: true })
+    resetTokenExpiration?: Date | null;
 }

@@ -32,11 +32,11 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
           </div>
           <div className="flex">
             <img src={starIcon} alt="Звезда" />
-            <p>{article.favoriteCount || 0}</p>
+            <p>{article.favoritesCount || 0}</p>
           </div>
           <div className="flex">
             <img src={commentsIcon} alt="Комментарии" />
-            <p>{article.comments?.length}</p>
+            <p>{article.comments || 0}</p>
           </div>
         </div>
         {/* Короткое содержание статьи */}

@@ -20,6 +20,7 @@ import ProtectedRoute from './components/ProtectedRoute'; // Компонент 
 import AuthenticatedRoute from './components/AuthenticatedRoute'; // Компонент для проверки авторизации пользователя
 import CreateArticleForm from './components/CreateArticleForm'; // Форма создания статьи
 import CreateNewForm from './components/CreateNewForm'; // Форма создания новости
+import ConfirmEmailPage from './pages/EmailConfirmed';
 
 import './styles/main.css'; // Основные стили
 import './styles/media.css'; // Медиа стили для адаптивного дизайна
@@ -43,6 +44,7 @@ const App: React.FC = () => {
         <Route path="/my-articles" element={<UserArticles />} />  {/* Страница моих статей */}
         <Route path="/register" element={<RegisterPage />} /> {/* Страница регистрации пользователя */}
         <Route path="/login" element={<LoginPage />} /> {/* Страница входа в систему */}
+        <Route path="/confirm-email/:token" element={<ConfirmEmailPage />} /> {/* Страница подтверждения почты */}
 
         {/* Защищенные маршруты, доступные только определенным ролям */}
         

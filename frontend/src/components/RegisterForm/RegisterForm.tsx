@@ -7,7 +7,7 @@ import './RegisterForm.css';
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
-    username: '',
+    email: '',
     password: '',
     confirmPassword: '', // Добавляем поле подтверждения пароля
   });
@@ -35,7 +35,7 @@ const RegisterForm: React.FC = () => {
 
     try {
       // Отправляем запрос на сервер для регистрации
-      await registerUser(formData.username, formData.password);
+      await registerUser(formData.email, formData.password);
       toast.success('Регистрация прошла успешно! Пожалуйста, войдите.');
       navigate('/login');
     } catch (error) {
@@ -49,10 +49,10 @@ const RegisterForm: React.FC = () => {
         <div className="form__input centered-input">
           <input
             type="text"
-            name="username"
-            placeholder="Имя пользователя"
+            name="email"
+            placeholder="E-mail"
             className="default__input"
-            value={formData.username}
+            value={formData.email}
             onChange={handleChange}
             required
           />

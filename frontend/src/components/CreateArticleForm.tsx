@@ -15,6 +15,7 @@ const CreateArticleForm: React.FC = () => {
     content: '',
     coverImage: null as File | null,
     contentImages: [] as ContentImage[],
+    contentType: 'article'
   });
   const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
   const [contentImagesPreviews, setContentImagesPreviews] = useState<string[]>([]);  
@@ -81,8 +82,8 @@ const CreateArticleForm: React.FC = () => {
           img.src = fileUrl;
           img.onload = () => {
             console.log('Размер изображения:', img.width, img.height);
-            if (img.width > 1920 || img.height > 1080) {
-              toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
+            if (img.width > 1920 || img.height > 1920) {
+              toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1920.');
               console.log('Разрешение изображения слишком велико');
               return;
             }
@@ -199,8 +200,8 @@ const CreateArticleForm: React.FC = () => {
       return;
     }
   
-    if (formData.title.length < 5) {
-      toast.error('Заголовок должен содержать не менее 5 символов.');
+    if (formData.title.length < 5 || formData.title.length > 100) {
+      toast.error('Заголовок должен содержать не менее 5 символов и не более 100.');
       return;
     }
   

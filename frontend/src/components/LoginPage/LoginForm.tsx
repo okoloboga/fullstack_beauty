@@ -13,7 +13,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const LoginForm: React.FC = () => {
   // Состояние для данных формы авторизации
   const [formData, setFormData] = useState<LoginFormData>({
-    username: '',
+    email: '',
     password: '',
   });
 
@@ -61,10 +61,10 @@ const LoginForm: React.FC = () => {
         <div className="form__input centered-input">
           <input
             type="text"
-            name="username"
-            placeholder="Имя пользователя"
+            name="email"
+            placeholder="E-mail"
             className="default__input form__post"
-            value={formData.username}
+            value={formData.email}
             onChange={handleChange}
             required
           />

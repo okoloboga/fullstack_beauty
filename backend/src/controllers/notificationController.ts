@@ -5,17 +5,17 @@ import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 
 // Получить все уведомления пользователя
 export const getUserNotifications = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const userId = req.user?.userId;
-    console.log(`Запрос на получение уведомлений для пользователя с id: ${userId}`);
+    const user = req.user?.user;
+    console.log(`Запрос на получение уведомлений для пользователя с id: ${user}`);
 
     try {
         const notificationRepository = AppDataSource.getRepository(Notification);
         const notifications = await notificationRepository.find({
-            where: { recipient: { id: userId } },
+            where: { recipient: { id: user } },
             order: { id: "DESC" },
         });
 
-        console.log(`Уведомления для пользователя с id: ${userId} успешно получены`);
+        console.log(`Уведомления для пользователя с id: ${user} успешно получены`);
         res.status(200).json(notifications);
     } catch (error) {
         console.error("Ошибка при получении уведомлений пользователя:", error);

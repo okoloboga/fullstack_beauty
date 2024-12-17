@@ -2,24 +2,26 @@ import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware"; // Импортируем интерфейс с типизацией для req
 import { LikeDislike } from "../models/LikeDislike";
 import { AppDataSource } from "../config/db"; // Импортируем DataSource
-import { Article, News } from "../models/ContentEntity";
+import { Content } from "../models/Content";
 
 // Получаем репозиторий через DataSource
 const likeDislikeRepository = AppDataSource.getRepository(LikeDislike);
-const articleRepository = AppDataSource.getRepository(Article);
-const newsRepository = AppDataSource.getRepository(News);
+const contentRepository = AppDataSource.getRepository(Content);
 
-// Добавить лайк
-export const addLike = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const { contentId, contentType } = req.body;
+// Добавить лайк или дизлайк
+export const addLikeDislike = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const { contentId, type } = req.body; // Получаем contentId и type (like/dislike)
+    const user = req.user?.user;
+
+    if (type !== 'like' && type !== 'dislike') {
+        res.status(400).json({ message: "Invalid type, must be 'like' or 'dislike'" });
+        return;
+    }
 
     try {
-        let content;
-        if (contentType === 'article') {
-            content = await articleRepository.findOneBy({ id: contentId });
-        } else if (contentType === 'news') {
-            content = await newsRepository.findOneBy({ id: contentId });
-        }
+        const content = await contentRepository.findOneBy({ id: contentId });
+
+        console.log(`Ставим ${type} пользователем:`, req.user, 'для контента:', req.body);
 
         if (!content) {
             res.status(404).json({ message: "Контент не найден" });
@@ -29,123 +31,58 @@ export const addLike = async (req: AuthenticatedRequest, res: Response): Promise
         // Проверяем, есть ли уже лайк или дизлайк от этого пользователя
         const existingLikeDislike = await likeDislikeRepository.findOne({
             where: {
-                user: req.user, // Убедись, что `req.user` правильно типизирован
-                content: content,
+                user: req.user.id,
+                contentId: content.id,       // id контента
             },
         });
 
         if (existingLikeDislike) {
-            if (existingLikeDislike.type === 'like') {
-                res.status(400).json({ message: "Вы уже поставили лайк" });
+            if (existingLikeDislike.type === type) {
+                res.status(400).json({ message: `Вы уже поставили ${type}` });
                 return;
             } else {
-                // Если ранее был дизлайк, меняем его на лайк
-                existingLikeDislike.type = 'like';
+                // Если был лайк и мы получаем дизлайк или наоборот
+                existingLikeDislike.type = type;
                 await likeDislikeRepository.save(existingLikeDislike);
-                res.status(200).json({ message: "Дизлайк изменен на лайк" });
+
+                // Обновляем количество лайков и дизлайков
+                if (type === 'like') {
+                    await contentRepository.update(content.id, {
+                        likes: (content.likes || 0) + 1,
+                        dislikes: (content.dislikes || 0) - 1
+                    });
+                    res.status(200).json({ message: "Дизлайк изменен на лайк" });
+                } else {
+                    await contentRepository.update(content.id, {
+                        likes: (content.likes || 0) - 1,
+                        dislikes: (content.dislikes || 0) + 1
+                    });
+                    res.status(200).json({ message: "Лайк изменен на дизлайк" });
+                }
                 return;
             }
         }
 
-        const like = new LikeDislike();
-        like.user = req.user; // Привязываем пользователя
-        like.content = content;
-        like.type = 'like'; // Тип - лайк
+        // Записываем новый лайк или дизлайк
+        const likeDislike = new LikeDislike();
+        likeDislike.user = user; // Привязываем пользователя
+        likeDislike.contentId = content.id;
+        likeDislike.type = type; // Устанавливаем тип
 
-        await likeDislikeRepository.save(like);
-        res.status(201).json({ message: "Лайк добавлен" });
+        await likeDislikeRepository.save(likeDislike);
+
+        // Обновляем счетчики лайков и дизлайков
+        if (type === 'like') {
+            await contentRepository.update(content.id, { likes: (content.likes || 0) + 1 });
+            res.status(201).json({ message: "Лайк добавлен" });
+        } else {
+            await contentRepository.update(content.id, { dislikes: (content.dislikes || 0) + 1 });
+            res.status(201).json({ message: "Дизлайк добавлен" });
+        }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Ошибка при добавлении лайка" });
+        console.error("Ошибка при добавлении лайка или дизлайка:", error);
+        res.status(500).json({ message: "Ошибка при добавлении лайка или дизлайка" });
     }
 };
 
-// Добавить дизлайк
-export const addDislike = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const { contentId, contentType } = req.body;
 
-    try {
-        let content;
-        if (contentType === 'article') {
-            content = await articleRepository.findOneBy({ id: contentId });
-        } else if (contentType === 'news') {
-            content = await newsRepository.findOneBy({ id: contentId });
-        }
-
-        if (!content) {
-            res.status(404).json({ message: "Контент не найден" });
-            return;
-        }
-
-        // Проверяем, есть ли уже лайк или дизлайк от этого пользователя
-        const existingLikeDislike = await likeDislikeRepository.findOne({
-            where: {
-                user: req.user,
-                content: content,
-            },
-        });
-
-        if (existingLikeDislike) {
-            if (existingLikeDislike.type === 'dislike') {
-                res.status(400).json({ message: "Вы уже поставили дизлайк" });
-                return;
-            } else {
-                // Если ранее был лайк, меняем его на дизлайк
-                existingLikeDislike.type = 'dislike';
-                await likeDislikeRepository.save(existingLikeDislike);
-                res.status(200).json({ message: "Лайк изменен на дизлайк" });
-                return;
-            }
-        }
-
-        const dislike = new LikeDislike();
-        dislike.user = req.user; // Привязываем пользователя
-        dislike.content = content;
-        dislike.type = 'dislike'; // Тип - дизлайк
-
-        await likeDislikeRepository.save(dislike);
-        res.status(201).json({ message: "Дизлайк добавлен" });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Ошибка при добавлении дизлайка" });
-    }
-};
-
-// Удалить лайк или дизлайк
-export const removeLikeDislike = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const { contentId, contentType } = req.body; // Получаем contentId и contentType (article или news)
-
-    try {
-        let content;
-        if (contentType === 'article') {
-            content = await articleRepository.findOneBy({ id: contentId });
-        } else if (contentType === 'news') {
-            content = await newsRepository.findOneBy({ id: contentId });
-        }
-
-        if (!content) {
-            res.status(404).json({ message: "Контент не найден" });
-            return;
-        }
-
-        // Ищем существующий лайк или дизлайк
-        const likeDislike = await likeDislikeRepository.findOne({
-            where: { 
-                user: req.user, // Проверяем, что это тот же пользователь
-                content: content, // И контент должен совпадать
-            }
-        });
-
-        if (!likeDislike) {
-            res.status(404).json({ message: "Лайк или дизлайк не найден" });
-            return;
-        }
-
-        // Удаляем лайк или дизлайк
-        await likeDislikeRepository.remove(likeDislike);
-        res.status(204).json({ message: "Лайк или дизлайк удалён" });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Ошибка при удалении лайка или дизлайка" });
-    }
-};

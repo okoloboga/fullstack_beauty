@@ -1,19 +1,21 @@
 import "reflect-metadata";
 import express from "express";
-import cors from "cors"; // Импортируем CORS
+import cors from "cors";
 import userRoutes from "./routes/userRoutes";
-import articleRoutes from "./routes/articleRoutes";
+import contentRoutes from "./routes/contentRoutes";
 import commentRoutes from "./routes/commentRoutes";
 import favoriteRoutes from "./routes/favoriteRoutes";
 import likeDislokeRoutes from "./routes/likeDislikeRoutes";
 import adminRoutes from "./routes/adminRoutes";
-import newsRoutes from "./routes/newsRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
 import { AppDataSource } from "./config/db";
 import path from 'path';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
-const PORT = parseInt(process.env.PORT as string, 10) || 5000;
+const PORT = parseInt(process.env.PORT as string, 10);
 
 // Определяем параметры CORS
 const allowedOrigins = [
@@ -59,17 +61,16 @@ AppDataSource.initialize()
 
         // Роуты
         app.use("/api/users", userRoutes);
-        app.use("/api/articles", articleRoutes);
+        app.use("/api/articles", contentRoutes);
         app.use("/api/comments", commentRoutes);
         app.use("/api/favorite", favoriteRoutes);
         app.use("/api/likedislike", likeDislokeRoutes);
         app.use("/api/admin", adminRoutes);
-        app.use("/api/news", newsRoutes);
         app.use("/api/notifications", notificationRoutes);
 
         // Запуск сервера
         app.listen(PORT, '0.0.0.0', () => {
-            console.log(`Server is running on http://${process.env.HOST || 'localhost'}:${PORT}`);
+            console.log(`Server is running on http://${process.env.HOST}:${PORT}`);
         });
     })
     .catch((error) => console.log("Database connection error:", error));

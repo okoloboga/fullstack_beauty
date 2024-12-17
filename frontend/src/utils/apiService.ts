@@ -148,7 +148,7 @@ export const createNews = async (formData: FormData, token: string) => {
   };
 
 // Функция для загрузки данных профиля
-export const fetchUserProfile = async (userId: string): Promise<any> => {
+export const fetchUserProfile = async (user: string): Promise<any> => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -156,7 +156,7 @@ export const fetchUserProfile = async (userId: string): Promise<any> => {
         throw new Error('Токен авторизации отсутствует');
       }
   
-      const response = await axiosInstance.get(`${apiUrl}/api/users/profile/${userId}`, {
+      const response = await axiosInstance.get(`${apiUrl}/api/users/profile/${user}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -174,7 +174,7 @@ export const fetchUserProfile = async (userId: string): Promise<any> => {
   };
 
 // Функция для получения избранных статей и новостей пользователя
-export const fetchUserFavorites = async (userId: string): Promise<any> => {
+export const fetchUserFavorites = async (user: string): Promise<any> => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -188,7 +188,9 @@ export const fetchUserFavorites = async (userId: string): Promise<any> => {
       },
     });
 
-    return response.data.favorites; // Возвращаем список избранных
+    console.log('Полученные избранные статьи:', response.data)
+    
+    return response.data; // Возвращаем список избранных
   } catch (error) {
     console.error('Ошибка при загрузке списка избранных:', error);
     if (axios.isAxiosError(error)) {
@@ -229,7 +231,7 @@ export const fetchUserArticles = async (): Promise<any> => {
 
 // Функция для обновления профиля пользователя
 export const updateUserProfile = async (
-    userId: string,
+    user: string,
     formData: any,
     profileImage: File | null,
     portfolioImage: File | null
@@ -260,7 +262,7 @@ export const updateUserProfile = async (
       }
   
       // Отправляем запрос на обновление данных профиля
-      const response = await axiosInstance.put(`${apiUrl}/api/users/profile/${userId}`, formDataToSend, {
+      const response = await axiosInstance.put(`${apiUrl}/api/users/profile/${user}`, formDataToSend, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -289,10 +291,10 @@ export const updateUserProfile = async (
   };
 
 // Функция для регистрации пользователя
-export const registerUser = async (username: string, password: string): Promise<void> => {
+export const registerUser = async (email: string, password: string): Promise<void> => {
     try {
       const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/users/register`, {
-        username,
+        email,
         password,
       });
       console.log('Успешная регистрация:', response.data);
@@ -305,6 +307,43 @@ export const registerUser = async (username: string, password: string): Promise<
       }
     }
   };
+
+  export const confirmEmail = async (token: string): Promise<any> => {
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/users/confirm-email?token=${token}`);
+      return response.data; // Возвращаем ответ от сервера
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      if (err.response) {
+        return err.response.data?.message || 'Ошибка при подтверждении почты'; // Возвращаем сообщение об ошибке
+      } else {
+        return 'Ошибка при подтверждении почты, попробуйте еще раз'; // Если нет ответа от сервера
+      }
+    }
+  };
+
+// Функция для запроса на восстановление пароля
+export const requestPasswordReset = async (email: string): Promise<void> => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/request-password-reset`, { email });
+    console.log(response.data.message);
+  } catch (error) {
+    console.error('Ошибка при запросе на восстановление пароля:', error);
+  }
+};
+
+// Функция для обновления пароля
+export const resetPassword = async (token: string, newPassword: string): Promise<void> => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/reset-password`, {
+      token,
+      newPassword,
+    });
+    console.log(response.data.message);
+  } catch (error) {
+    console.error('Ошибка при обновлении пароля:', error);
+  }
+};
 
   // Функция отправки контактных данных на сервер
 export const sendContactMessage = async (formData: ContactFormData): Promise<void> => {
@@ -329,7 +368,7 @@ export const sendContactMessage = async (formData: ContactFormData): Promise<voi
   };
 
 // Функция для добавления лайка
-export const toggleLike = async (contentId: number, contentType: 'article' | 'news'): Promise<void> => {
+export const toggleLike = async (contentId: number, type: string ): Promise<void> => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -338,8 +377,8 @@ export const toggleLike = async (contentId: number, contentType: 'article' | 'ne
     }
 
     const response = await axiosInstance.post(
-      `${apiUrl}/api/likedislike/like`,
-      { contentId, contentType },  // Отправляем в теле запроса
+      `${apiUrl}/api/likedislike`,
+      { contentId, type },  // Отправляем в теле запроса
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -355,7 +394,7 @@ export const toggleLike = async (contentId: number, contentType: 'article' | 'ne
 };
 
 // Функция для добавления дизлайка
-export const toggleDislike = async (contentId: number, contentType: 'article' | 'news'): Promise<void> => {
+export const toggleDislike = async (contentId: number, type: string ): Promise<void> => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -364,8 +403,8 @@ export const toggleDislike = async (contentId: number, contentType: 'article' | 
     }
 
     const response = await axiosInstance.post(
-      `${apiUrl}/api/likedislike/dislike`,
-      { contentId, contentType },  // Отправляем в теле запроса
+      `${apiUrl}/api/likedislike`,
+      { contentId, type },  // Отправляем в теле запроса
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -379,3 +418,96 @@ export const toggleDislike = async (contentId: number, contentType: 'article' | 
     toast.error('Ошибка при добавлении дизлайка');
   }
 };
+
+// Функция для добавления комментария
+export const createComment = async (articleId: number, content: string): Promise<void> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      throw new Error('Токен авторизации отсутствует');
+    }
+
+    const response = await axiosInstance.post(
+      `${apiUrl}/api/comments`, // Путь к эндпоинту создания комментария
+      { articleId, content }, // Отправляем тело запроса с ID статьи и текстом комментария
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    toast.success(response.data.message); // Выводим сообщение об успехе
+  } catch (error) {
+    console.error('Ошибка при создании комментария:', error);
+    toast.error('Ошибка при создании комментария');
+  }
+};
+
+// Функция для добавления/удаления из избранного
+export const toggleFavorite = async (contentId: number): Promise<void> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      throw new Error('Токен авторизации отсутствует');
+    }
+
+    const response = await axios.post(
+      `${apiUrl}/api/favorite`,  // Ваш эндпоинт
+      { contentId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    toast.success(response.data.message);  // Показываем уведомление об успешной операции
+  } catch (error) {
+    console.error('Ошибка при добавлении/удалении из избранного:', error);
+    toast.error('Ошибка при добавлении/удалении из избранного');
+  }
+};
+
+// Функция для удаления комментария
+export const deleteComment = async (commentId: number): Promise<void> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      throw new Error('Токен авторизации отсутствует');
+    }
+
+    const response = await axiosInstance.delete(
+      `${apiUrl}/api/comments/${commentId}`, // Путь к эндпоинту удаления комментария
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    toast.success(response.data.message); // Выводим сообщение об успехе
+  } catch (error) {
+    console.error('Ошибка при удалении комментария:', error);
+    toast.error('Ошибка при удалении комментария');
+  }
+};
+
+
+export const fetchComments = async (articleId: number): Promise<any> => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/api/comments/${articleId}`
+    );
+
+    return response.data.comments;
+  } catch (error) {
+    console.error("Ошибка при получении комментариев:", error);
+    throw new Error("Ошибка при получении комментариев");
+  }
+};
+
+

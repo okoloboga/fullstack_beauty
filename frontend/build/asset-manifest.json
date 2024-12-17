@@ -1,0 +1,36 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1507371c.css",
+    "main.js": "/static/js/main.c172e188.js",
+    "static/media/second__section__girls.png": "/static/media/second__section__girls.667638352f876b53991d.png",
+    "static/media/second__section__girl4.png": "/static/media/second__section__girl4.b3ef43e24f13f5fba7c4.png",
+    "static/media/second__section__girl3.png": "/static/media/second__section__girl3.3190134e03e9b5c0b9a7.png",
+    "static/media/eye-icon.svg": "/static/media/eye-icon.6b585680fb2c5e1449c5d68ead16b24c.svg",
+    "static/media/user.svg": "/static/media/user.b0234b43f3d77069afd09f0f6c63488b.svg",
+    "static/media/no-image.png": "/static/media/no-image.0e049a3860b0e7e6c2f1.png",
+    "static/media/dislike.svg": "/static/media/dislike.4d7d9eb43414cc4b46ab4ad5babb2b43.svg",
+    "static/media/like.svg": "/static/media/like.2f48d972ac87f5fe3d570ea15feb4ed9.svg",
+    "static/media/girl.svg": "/static/media/girl.b138e28912db873e05638aceee76d04d.svg",
+    "static/media/second__section__girl.png": "/static/media/second__section__girl.60dc380a051f6bfdc17c.png",
+    "static/media/second__section__girl2.png": "/static/media/second__section__girl2.7c85e31b27a1803a7c4b.png",
+    "static/media/logo.svg": "/static/media/logo.77ddf585e2c21c6e1434e00662b73584.svg",
+    "static/media/instagram.svg": "/static/media/instagram.f106d26e5e39f597785a5760c82fc613.svg",
+    "static/media/vk.svg": "/static/media/vk.cc90853ed51fdf362191391320883c25.svg",
+    "static/media/comments.svg": "/static/media/comments.594675c5df3d84b034449ba18427aa84.svg",
+    "static/media/filter-icon.svg": "/static/media/filter-icon.47bdd817dd36691531ce2c92801e4b7e.svg",
+    "static/media/add-file.svg": "/static/media/add-file.29cc3080967504d9c2064125d381c0e8.svg",
+    "static/media/telegram.svg": "/static/media/telegram.b8ce5c880f13cad474e0b378ffa55407.svg",
+    "index.html": "/index.html",
+    "static/media/facebook.svg": "/static/media/facebook.3f78ff42926afc2edc448c6e24e98dbd.svg",
+    "static/media/search.svg": "/static/media/search.ae22ead11d0f3f83c365.svg",
+    "static/media/star.svg": "/static/media/star.39b0d5fd9ec8e07dd139b3f85a932966.svg",
+    "static/media/top-arrow.svg": "/static/media/top-arrow.ef1b929077e930c0150ae04f42d9a574.svg",
+    "static/media/right-arrow.svg": "/static/media/right-arrow.9d0846004eec923d80cf7a0969d55178.svg",
+    "main.1507371c.css.map": "/static/css/main.1507371c.css.map",
+    "main.c172e188.js.map": "/static/js/main.c172e188.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1507371c.css",
+    "static/js/main.c172e188.js"
+  ]
+}

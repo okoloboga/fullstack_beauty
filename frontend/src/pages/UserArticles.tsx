@@ -18,6 +18,7 @@ const UserArticles: React.FC = () => {
 
       try {
         const articlesData = await fetchUserArticles(); // Получаем статьи пользователя
+        console.log('Статьи пользователя:', articlesData);
         setArticles(articlesData); // Сохраняем их в состояние
       } catch (error) {
         toast.error('Не удалось загрузить статьи');

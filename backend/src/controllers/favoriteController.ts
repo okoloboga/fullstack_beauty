@@ -1,69 +1,116 @@
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware"; // Импортируем интерфейс с типизацией для req
 import { Favorite } from "../models/Favorite";
-import { Article, News } from "../models/ContentEntity";
+import { Content } from "../models/Content";
 import { AppDataSource } from "../config/db"; // Импортируем DataSource
 
 // Получаем репозиторий через DataSource
 const favoriteRepository = AppDataSource.getRepository(Favorite);
-const articleRepository = AppDataSource.getRepository(Article);
-const newsRepository = AppDataSource.getRepository(News);
+const contentRepository = AppDataSource.getRepository(Content);
 
-// Добавить статью или новость в избранное
-export const addToFavorites = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const { contentId, contentType } = req.body;
+// Добавить или удалить статью или новость из избранного
+export const toggleFavorite = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const { contentId } = req.body;
+    const user = req.user?.user;
+
+    console.log('Добавляем статью', contentId, 'в избранное к пользователю', user);
 
     try {
-        let content;
-        if (contentType === 'article') {
-            content = await articleRepository.findOneBy({ id: contentId });
-        } else if (contentType === 'news') {
-            content = await newsRepository.findOneBy({ id: contentId });
+        // Ищем запись в избранном для текущего пользователя
+        const existingFavorite = await favoriteRepository.findOne({
+            where: {
+                user: user,
+                contentId: contentId,
+            },
+        });
+
+        if (existingFavorite) {
+            // Если запись найдена, удаляем её из избранного и уменьшаем счетчик
+            await favoriteRepository.remove(existingFavorite);
+
+            // Уменьшаем счетчик favoritesCount для контента
+            const content = await contentRepository.findOneBy({ id: contentId });
+            if (content && content.favoritesCount > 0) {
+                content.favoritesCount -= 1; // Уменьшаем счетчик
+                await contentRepository.save(content); // Сохраняем обновленный контент
+            
+
+            res.status(200).json({ message: "Контент удален из избранного" });
+        } else {
+
+            // Если записи нет, добавляем её в избранное и увеличиваем счетчик
+            const favorite = new Favorite();
+            favorite.user = user;
+            favorite.contentId = contentId;
+
+            // Сохраняем запись в базе данных
+            await favoriteRepository.save(favorite);
+
+            const article = await contentRepository.findOneBy({ id: contentId });
+            if (content) {
+                content.favoritesCount = (content.favoritesCount || 0) + 1; // Увеличиваем счетчик
+                await contentRepository.save(content); // Сохраняем обновленный контент
+            }
+            }
+
+            res.status(201).json({ message: "Контент добавлен в избранное" });
         }
-
-        if (!content) {
-            res.status(404).json({ message: "Контент не найден" });
-            return
-        }
-
-        // Создаем запись в избранном
-        const favorite = new Favorite();
-        favorite.user = req.user; // Привязываем пользователя из токена
-        favorite.content = content;
-
-        await favoriteRepository.save(favorite);
-        res.status(201).json({ message: "Контент добавлен в избранное" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Ошибка при добавлении в избранное" });
+        res.status(500).json({ message: "Ошибка при добавлении или удалении из избранного" });
     }
 };
 
 export const getUserFavorites = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const userId = req.user?.userId; // Получаем id пользователя из токена
-  
-    if (!userId) {
-      res.status(401).json({ message: "User not authenticated" });
-      return;
+    const user = req.user?.user; // Получаем id пользователя из токена
+    console.log('Получаем избранные статьи пользователя:', user);
+
+    if (!user) {
+        res.status(401).json({ message: "User not authenticated" });
+        return;
     }
-  
+
     try {
-      // Получаем все избранные записи пользователя
-      const favoritesRepository = AppDataSource.getRepository(Favorite);
-      const favorites = await favoritesRepository.find({
-        where: { user: { id: userId } },
-        relations: ["content"], // Подключаем связи с контентом (статья или новость)
-      });
-  
-      // Извлекаем контент из избранных записей
-      const contentItems = favorites.map(favorite => favorite.content);
-  
-      res.status(200).json({ favorites: contentItems }); // Отправляем контент в ответ
+        // Получаем все избранные записи пользователя, ищем по user.id
+        const favoritesRepository = AppDataSource.getRepository(Favorite);
+        const favorites = await favoritesRepository.find({
+            where: { user: { id: user } }
+        });
+
+        if (favorites.length === 0) {
+            res.status(404).json({ message: "Нет избранных статей данного пользователя" });
+            return;
+        }
+
+        // Извлекаем contentId и contentType из избранных записей
+        const contentIds = favorites.map(favorite => ({
+            contentId: favorite.contentId,
+        }));
+        
+        // Получаем статьи на основе contentIds
+        const contentRepository = AppDataSource.getRepository(Content);
+        const content = await contentRepository.find({
+            where: contentIds.map(content => ({
+                id: content.contentId, // Находим статью по contentId
+            })),
+            relations: ["author"], // Загружаем связь с автором, если она нужна
+        });
+
+        // Если статьи не найдены
+        if (content.length === 0) {
+            res.status(404).json({ message: "Нет избранных статей" });
+            return;
+        }
+
+        // Отправляем массив статей
+        res.status(200).json(content);
+
     } catch (error) {
-      console.error("Error fetching user favorites:", error);
-      res.status(500).json({ message: "Internal server error" });
+        console.error("Error fetching user favorites:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-  };
+};
+
 
 // Удалить статью или новость из избранного
 export const removeFromFavorites = async (req: AuthenticatedRequest, res: Response): Promise<void> => {

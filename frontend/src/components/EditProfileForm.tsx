@@ -14,7 +14,6 @@ const EditProfileForm: React.FC = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [portfolioImage, setPortfolioImage] = useState<File | null>(null); // Изменено на один файл
   const [formData, setFormData] = useState<ProfileData>({
-    email: '',
     password: '',
     name: '',
     city: '',
@@ -36,7 +35,7 @@ const EditProfileForm: React.FC = () => {
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.userId;
+        return payload.user;
       } catch (error) {
         console.error('Ошибка при декодировании токена:', error);
         return null;
@@ -45,18 +44,18 @@ const EditProfileForm: React.FC = () => {
     return null;
   };
 
-  const userId = getUserIdFromToken();
+  const user = getUserIdFromToken();
 
   // Загрузка данных профиля при загрузке компонента
   useEffect(() => {
-    if (!userId) {
+    if (!user) {
       toast.error('Ошибка: ID пользователя не найден');
       return;
     }
 
     const loadProfile = async () => {
       try {
-        const profileData = await fetchUserProfile(userId); // Используем функцию из сервиса
+        const profileData = await fetchUserProfile(user); // Используем функцию из сервиса
         console.log('Данные профиля:', profileData);
         setFormData(profileData);
         setPortfolioImage(null); // Очищаем состояние для загруженного файла, если он был ранее
@@ -68,7 +67,7 @@ const EditProfileForm: React.FC = () => {
     };
 
     loadProfile();
-  }, [userId]);
+  }, [user]);
 
   // Обработчик изменения полей формы
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -137,13 +136,13 @@ const EditProfileForm: React.FC = () => {
 
   // Обработчик обновления профиля
   const handleProfileUpdate = async () => {
-    if (!userId) {
+    if (!user) {
       toast.error('Ошибка: ID пользователя не найден');
       return;
     }
 
     try {
-      const response = await updateUserProfile(userId, formData, profileImage, portfolioImage);
+      const response = await updateUserProfile(user, formData, profileImage, portfolioImage);
       console.log('Профиль успешно обновлен:', response);
       setFormData((prev) => ({
         ...prev,
@@ -197,29 +196,6 @@ const EditProfileForm: React.FC = () => {
         
         {/* Поле для E-mail */}
         <div className="container">
-          <div className="form__field">
-            <p>E-Mail</p>
-            <div className="form__input">
-              <input
-                type="email"
-                name="email"
-                placeholder="E-mail"
-                className="default__input"
-                value={formData.email ?? ''}
-                onChange={handleChange}
-              />
-              <svg
-                width="21"
-                height="21"
-                viewBox="0 0 21 21"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* SVG path here */}
-              </svg>
-            </div>
-          </div>
-
           {/* Поле для пароля */}
           <div className="form__field">
             <p>Новый Пароль</p>

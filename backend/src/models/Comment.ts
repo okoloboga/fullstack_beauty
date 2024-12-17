@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from "typeorm";
 import { User } from "./User";
-import { ContentEntity } from "./ContentEntity";
 
 @Entity()
 export class Comment {
@@ -10,8 +9,8 @@ export class Comment {
     @ManyToOne(() => User, (user) => user.id)
     user!: User;
 
-    @ManyToOne(() => ContentEntity, (content) => content.id) // Связь с любой сущностью, которая наследует ContentEntity
-    content!: ContentEntity;  // Это может быть и статья, и новость
+    @Column({ nullable: true })
+    contentId?: number;  // ID контента (статья или новость)
 
     @Column()
     contentText!: string;  // Текст комментария

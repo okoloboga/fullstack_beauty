@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
-import { fetchArticle, toggleDislike, toggleLike } from '../utils/apiService'; // Импортируем функцию
-import { ArticleDetail } from '../types';
+import { fetchArticle, toggleDislike, toggleLike, createComment, fetchComments, toggleFavorite } from '../utils/apiService'; // Импортируем функцию
+import { ArticleDetail, ContentComment } from '../types';
 import './styles/ArticleDetailPage.css';
 import eyeIcon from '../assets/images/eye-icon.svg';
 import rightArrow from '../assets/images/right-arrow.svg';
 import likes from '../assets/images/like.svg';
 import dislikes from '../assets/images/dislike.svg';
 import star from '../assets/images/star.svg';
-import comments from '../assets/images/comments.svg';
+import commentsIcon from '../assets/images/comments.svg';
 import ConnectSection from '../components/MainContent/ConnectSection';
 
 const ArticleDetailPage: React.FC = () => {
@@ -17,28 +18,45 @@ const ArticleDetailPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
-  const [newComment, setNewComment] = useState<string>('');
+  const [comments, setComments] = useState<ContentComment[]>([]);
   const [liked, setLiked] = useState<boolean>(false); // Состояние для лайка
   const [disliked, setDisliked] = useState<boolean>(false); // Состояние для дизлайка
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [newComment, setNewComment] = useState<string>('');
 
+  // Функция для получения данных о статье
+  const getArticle = async () => {
+    try {
+      if (id) {
+        const data = await fetchArticle(id); // Вызов функции из articleService
+        setArticle(data);
+        setLiked(data.likes > 0); // Устанавливаем состояние лайка
+        setDisliked(data.dislikes > 0); // Устанавливаем состояние дизлайка
+      } else {
+        setError('Невалидный идентификатор статьи');
+      }
+    } catch (err) {
+      setError('Ошибка при загрузке статьи');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Функция для получения комментариев
+  const getCommentsForArticle = async () => {
+    try {
+      if (id) {
+        const data = await fetchComments(Number(id)); // Получаем комментарии для статьи
+        setComments(data);
+      }
+    } catch (err) {
+      toast.error("Ошибка при загрузке комментариев");
+    }
+  };
 
   useEffect(() => {
-    const getArticle = async () => {
-      try {
-        if (id) {
-          const data = await fetchArticle(id); // Вызов функции из articleService
-          setArticle(data);
-        } else {
-          setError('Невалидный идентификатор статьи');
-        }
-      } catch (err) {
-        setError('Ошибка при загрузке статьи');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getArticle(); // Вызываем getArticle без проверки id в зависимости
+    getCommentsForArticle();  
+    getArticle(); // Загружаем статью при монтировании компонента
   }, [id]);
 
   if (loading) {
@@ -77,37 +95,92 @@ const ArticleDetailPage: React.FC = () => {
     );
   };
 
-  const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewComment(e.target.value); // Обновляем состояние при изменении текста комментария
-  };
-
-  const handleCommentSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newComment.trim()) {
-      // Здесь можно отправить комментарий на сервер (например, через API).
-      console.log("Новый комментарий:", newComment);
-      setNewComment(''); // Очистить поле ввода после отправки
-    }
-  };
-
   // Функции для обработки лайков и дизлайков
   const handleLikeClick = async () => {
-    if (liked) {
-      setLiked(false); // Если лайк уже поставлен, убираем его
-      await toggleLike(article.id, 'article'); // Вызов функции для убирания лайка
-    } else {
-      setLiked(true); // Если лайк не поставлен, ставим
-      await toggleLike(article.id, 'article'); // Вызов функции для добавления лайка
+    try {
+      if (liked) {
+        setLiked(false); // Если лайк уже поставлен, убираем его
+        await toggleLike(article!.id, 'like'); // Вызов функции для убирания лайка
+      } else {
+        setLiked(true); // Если лайк не поставлен, ставим
+        await toggleLike(article!.id, 'like'); // Вызов функции для добавления лайка
+      }
+
+      // Перезапрашиваем данные о статье после изменения лайка
+      getArticle();
+    } catch (err) {
+      console.error('Ошибка при обработке лайка:', err);
     }
   };
 
   const handleDislikeClick = async () => {
-    if (disliked) {
-      setDisliked(false); // Если дизлайк уже поставлен, убираем его
-      await toggleDislike(article.id, 'article'); // Вызов функции для убирания дизлайка
+    try {
+      if (disliked) {
+        setDisliked(false); // Если дизлайк уже поставлен, убираем его
+        await toggleDislike(article!.id, 'dislike'); // Вызов функции для убирания дизлайка
+      } else {
+        setDisliked(true); // Если дизлайк не поставлен, ставим
+        await toggleDislike(article!.id, 'dislike'); // Вызов функции для добавления дизлайка
+      }
+
+      // Перезапрашиваем данные о статье после изменения дизлайка
+      getArticle();
+    } catch (err) {
+      console.error('Ошибка при обработке дизлайка:', err);
+    }
+  };
+
+  // Обработчик клика для добавления/удаления из избранного
+  const handleFavoriteClick = async () => {
+    try {
+      if (isFavorite) {
+        setIsFavorite(false);  // Если контент уже в избранном, убираем его
+        await toggleFavorite(article!.id);  // Убираем из избранного
+      } else {
+        setIsFavorite(true);  // Если контент не в избранном, добавляем его
+        await toggleFavorite(article!.id);  // Добавляем в избранное
+      }
+    } catch (err) {
+      console.error('Ошибка при обработке избранного:', err);
+    }
+  };
+
+  const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewComment(e.target.value); // Обновляем состояние при изменении текста комментария
+  };
+
+  const handleCommentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    if (newComment.trim()) {
+      try {
+        // Попытка отправить комментарий
+        await createComment(article!.id, newComment);
+        
+        // Если комментарий успешно добавлен
+        toast.success('Комментарий успешно добавлен');
+        console.log('Новый комментарий:', newComment);
+  
+        // Обновляем список комментариев с новым добавленным комментарием
+        getCommentsForArticle()
+  
+        // Обновляем счетчик комментариев в статье
+        if (article) {
+          setArticle({
+            ...article,
+            comments: (article.comments || 0) + 1, // Увеличиваем счетчик
+          });
+        }
+  
+        // Очистить поле ввода после отправки
+        setNewComment('');
+      } catch (error) {
+        console.error('Ошибка при добавлении комментария:', error);
+        toast.error('Ошибка при добавлении комментария');
+      }
     } else {
-      setDisliked(true); // Если дизлайк не поставлен, ставим
-      await toggleDislike(article.id, 'article'); // Вызов функции для добавления дизлайка
+      // Если комментарий пустой
+      toast.warning('Комментарий не может быть пустым');
     }
   };
 
@@ -197,25 +270,25 @@ const ArticleDetailPage: React.FC = () => {
               <button onClick={handleLikeClick}>
                 <img src={likes} alt="Нравится" />
               </button>
-              <p>{article.likes}</p>
+              <p>{article.likes || 0}</p>
             </div>
             <div className="product__activity">
               <button onClick={handleDislikeClick}>
                 <img src={dislikes} alt="Не нравится" />
               </button>
-              <p>{article.dislikes}</p>
+              <p>{article.dislikes || 0}</p>
             </div>
             <div className="product__activity">
-              <div>
+              <button onClick={handleFavoriteClick}>
                 <img src={star} alt="Звезды" />
-              </div>
-              <p>{article.favoriteCount}</p>
+              </button>
+              <p>{article.favoritesCount || 0}</p>
             </div>
             <div className="product__activity">
               <div>
-                <img src={comments} alt="Комментарии" />
+                <img src={commentsIcon} alt="Комментарии" />
               </div>
-              <p>{article.comments && article.comments.length === 0 ? '0' : article.comments?.length}</p>
+              <p>{article.comments || 0}</p>
             </div>
           </div>
         </div>
@@ -244,15 +317,15 @@ const ArticleDetailPage: React.FC = () => {
         {/* Список комментариев */}
         <div className="product__comments">
           <div></div>
-            <div className="flex flex-column">
-            {article?.comments?.length === 0 ? (
+          <div className="flex flex-column">
+            {comments.length === 0 ? (
               <p>Нет комментариев</p>
             ) : (
-              article.comments?.map((comment) => (
+              comments.map((comment) => (
                 <div className="product__comment" key={comment.id}>
                   <div className="flex flex-column">
-                    <h3>{comment.user?.name}</h3>
-                    <p>{new Date(comment.createdAt).toLocaleString()}</p>
+                    <h3>{comment.user?.name || comment.user?.username}</h3>
+                    <p>{new Date(comment.createdAt).toLocaleString('ru-RU')}</p>
                   </div>
                   <div>
                     <p>{comment.contentText}</p>
@@ -262,6 +335,7 @@ const ArticleDetailPage: React.FC = () => {
             )}
           </div>
         </div>
+
       </section>
       <ConnectSection />
     </main>

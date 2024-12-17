@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
-import { Article } from './ContentEntity'; // Модель статьи
+import { Content } from './Content'; // Модель статьи
 
 @Entity()
 export class ArticleViewsByIP {
@@ -9,8 +9,8 @@ export class ArticleViewsByIP {
     @Column()
     ipAddress!: string;  // IP-адрес пользователя
 
-    @ManyToOne(() => Article, (article) => article.id)
-    article!: Article; // Связь с статьей
+    @ManyToOne(() => Content, (content) => content.id)
+    content!: Content; // Связь с статьей
 
     @CreateDateColumn({ type: 'timestamp' })
     viewedAt!: Date;  // Дата первого просмотра
