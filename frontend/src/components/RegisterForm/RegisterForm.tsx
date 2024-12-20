@@ -1,9 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { registerUser } from '../../utils/apiService';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // Импортируем toast
+import { toast } from 'react-toastify';
 import { RegisterFormData } from '../../types';
-import './RegisterForm.css';
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -36,7 +35,7 @@ const RegisterForm: React.FC = () => {
     try {
       // Отправляем запрос на сервер для регистрации
       await registerUser(formData.email, formData.password);
-      toast.success('Регистрация прошла успешно! Пожалуйста, войдите.');
+      toast.success(`На почту ${formData.email} выслано письмо для подтверждения регистрации`);
       navigate('/login');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Ошибка при регистрации');

@@ -12,7 +12,7 @@ import './CreateArticleForm.css';
 const CreateArticleForm: React.FC = () => {
   const [formData, setFormData] = useState<ContentFormData>({
     title: '',
-    content: '',
+    contentText: '',
     coverImage: null as File | null,
     contentImages: [] as ContentImage[],
     contentType: 'article'
@@ -205,14 +205,14 @@ const CreateArticleForm: React.FC = () => {
       return;
     }
   
-    if (formData.content.length < 50) {
+    if (formData.contentText.length < 50) {
       toast.error('Текст статьи должен содержать не менее 50 символов.');
       return;
     }
   
     const data = new FormData();
     data.append('title', formData.title);
-    data.append('content', formData.content);
+    data.append('contentText', formData.contentText);
   
     // Добавляем одно изображение для обложки
     if (formData.coverImage) {
@@ -276,10 +276,10 @@ const CreateArticleForm: React.FC = () => {
           </div>
           <textarea
             id="content"
-            name="content"
+            name="contentText"
             className="default__input article-input"
             rows={20}
-            value={formData.content}
+            value={formData.contentText}
             onChange={handleChange}
             required
           ></textarea>

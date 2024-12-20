@@ -8,27 +8,41 @@ import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 
 // Создать комментарий
 export const createComment = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const { contentId, commentContent } = req.body;
+    const { articleId, commentContent } = req.body;
     const user = req.user?.user;
 
-    console.log("Запрос на создание комментария");
+    console.log("Запрос на создание комментария для статьи", articleId, "текст комментария:", commentContent);
 
     try {
         const userRepository = AppDataSource.getRepository(User);
         const contentRepository = AppDataSource.getRepository(Content);
 
         const author = await userRepository.findOneBy({ id: user });
-        const content = await contentRepository.findOneBy({ id: contentId });
+        const content = await contentRepository.findOneBy({ id: articleId });
 
         if (!author) {
             console.warn(`Пользователь с id: ${user} не найден`);
-            res.status(404).json({ message: "User not found" });
+            res.status(404).json({ message: "Пользователь не найден" });
+            return;
+        }
+
+        const authorName = author.name;
+
+        if (!authorName) {
+            console.warn(`У пользователя ${author.id} не указан name`);
+            res.status(400).json({ message: "Не указано Имя пользователя"});
             return;
         }
 
         if (!content) {
-            console.warn(`Статья или новость с id: ${contentId} не найдена`);
-            res.status(404).json({ message: "Article or news not found" });
+            console.warn(`Статья с id: ${articleId} не найдена`);
+            res.status(404).json({ message: "Статья не найдена" });
+            return;
+        }
+
+        if (!commentContent) {
+            console.warn(`Отсутствует текст ${commentContent} комментария`);
+            res.status(400).json({ message: "Отутствует текст комментария"});
             return;
         }
 
@@ -60,22 +74,23 @@ export const createComment = async (req: AuthenticatedRequest, res: Response): P
             console.log(`Уведомление отправлено автору контента с id: ${contentAuthor.id}`);
         }
 
-        res.status(201).json({ message: "Comment added successfully", comment });
+        res.status(201).json({ message: "Комментарий успешно добавлен" });
     } catch (error) {
         console.error("Ошибка при создании комментария:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Внутренняя ошибка сервера" });
     }
 };
 
 export const getComments = async (req: Request, res: Response): Promise<void> => {
-    const { contentId } = req.params;
+    const { articleId } = req.params;
+    console.log('Получение комментариев для статьи', articleId);
 
     try {
         const commentRepository = AppDataSource.getRepository(Comment);
 
         // Получаем все комментарии, относящиеся к статье (articleId)
         const comments = await commentRepository.find({
-            where: { contentId: parseInt(contentId) },
+            where: { contentId: parseInt(articleId) },
             relations: ["user"],  // Для того чтобы получить информацию о пользователе (например, имя)
             order: {
                 createdAt: "DESC",  // Сортируем по дате создания (от новых к старым)

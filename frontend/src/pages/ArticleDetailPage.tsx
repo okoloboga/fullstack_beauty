@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 import { fetchContent, toggleDislike, toggleLike, createComment, fetchComments, toggleFavorite } from '../utils/apiService'; // Импортируем функцию
@@ -156,13 +157,12 @@ const ArticleDetailPage: React.FC = () => {
       try {
         // Попытка отправить комментарий
         await createComment(article!.id, newComment);
-        
+  
         // Если комментарий успешно добавлен
-        toast.success('Комментарий успешно добавлен');
         console.log('Новый комментарий:', newComment);
   
         // Обновляем список комментариев с новым добавленным комментарием
-        getCommentsForArticle()
+        await getCommentsForArticle();
   
         // Обновляем счетчик комментариев в статье
         if (article) {
@@ -174,9 +174,17 @@ const ArticleDetailPage: React.FC = () => {
   
         // Очистить поле ввода после отправки
         setNewComment('');
-      } catch (error) {
+      } catch (error: unknown) {
+        // Если возникает ошибка, мы её обрабатываем
         console.error('Ошибка при добавлении комментария:', error);
-        toast.error('Ошибка при добавлении комментария');
+  
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data?.message || 'Ошибка при добавлении комментария');
+        } else if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error('Произошла неизвестная ошибка');
+        }
       }
     } else {
       // Если комментарий пустой

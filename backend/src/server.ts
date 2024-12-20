@@ -61,7 +61,7 @@ AppDataSource.initialize()
 
         // Роуты
         app.use("/api/users", userRoutes);
-        app.use("/api/articles", contentRoutes);
+        app.use("/api/content", contentRoutes);
         app.use("/api/comments", commentRoutes);
         app.use("/api/favorite", favoriteRoutes);
         app.use("/api/likedislike", likeDislokeRoutes);

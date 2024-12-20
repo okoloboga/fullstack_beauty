@@ -22,70 +22,105 @@ const upload = multer({ storage });
 
 // Регистрация пользователя
 export const registerUser = async (req: Request, res: Response) => {
-    const { password, email } = req.body; // Добавляем email
-    console.log(`Запрос на регистрацию нового пользователя: ${email}`);
+    const { password, email } = req.body;
+    console.log(`[INFO] Запрос на регистрацию нового пользователя: ${email}`);
     
     const userRepository = AppDataSource.getRepository(User);
-    const user = await userRepository.findOneBy({ email });
-
-    console.log('User:', user);
-    
-    if (user) {
-        console.warn(`Пользователь с почтой: ${email} уже зарегистрирован`);
-        res.status(400).json({ message: "Пользователь с таким именем уже зарегистрирован" });
-        return;
-    }
 
     try {
+        // Проверка существования пользователя
+        console.log(`[DEBUG] Проверка существования пользователя с email: ${email}`);
+        const existingUser = await userRepository.findOneBy({ email });
+
+        if (existingUser) {
+            console.warn(`[WARN] Пользователь с почтой ${email} уже зарегистрирован`);
+            res.status(400).json({ message: "Пользователь с таким email уже зарегистрирован." });
+            return;
+        }
+
+        // Хэширование пароля
+        console.log(`[DEBUG] Хэширование пароля для email: ${email}`);
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Создание нового пользователя
+        console.log(`[DEBUG] Создание нового объекта User для email: ${email}`);
         const user = new User();
         user.password = hashedPassword;
         user.role = "admin";
-        user.email = email; // Сохраняем email
+        user.email = email;
+        user.isConfirmed = false;
 
-        // Генерация уникального токена подтверждения
+        // Генерация токена подтверждения
         const confirmationToken = uuidv4();
+        console.log(`[DEBUG] Сгенерирован токен подтверждения для email: ${email}`);
         user.confirmationToken = confirmationToken;
         user.confirmationTokenExpiration = new Date(Date.now() + 3600000); // Токен действителен 1 час
 
+        // Сохранение пользователя в БД
+        console.log(`[DEBUG] Сохранение пользователя в БД для email: ${email}`);
         await userRepository.save(user);
 
-        // Настройки для отправки письма
+        // Настройка почтового транспорта
+        console.log(`[DEBUG] Настройка почтового транспорта`);
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false, // true для порта 465, false для других портов
             auth: {
-                user: process.env.EMAIL_USER,  // Твой email
-                pass: process.env.EMAIL_PASS,  // Твой пароль приложения
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
             },
         });
+        
 
         // Ссылка на подтверждение регистрации
         const confirmationUrl = `http://localhost:3000/confirm-email?token=${confirmationToken}`;
+        console.log(`[DEBUG] Ссылка подтверждения: ${confirmationUrl}`);
 
-        // Письмо с подтверждением
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: email, // Отправляем на email пользователя
+            to: email,
             subject: 'Подтверждение регистрации',
             text: `Спасибо за регистрацию! Пожалуйста, подтвердите вашу почту, перейдя по ссылке: ${confirmationUrl}`,
         };
 
-        // Отправка письма
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.log('Ошибка при отправке письма:', error);
-            } else {
-                console.log('Письмо отправлено: ' + info.response);
-            }
-        });
+        // Обёртка sendMail в Promise
+        const sendMailAsync = (mailOptions: any): Promise<any> => {
+            console.log(`[DEBUG] Отправка письма начата для email: ${email}`);
+            return new Promise((resolve, reject) => {
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.error(`[ERROR] Ошибка при отправке письма: ${error.message}`);
+                        reject(error);
+                    } else {
+                        console.log(`[DEBUG] Письмо успешно отправлено: ${info.response}`);
+                        resolve(info);
+                    }
+                });
+            });
+        };
 
-        console.log(`Пользователь ${email} успешно зарегистрирован`);
-        res.status(201).json({ message: "Регистрация успешно завершена. Письмо с подтверждением отправлено." });
+        // Попытка отправки письма
+        console.log(`[DEBUG] Попытка отправки письма для email: ${email}`);
+        const mailInfo = await sendMailAsync(mailOptions);
+
+        console.log(`[INFO] Письмо отправлено успешно: ${mailInfo.response}`);
+        res.status(201).json({ message: "Регистрация завершена. Письмо с подтверждением отправлено." });
     } catch (error) {
-        console.error("Ошибка при регистрации пользователя:", error);
-        res.status(500).json({ message: "Внутренняя ошибка сервера" });
+        console.error(`[ERROR] Ошибка при обработке регистрации:`, error);
+
+        // Если пользователь был частично создан в БД, удаляем его
+        const partialUser = await userRepository.findOneBy({ email });
+        if (partialUser) {
+            console.log(`[DEBUG] Удаление частично созданного пользователя с email: ${email}`);
+            await userRepository.remove(partialUser);
+        }
+
+        res.status(500).json({ message: "Внутренняя ошибка сервера." });
     }
 };
+
+
 
 // Подтверждение email
 export const confirmEmail = async (req: Request, res: Response): Promise<void> => {
@@ -147,6 +182,14 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
+        const confirmed = user?.isConfirmed
+
+        if (!confirmed) {
+            console.warn(`Пользователь ${email} не завершил регистрацию`);
+            res.status(400).json({ message: "Почта не подтверждена!" });
+            return;
+        }
+
         const token = jwt.sign({ user: user.id, role: user.role }, "secret_key", { expiresIn: "1h" });
         console.log(`Пользователь ${email} успешно вошел в систему`);
         res.status(200).json({ token });
@@ -157,8 +200,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const requestPasswordReset = async (req: Request, res: Response): Promise<void> => {
-    const { email } = req.body;
-    console.log('Запрос на восстановление пароля:', email);
+    const { email } = req.body;;
   
     const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOneBy({ email });
@@ -214,7 +256,7 @@ export const requestPasswordReset = async (req: Request, res: Response): Promise
 // Восстановление пароля
 export const resetPassword = async (req: Request, res: Response): Promise<void> => {
     const { token, newPassword } = req.body;
-    console.log('Результат восстановления пароля');
+    console.log('Результат восстановления пароля:', newPassword);
 
     try {
         const userRepository = AppDataSource.getRepository(User);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import ArticleCard from '../components/ArticlesPage/ArticleCard';
 import { toast } from 'react-toastify';
+import ArticleCard from '../components/ArticlesPage/ArticleCard';
+import ConnectSection from '../components/MainContent/ConnectSection';
 import { fetchUserFavorites } from '../utils/apiService'; // Импортируем функцию для получения избранных
 
 const UserFavorites: React.FC = () => {
@@ -35,11 +35,17 @@ const UserFavorites: React.FC = () => {
   }
 
   return (
-    <div className="articles__div">
-      <h1>Мои Избранные</h1>
+    <main>
 
+      <section className="container">
+        <h1 className="title text-center main__title">Избранные</h1>
+      </section>
       {favorites.length === 0 ? (
-        <p>У вас нет избранных статей.</p>
+        <div className="text-center" style={{ marginTop: '20px' }}>
+          <a className="text-dark" href="/edit-profile" style={{ marginTop: '20px' }}>
+            У вас нет избранных статей! Вернуться
+          </a>
+        </div>
       ) : (
         <div className="articles__block__cards__div">
           <div className="articles__block__cards flex">
@@ -47,13 +53,15 @@ const UserFavorites: React.FC = () => {
               <ArticleCard key={favorite.id} article={favorite} />
             ))}
           </div>
+          <button className="button__with__bg" style={{ marginTop: '50px' }}>
+            Показать ещё
+          </button>
         </div>
       )}
 
-      <button className="button__with__bg" style={{ marginTop: '50px' }}>
-        Показать ещё
-      </button>
-    </div>
+      {/* Секция для связи с пользователями */}
+      <ConnectSection />
+    </main>
   );
 };
 

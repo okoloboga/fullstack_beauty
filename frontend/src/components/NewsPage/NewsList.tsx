@@ -51,7 +51,6 @@ const NewsList: React.FC<NewsListProps> = ({ type }) => {
   return (
     <div className="news__div">
       <div className="news__div__controls">
-        {/* Условно рендерим кнопку "Создать Новость" для админа */}
         {userRole === 'admin' && (
           <button className="create-news-btn button__with__bg">
             <Link to="/create-news">Создать Новость</Link>

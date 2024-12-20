@@ -77,12 +77,18 @@ export const createContent = [
                 return;
             }
 
+            if (!contentText || contentText.trim() === '') {
+                console.warn("Контент статьи отсутствует");
+                res.status(400).json({ message: "Content is required" });
+                return;
+            }
+
             // Преобразование images в массив URL-ов (если переданы изображения)
             const contentImages: string[] = files.contentImages
                 ? (files.contentImages as Express.Multer.File[]).map(file => `uploads/${file.filename}`)
                 : [];
 
-            console.log("URL-ы изображений:", );
+            console.log("URL-ы изображений:", contentImages);
 
             const content = new Content();
             content.title = title;

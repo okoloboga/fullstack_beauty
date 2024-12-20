@@ -18,7 +18,7 @@ const RegisterPage: React.FC = () => {
       </section>
 
       <div className="text-center" style={{ marginTop: '20px' }}>
-        <a href="/login" style={{ marginTop: '20px' }}>
+        <a className="text-dark" href="/login" style={{ marginTop: '20px' }}>
           Зарегистрированы? Войти
         </a>
       </div>

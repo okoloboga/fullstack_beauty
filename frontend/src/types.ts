@@ -32,7 +32,7 @@ export interface ContentImage {
   
 export interface ContentFormData {
     title: string;
-    content: string;
+    contentText: string;
     coverImage: File | null;
     contentImages: ContentImage[];
     contentType: string;

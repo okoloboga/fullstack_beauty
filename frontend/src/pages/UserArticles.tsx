@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { fetchUserArticles } from '../utils/apiService'; // Импортируем функцию для получения статей пользователя
 import ArticleCard from '../components/ArticlesPage/ArticleCard'; // Импортируем компонент карточки статьи
+import ConnectSection from '../components/MainContent/ConnectSection';
 
 const UserArticles: React.FC = () => {
   const [articles, setArticles] = useState<any[]>([]); // Состояние для статей
@@ -36,11 +37,16 @@ const UserArticles: React.FC = () => {
   }
 
   return (
-    <div className="articles__div">
-      <h1>Мои статьи</h1>
-
+    <main>
+      <section className="container">
+        <h1 className="title text-center main__title">Мои статьи</h1>
+      </section>
       {articles.length === 0 ? (
-        <p>У вас нет статей.</p>
+        <div className="text-center" style={{ marginTop: '20px' }}>
+          <a className="text-dark" href="/edit-profile" style={{ marginTop: '20px' }}>
+            У Вас нет статей! Вернуться
+          </a>
+        </div>
       ) : (
         <div className="articles__block__cards__div">
           <div className="articles__block__cards flex">
@@ -48,13 +54,14 @@ const UserArticles: React.FC = () => {
               <ArticleCard key={article.id} article={article} />
             ))}
           </div>
+          <button className="button__with__bg" style={{ marginTop: '50px' }}>
+            Показать ещё
+          </button>
         </div>
       )}
-
-      <button className="button__with__bg" style={{ marginTop: '50px' }}>
-        Показать ещё
-      </button>
-    </div>
+      {/* Секция для связи с пользователями */}
+      <ConnectSection />
+    </main>
   );
 };
 

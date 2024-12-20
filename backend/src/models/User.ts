@@ -50,7 +50,7 @@ export class User {
     @Column({ nullable: true })
     portfolioImage?: string;
 
-    @Column({ nullable: true })
+    @Column({ type: 'text', nullable: true })
     confirmationToken?: string | null;
   
     @Column({ type: 'timestamp', nullable: true })
@@ -59,7 +59,7 @@ export class User {
     @Column({ default: false })
     isConfirmed?: boolean;
 
-    @Column({ nullable: true })
+    @Column({ type: 'text', nullable: true })
     resetToken?: string | null;
   
     @Column({ type: 'timestamp', nullable: true })

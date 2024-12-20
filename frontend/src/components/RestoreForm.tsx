@@ -1,11 +1,9 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { AxiosError } from 'axios';
-import axiosInstance from '../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { RestoreFormData } from '../types';
 import { requestPasswordReset } from '../utils/apiService';
-import './LoginForm.css';
 
 const RestoreForm: React.FC = () => {
   // Состояние для данных формы восстановления пароля
@@ -30,15 +28,9 @@ const RestoreForm: React.FC = () => {
     e.preventDefault();
 
     try {
-      // Создаем FormData для отправки на сервер
-      const form = new FormData();
-      form.append('email', formData.email);
-
       // Отправляем запрос на backend для восстановления пароля
-      const message = await requestPasswordReset(form);
-      
-      // Уведомление об успешном запросе
-      toast.success(message || 'Ссылка для восстановления пароля отправлена на ваш email');
+      await requestPasswordReset(formData.email);
+      toast.success('Ссылка для восстановления пароля отправлена на ваш email');
       navigate('/login'); // Перенаправление на страницу входа
     } catch (error) {
       // Обрабатываем ошибки

@@ -19,13 +19,16 @@ export const toggleFavorite = async (req: AuthenticatedRequest, res: Response): 
         // Ищем запись в избранном для текущего пользователя
         const existingFavorite = await favoriteRepository.findOne({
             where: {
-                user: user,
+                user: { id: user },
                 contentId: contentId,
             },
         });
 
+        console.log('Существующая запись в избранном:', existingFavorite);
+
         if (existingFavorite) {
             // Если запись найдена, удаляем её из избранного и уменьшаем счетчик
+            console.log(`Статья уже ${contentId} находится у пользователя ${user} в избранном`);
             await favoriteRepository.remove(existingFavorite);
 
             // Уменьшаем счетчик favoritesCount для контента
@@ -33,12 +36,13 @@ export const toggleFavorite = async (req: AuthenticatedRequest, res: Response): 
             if (content && content.favoritesCount > 0) {
                 content.favoritesCount -= 1; // Уменьшаем счетчик
                 await contentRepository.save(content); // Сохраняем обновленный контент
-            
+            }
 
             res.status(200).json({ message: "Контент удален из избранного" });
         } else {
 
             // Если записи нет, добавляем её в избранное и увеличиваем счетчик
+            console.log(`Статья ${contentId} не находится у пользователя ${user} в избранном`);
             const favorite = new Favorite();
             favorite.user = user;
             favorite.contentId = contentId;
@@ -47,10 +51,9 @@ export const toggleFavorite = async (req: AuthenticatedRequest, res: Response): 
             await favoriteRepository.save(favorite);
 
             const article = await contentRepository.findOneBy({ id: contentId });
-            if (content) {
-                content.favoritesCount = (content.favoritesCount || 0) + 1; // Увеличиваем счетчик
-                await contentRepository.save(content); // Сохраняем обновленный контент
-            }
+            if (article) {
+                article.favoritesCount = (article.favoritesCount || 0) + 1; // Увеличиваем счетчик
+                await contentRepository.save(article); // Сохраняем обновленный контент
             }
 
             res.status(201).json({ message: "Контент добавлен в избранное" });

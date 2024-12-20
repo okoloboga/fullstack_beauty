@@ -10,7 +10,7 @@ const router = Router();
 router.post("/", authenticateToken, createContent);
 
 // Получить все статьи (доступно всем)
-router.get("/article", getArticles);
+router.get("/articles", getArticles);
 
 // Получить все новости (доступно всем)
 router.get("/news", getNews);

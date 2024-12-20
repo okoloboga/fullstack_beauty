@@ -311,6 +311,7 @@ export const registerUser = async (email: string, password: string): Promise<voi
   export const confirmEmail = async (token: string): Promise<any> => {
     try {
       const response = await axiosInstance.get(`${apiUrl}/api/users/confirm-email?token=${token}`);
+
       return response.data; // Возвращаем ответ от сервера
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
@@ -323,30 +324,47 @@ export const registerUser = async (email: string, password: string): Promise<voi
   };
 
 // Функция для запроса на восстановление пароля
-export const requestPasswordReset = async (formData: FormData): Promise<string> => {
+export const requestPasswordReset = async (email: string): Promise<void> => {
   try {
-    const response = await axios.post(`${apiUrl}/api/users/request-password-reset`, formData);
-    console.log(response.data.message);
-    // Если сервер вернул успешный ответ
-    return 'Письмо с инструкциями отправлено на ваш email';
+    console.log('Форма для восстановления пароля:', email);
+    const response = await axios.post(`${apiUrl}/api/users/request-password-reset`, {
+      email,
+    });
+    console.log('Запрос на восстановление пароля:', response);
   } catch (error) {
     console.error('Ошибка при запросе на восстановление пароля:', error);
-    
-    // В случае ошибки возвращаем стандартное сообщение
-    return 'Произошла ошибка при запросе восстановления пароля';
+
+    // Преобразуем ошибку для передачи в вызывающий код
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || 'Не удалось отправить запрос на восстановление пароля'
+      );
+    } else {
+      throw new Error('Произошла ошибка при запросе на восстановление пароля');
+    }
   }
 };
 
 // Функция для обновления пароля
 export const resetPassword = async (token: string, newPassword: string): Promise<void> => {
   try {
-    const response = await axios.post(`${apiUrl}/api/users/reset-password`, {
+    console.log('Обновление пароля:', newPassword);
+    const response = await axios.post(`${apiUrl}/api/users/password-reset`, {
       token,
       newPassword,
     });
-    console.log(response.data.message);
+    console.log('Ответ от сервера:', response.data.message);
   } catch (error) {
     console.error('Ошибка при обновлении пароля:', error);
+
+    // Преобразуем ошибку для передачи в вызывающий код
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || 'Не удалось обновить пароль'
+      );
+    } else {
+      throw new Error('Произошла ошибка при обновлении пароля');
+    }
   }
 };
 
@@ -425,17 +443,17 @@ export const toggleDislike = async (contentId: number, type: string ): Promise<v
 };
 
 // Функция для добавления комментария
-export const createComment = async (articleId: number, content: string): Promise<void> => {
+export const createComment = async (articleId: number, commentContent: string) => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Ошибка: Токен авторизации отсутствует');
-      throw new Error('Токен авторизации отсутствует');
+      return; // Завершаем выполнение
     }
 
     const response = await axiosInstance.post(
       `${apiUrl}/api/comments`, // Путь к эндпоинту создания комментария
-      { articleId, content }, // Отправляем тело запроса с ID статьи и текстом комментария
+      { articleId, commentContent },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -443,10 +461,19 @@ export const createComment = async (articleId: number, content: string): Promise
       }
     );
 
-    toast.success(response.data.message); // Выводим сообщение об успехе
+    toast.success(response.data.message);
   } catch (error) {
-    console.error('Ошибка при создании комментария:', error);
-    toast.error('Ошибка при создании комментария');
+    // Проверяем, является ли ошибка от сервера (Axios)
+    if (axios.isAxiosError(error) && error.response) {
+      // Извлекаем сообщение об ошибке, возвращенное сервером
+      const serverMessage = error.response.data?.message || 'Неизвестная ошибка';
+      toast.error(serverMessage); // Показываем пользователю сообщение сервера
+      return; // Завершаем выполнение
+    }
+
+    // Если ошибка не связана с Axios (например, сбой сети)
+    console.error('Неизвестная ошибка:', error);
+    toast.error('Ошибка при создании комментария. Пожалуйста, попробуйте еще раз.');
   }
 };
 

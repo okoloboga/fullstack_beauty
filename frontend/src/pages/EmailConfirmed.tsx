@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ConnectSection from '../components/MainContent/ConnectSection';
 import { confirmEmail } from './../utils/apiService'; // Путь к функции
 import { toast } from 'react-toastify'; // Импорт toast для уведомлений
 import { useNavigate, useLocation } from 'react-router-dom'; 
@@ -20,7 +21,9 @@ const ConfirmEmailPage = () => {
     }
 
     confirmEmail(token)
-      .then((message) => {
+      .then((response) => {
+        const message = response.message || 'Неизвестная ошибка';
+        console.log(message);
         setStatus(message);
         if (message === 'Почта успешно подтверждена!') {
           toast.success(message);
@@ -42,10 +45,17 @@ const ConfirmEmailPage = () => {
   }
 
   return (
-    <div>
-      <h1>Подтверждение email</h1>
-      {status && <p>{status}</p>}
-    </div>
+    <main>
+      <section className="container">
+        <h1 className="title text-center main__title">Подтверждение email</h1>
+        <div className='text-center' style={{ marginTop: '20px' }}>
+          <a className="text-dark" href="/login" style={{ marginTop: '20px' }}>
+            {status && <p>{status} Вернуться на страницу входа</p>}
+          </a>
+        </div>
+      </section>
+      <ConnectSection />
+    </main>
   );
 };
 

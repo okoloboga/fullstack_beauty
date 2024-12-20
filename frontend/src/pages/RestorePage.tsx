@@ -18,7 +18,7 @@ const RestorePage: React.FC = () => {
       </section>
 
       <div className="text-center" style={{ marginTop: '20px' }}>
-        <a href="/login" style={{ marginTop: '20px' }}>
+        <a className="text-dark" href="/login" style={{ marginTop: '20px' }}>
             Я вспомнил пароль! Вернуться
         </a>
       </div>

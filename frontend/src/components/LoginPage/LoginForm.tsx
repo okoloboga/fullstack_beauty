@@ -1,11 +1,9 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { AxiosError } from 'axios';
-import axiosInstance from '../../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LoginFormData } from '../../types';
 import { loginUser } from '../../utils/apiService';
-import './LoginForm.css';
 
 // Компонент LoginForm представляет собой форму для авторизации пользователей
 const LoginForm: React.FC = () => {
@@ -80,6 +78,12 @@ const LoginForm: React.FC = () => {
             required
           />
         </div>
+      </div>
+
+      <div className="text-center" style={{ marginTop: '5px' }}>
+        <a className="text-dark" href="/restore">
+          Забыли пароль?
+        </a>
       </div>
 
       {/* Кнопка для отправки формы */}
