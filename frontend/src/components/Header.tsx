@@ -32,7 +32,7 @@ const Header: React.FC = () => {
           <ul className="flex">
             <li><Link to="/">Главная</Link></li>
             <li><Link to="/articles">Статьи</Link></li>
-            <li><Link to="/news-best">Новости</Link></li>
+            <li><Link to="/news">Новости</Link></li>
             <li><Link to="/partners">Партнёры</Link></li>
           </ul>
         </nav>

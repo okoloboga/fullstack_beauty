@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom'; // Импорт useNavigate
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
-import { fetchContent, toggleDislike, toggleLike, createComment, fetchComments, toggleFavorite } from '../utils/apiService'; // Импортируем функцию
-import { ArticleDetail, ContentComment } from '../types';
+import { 
+    fetchContent, toggleDislike, toggleLike, createComment, fetchComments, toggleFavorite, incrementViews, deleteContent
+  } from '../utils/apiService'; // Импортируем функцию
+import { ContentDetail, ContentComment, DecodedToken } from '../types';
 import './styles/ArticleDetailPage.css';
 import eyeIcon from '../assets/images/eye-icon.svg';
 import rightArrow from '../assets/images/right-arrow.svg';
@@ -14,8 +18,9 @@ import commentsIcon from '../assets/images/comments.svg';
 import ConnectSection from '../components/MainContent/ConnectSection';
 
 const ArticleDetailPage: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const [article, setArticle] = useState<ArticleDetail | null>(null);
+  const [article, setArticle] = useState<ContentDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
@@ -24,11 +29,23 @@ const ArticleDetailPage: React.FC = () => {
   const [disliked, setDisliked] = useState<boolean>(false); // Состояние для дизлайка
   const [isFavorite, setIsFavorite] = useState(false);
   const [newComment, setNewComment] = useState<string>('');
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
 
   // Функция для получения данных о статье
   const getArticle = async () => {
     try {
       if (id) {
+        const viewedArticles = JSON.parse(localStorage.getItem('viewedArticles') || '[]');
+  
+        if (!viewedArticles.includes(id)) {
+          await incrementViews(id);
+          viewedArticles.push(id);
+          localStorage.setItem('viewedArticles', JSON.stringify(viewedArticles));
+        }
+  
         const data = await fetchContent(id); // Вызов функции из articleService
         setArticle(data);
         setLiked(data.likes > 0); // Устанавливаем состояние лайка
@@ -38,10 +55,27 @@ const ArticleDetailPage: React.FC = () => {
       }
     } catch (err) {
       setError('Ошибка при загрузке статьи');
+      console.error('Ошибка при загрузке статьи:', err);
     } finally {
       setLoading(false);
     }
   };
+
+    // Получаем роль и имя пользователя из токена
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const decodedToken = jwtDecode<DecodedToken>(token);
+          console.log('Роль пользователя:', decodedToken.role);
+          console.log('Имя пользователя:', decodedToken.name);
+          setUserRole(decodedToken.role);
+          setCurrentUsername(decodedToken.name);
+        } catch (error) {
+          console.error('Ошибка декодирования токена:', error);
+        }
+      }
+    }, []);
 
   // Функция для получения комментариев
   const getCommentsForArticle = async () => {
@@ -192,6 +226,24 @@ const ArticleDetailPage: React.FC = () => {
     }
   };
 
+  const isAuthor = !!currentUsername && !!article.author && (currentUsername === article.author.name);
+  const isAdmin = userRole === 'admin';
+
+  // Функция для удаления статьи
+  const handleDelete = async () => {
+    if (window.confirm('Вы уверены, что хотите удалить эту статью?')) {
+      setIsDeleting(true);
+      try {
+        await deleteContent(article.id);
+        // После успешного удаления, обновляем состояние новостей
+        navigate('/articles');
+        toast.success('Статья успешно удалена');
+      } catch (error) {
+        // Ошибка уже обработана в функции deleteArticle
+      }
+    };
+  };
+
   return (
     <main>
       <section className="product__section container">
@@ -207,7 +259,16 @@ const ArticleDetailPage: React.FC = () => {
         {/* Описание статьи и основная информация - автор, просмотры, дата создания */}
         <div className="product__description flex">
           <div>
-           <h4>{article.author?.name || article.author?.username}</h4>
+           <h4>{article.author.name}</h4>
+           {(isAuthor || isAdmin) && (
+              <button
+                className="button__without__bg"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Удаление...' : 'УДАЛИТЬ СТАТЬЮ'}
+              </button>
+            )}
            <p>Добавлено {new Date(article.createdAt).toLocaleDateString('ru-RU')}</p>
             <div className="flex item-center">
               <img src={eyeIcon} alt="Просмотры" />
@@ -332,7 +393,7 @@ const ArticleDetailPage: React.FC = () => {
               comments.map((comment) => (
                 <div className="product__comment" key={comment.id}>
                   <div className="flex flex-column">
-                    <h3>{comment.user?.name || comment.user?.username}</h3>
+                    <h3>{comment.author}</h3>
                     <p>{new Date(comment.createdAt).toLocaleString('ru-RU')}</p>
                   </div>
                   <div>

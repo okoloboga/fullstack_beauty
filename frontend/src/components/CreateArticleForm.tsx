@@ -15,7 +15,8 @@ const CreateArticleForm: React.FC = () => {
     contentText: '',
     coverImage: null as File | null,
     contentImages: [] as ContentImage[],
-    contentType: 'article'
+    contentType: 'article',
+    contentCategory: 'Косметика'
   });
   const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
   const [contentImagesPreviews, setContentImagesPreviews] = useState<string[]>([]);  
@@ -40,7 +41,8 @@ const CreateArticleForm: React.FC = () => {
         .catch(error => console.error('Ошибка при загрузке файлов', error));
     }
   }, [formData.contentImages]); // Этот эффект будет срабатывать при изменении contentImages
-
+  
+  const categories = ['Косметика', 'Одежда', 'Украшения', 'Причёски', 'Питание', 'Спорт'];
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -213,6 +215,8 @@ const CreateArticleForm: React.FC = () => {
     const data = new FormData();
     data.append('title', formData.title);
     data.append('contentText', formData.contentText);
+    data.append('contentType', formData.contentType);
+    data.append('contentCategory', formData.contentCategory);
   
     // Добавляем одно изображение для обложки
     if (formData.coverImage) {
@@ -232,7 +236,7 @@ const CreateArticleForm: React.FC = () => {
       toast.success('Статья успешно сохранена!');
       setTimeout(() => {
         navigate('/articles');
-      }, 2000);
+      }, 1000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error('Ошибка при создании статьи:', error.response?.data?.message || error.message);
@@ -284,7 +288,7 @@ const CreateArticleForm: React.FC = () => {
             required
           ></textarea>
         </div>
-  
+
         <form>
           {/* Загрузка изображений */}
           <div className="field">
@@ -364,6 +368,27 @@ const CreateArticleForm: React.FC = () => {
             )}
           </div>
         </form>
+
+        {/* Радиокнопки для выбора категории */}
+        <div className="form-group">
+          <label>Категория:</label>
+          <div className="radio-group">
+            {categories.map(contentCategory => (
+              <div key={contentCategory} className="radio-item">
+                <label>
+                  <input
+                    type="radio"
+                    name="contentCategory"
+                    value={contentCategory}
+                    checked={formData.contentCategory === contentCategory}
+                    onChange={handleChange}
+                  />
+                  {contentCategory}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
   
         {/* Кнопка отправки формы */}
         <div className="flex pt-2 item-stretch myInput">  

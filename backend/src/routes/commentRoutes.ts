@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createComment, deleteComment, getComments } from "../controllers/commentController";
+import { createComment, getComments } from "../controllers/commentController";
 import { authenticateToken } from "../middlewares/authMiddleware";
 
 const router = Router();
@@ -12,6 +12,6 @@ router.post("/", authenticateToken, createComment);
 router.get("/:articleId", getComments);
 
 // Удалить комментарий по id (доступно только автору комментария или администратору)
-router.delete("/:id", authenticateToken, deleteComment);
+// router.delete("/:id", authenticateToken, deleteComment);
 
 export default router;

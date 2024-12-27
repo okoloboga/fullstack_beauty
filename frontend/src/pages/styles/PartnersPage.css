@@ -1,0 +1,245 @@
+.search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  
+  }
+  
+  .search__input {
+    position: relative;
+    width: 100%;
+  }
+  
+  .search__input svg {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .search__input input {
+    width: 100%;
+    padding: 13px 13px 13px 50px;
+  }
+  
+  .search button {
+    background-color: transparent;
+  }
+  
+  .cards {
+    padding-top: 39px;
+  }
+  
+  .partners__card {
+    padding: 20px 0;
+    display: flex;
+    gap: 20px;
+    border-top: 1px solid #1F1F1F;
+  }
+  
+  .partners__card:last-child {
+    border-bottom: 1px solid #1F1F1F;
+  }
+  
+  .partners__card-content {
+    width: 100%;
+  }
+  
+  .card__stars {
+    gap: 10px;
+  }
+  
+  
+  .card__location {
+    color: #1F1F1F;
+  }
+  
+  .card__job {
+    padding-top: 15px;
+    padding-bottom: 20px;
+  }
+  
+  .card__point {
+    font-family: "Playfair Display";
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 600;
+    padding-bottom: 9px;
+  }
+  
+  .card__description {
+    max-width: 595px;
+    width: 100%;
+    padding-bottom: 30px;
+  }
+  
+  .card__portfolio {
+    width: 233px;
+    height: 155px;
+  }
+  
+  .partner__card {
+    flex: 0 0 calc(25% - 20px);
+    user-select: none;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .card__contact-title {
+    padding-top: 30px;
+  }
+  
+  .card svg {
+    fill: #1F1F1F;
+  }
+  
+  .partner__slider {
+    display: none !important;
+  }
+  
+  
+  .card__rating {
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .card__identity {
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .card__contact-sm {
+    display: none;
+  }
+  
+  .card__contact-sm .card__contact-title {
+    padding-top: 0;
+    font-size: 22px;
+  }
+  
+  .card__image {
+    max-width: 487px;
+    width: 100%;
+  }
+  
+  .article__count {
+    gap: 10px;
+  }
+  
+  .card__image-info {
+    display: none;
+  }
+  
+  .popup {
+    position: absolute;
+    z-index: 1000;
+    width: 300px;
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    right: 0;
+    top: 150px;
+  }
+  
+  .popup-content {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+  }
+  
+  .filter__option {
+    margin-right: 4px;
+  }
+  
+  @media (max-width: 1200px) {
+    .card__rating {
+      flex-direction: column-reverse;
+      align-items: end;
+    }
+  
+    .card__stars-wrap p {
+      font-size: 24px;
+    }
+  
+    .card__identity {
+      flex-direction: column;
+      align-items: start;
+    }
+  
+    .card__contact {
+      display: none;
+    }
+  
+    .card__contact-sm {
+      display: block;
+    }
+  
+    .card__image {
+      max-width: 243px;
+    }
+  
+    .card__job {
+      padding: 0 0 10px;
+    }
+  
+    .card__name {
+      font-size: 24px;
+      font-weight: 600;
+      text-align: left;
+    }
+  }
+  
+  @media (max-width: 700px) {
+    .first__block {
+      flex-direction: column;
+    }
+  
+    .partners__card {
+      flex-direction: column;
+    }
+  
+    .card__contact-sm {
+      display: none;
+    }
+  
+    .card__contact {
+      display: block;
+    }
+  
+    .card__location {
+      display: none;
+    }
+  
+    .article__count {
+      display: none !important;
+    }
+  
+    .card__image {
+      width: 145px;
+    }
+    .card__image-wrap {
+      display: flex;
+      gap: 10px;
+    }
+  
+    .card__image-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card__rating {
+      align-items: start;
+    }
+  }

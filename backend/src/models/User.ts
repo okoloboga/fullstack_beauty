@@ -14,8 +14,17 @@ export class User {
     @Column()
     role!: string; // 'user', 'partner', 'admin'
 
-    @Column({ nullable: true })
-    name?: string;
+    @Column()
+    name!: string;
+
+    @Column({ default: 0 })
+    reviews!: number;
+
+    @Column({ default: 4 })
+    rating!: number;
+
+    @Column({ default: 0 })
+    articles!: number;
 
     @Column({ nullable: true })
     city?: string;
@@ -47,8 +56,8 @@ export class User {
     @Column({ nullable: true })
     profileImage?: string;
 
-    @Column({ nullable: true })
-    portfolioImage?: string;
+    @Column("json", { default: [] })
+    portfolioImages?: string[];
 
     @Column({ type: 'text', nullable: true })
     confirmationToken?: string | null;

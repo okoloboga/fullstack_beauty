@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchLatestNews } from '../../utils/apiService';
-import { NewsItem } from '../../types';
+import { fetchNews } from '../../utils/apiService';
+import { ContentDetail } from '../../types';
 import './NewsSection.css';
 
 const NewsSection: React.FC = () => {
   // Состояние для хранения новостей
-  const [news, setNews] = useState<NewsItem[]>([]);
+  const [news, setNews] = useState<ContentDetail[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   // Хук useEffect для получения новостей при монтировании компонента
   useEffect(() => {
     const loadNews = async () => {
       try {
-        const latestNews = await fetchLatestNews(6); // Задаём лимит 6 новостей
+        const latestNews = await fetchNews(); // Задаём лимит 6 новостей
         setNews(latestNews); // Сохраняем новости в состояние
       } catch (error) {
         console.error('Ошибка при загрузке новостей:', error);
@@ -45,7 +45,7 @@ const NewsSection: React.FC = () => {
                 <div className="news__block__card">
                   <div>
                     <img src={item.coverImage} alt={item.title} />
-                    <p>{item.description}</p>
+                    <p>{item.content}</p>
                   </div>
                   <Link className="button__without__bg" to={`/news/${item.id}`}>
                     Читать далее
@@ -61,7 +61,7 @@ const NewsSection: React.FC = () => {
               <div key={item.id} className="news__block__card">
                 <div>
                   <img src={item.coverImage} alt={item.title} />
-                  <p>{item.description}</p>
+                  <p>{item.content}</p>
                 </div>
                 <Link className="button__without__bg" to={`/news/${item.id}`}>
                   Читать далее

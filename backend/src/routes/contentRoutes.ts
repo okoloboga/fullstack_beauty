@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticateToken } from "../middlewares/authMiddleware";
 import { 
-    createContent, getArticles, getNews, getContentById, getContentByUser, updateContent, deleteContent, incrementContentViews
+    createContent, getArticles, getNews, getContentById, getContentByUser, deleteContent, incrementContentViews
 } from "../controllers/contentController";
 
 const router = Router();
@@ -22,7 +22,7 @@ router.get("/my-articles", getContentByUser);
 router.get("/:id", getContentById);
 
 // Обновить статью (с возможностью изменить обложку, доступно только авторизованным авторам)
-router.put("/:id", authenticateToken, updateContent);
+// router.put("/:id", authenticateToken, updateContent);
 
 // Добавить 1 просмотр статье
 router.post("/:id/views", incrementContentViews);

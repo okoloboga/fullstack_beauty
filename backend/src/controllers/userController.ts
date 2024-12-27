@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import multer from "multer";
 import path from "path";
 import nodemailer from 'nodemailer';
+import fs from 'fs';
 
 // Настраиваем хранилище для файлов с помощью multer
 const storage = multer.diskStorage({
@@ -22,7 +23,7 @@ const upload = multer({ storage });
 
 // Регистрация пользователя
 export const registerUser = async (req: Request, res: Response) => {
-    const { password, email } = req.body;
+    const { email, name, password } = req.body;
     console.log(`[INFO] Запрос на регистрацию нового пользователя: ${email}`);
     
     const userRepository = AppDataSource.getRepository(User);
@@ -46,6 +47,7 @@ export const registerUser = async (req: Request, res: Response) => {
         console.log(`[DEBUG] Создание нового объекта User для email: ${email}`);
         const user = new User();
         user.password = hashedPassword;
+        user.name = name;
         user.role = "admin";
         user.email = email;
         user.isConfirmed = false;
@@ -190,7 +192,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const token = jwt.sign({ user: user.id, role: user.role }, "secret_key", { expiresIn: "1h" });
+        const token = jwt.sign({ user: user.id, role: user.role, name: user.name }, "secret_key", { expiresIn: "1h" });
         console.log(`Пользователь ${email} успешно вошел в систему`);
         res.status(200).json({ token });
     } catch (error) {
@@ -290,10 +292,21 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
   };
 
 // Обновление профиля пользователя
+const deleteFile = (filePath: string) => {
+    fs.unlink(path.join(__dirname, filePath), (err) => {
+        if (err) {
+            console.error('Ошибка при удалении файла:', err);
+        } else {
+            console.log(`Файл ${filePath} успешно удалён`);
+        }
+    });
+};
+
+// Обновление профиля пользователя
 export const updateUserProfile = [
     upload.fields([
         { name: 'profileImage', maxCount: 1 },
-        { name: 'portfolioImage', maxCount: 1 }
+        { name: 'portfolioImages', maxCount: 10 } // Изменено на множественное число
     ]),
     async (req: Request, res: Response): Promise<void> => {
         const userId = req.params.id;
@@ -310,14 +323,12 @@ export const updateUserProfile = [
             receiveNewsletter,
         } = req.body;
 
-        console.log(`Запрос на обновление профиля пользователя с id: ${userId}`);
-
         try {
             const userRepository = AppDataSource.getRepository(User);
             const user = await userRepository.findOneBy({ id: Number(userId) });
 
             if (!user) {
-                console.warn(`Пользователь с id: ${user} не найден`);
+                console.warn(`Пользователь с id: ${userId} не найден`);
                 res.status(404).json({ message: "Пользователь не найден..." });
                 return;
             }
@@ -334,22 +345,46 @@ export const updateUserProfile = [
             user.about = about ?? user.about;
             user.receiveNewsletter = receiveNewsletter ?? user.receiveNewsletter;
 
-            // Проверяем наличие загруженных файлов и обновляем соответствующие поля
+            // Проверяем наличие загруженных файлов
             const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
+            console.log('Полученные файлы:', files);
+
+            // Обновляем изображение профиля
             if (files?.profileImage && files.profileImage[0]) {
-                console.log(`Загрузка изображения профиля для пользователя с id: ${user}`);
+                console.log(`Загрузка изображения профиля для пользователя с id: ${userId}`);
                 user.profileImage = path.join('uploads', files.profileImage[0].filename);
             }
 
-            if (files?.portfolioImage && files.portfolioImage[0]) {
-                console.log(`Загрузка изображения портфолио для пользователя с id: ${user}`);
-                user.portfolioImage = path.join('uploads', files.portfolioImage[0].filename);
+            // Обновляем изображения портфолио
+            if (files?.portfolioImages) {
+                console.log(`Загрузка изображений портфолио для пользователя с id: ${userId}`);
+                const portfolioImagePaths = files.portfolioImages.map((file) =>
+                    path.join('uploads', file.filename)
+                );
+
+                // Убедитесь, что portfolioImages является массивом строк
+                if (!Array.isArray(user.portfolioImages)) {
+                    user.portfolioImages = [];
+                }
+
+                // Фильтруем любые некорректные значения, например, пустые строки
+                user.portfolioImages = user.portfolioImages.filter(
+                    (item) => typeof item === 'string' && item.trim() !== ''
+                );
+
+                // Добавляем новые пути к изображениям портфолио
+                user.portfolioImages = [
+                    ...user.portfolioImages,
+                    ...portfolioImagePaths,
+                ];
+
+                console.log('Обновленные portfolioImages:', user.portfolioImages);
             }
 
             await userRepository.save(user);
 
-            console.log(`Профиль пользователя с id: ${user} успешно обновлен`);
+            console.log(`Профиль пользователя с id: ${userId} успешно обновлен`);
             res.status(200).json({ message: "Профиль успешно обновлен" });
         } catch (error) {
             console.error("Ошибка при обновлении профиля пользователя:", error);
@@ -374,7 +409,7 @@ export const getUserProfile = async (req: Request, res: Response): Promise<void>
         }
 
         // Здесь можно выбрать только нужные данные профиля для ответа
-        const { id, email, name, city, activity, phone, instagram, vk, telegram, facebook, about, receiveNewsletter, profileImage, portfolioImage } = user;
+        const { id, email, name, city, activity, phone, instagram, vk, telegram, facebook, about, rating, articles, reviews, receiveNewsletter, profileImage, portfolioImages } = user;
 
         console.log(`Профиль пользователя с id: ${user} успешно получен`);
         res.status(200).json({
@@ -389,12 +424,58 @@ export const getUserProfile = async (req: Request, res: Response): Promise<void>
             telegram,
             facebook,
             about,
+            rating,
+            articles,
+            reviews,
             receiveNewsletter,
             profileImage,
-            portfolioImage
+            portfolioImages
         });
     } catch (error) {
         console.error("Ошибка при получении профиля пользователя:", error);
+        res.status(500).json({ message: "Внутренняя ошибка сервера" });
+    }
+};
+
+// Получить список пользователей с ролью partner или admin
+export const getUsersByRole = async (req: Request, res: Response): Promise<void> => {
+    console.log("Запрос на получение пользователей с ролью partner или admin");
+
+    try {
+        const userRepository = AppDataSource.getRepository(User);
+        
+        // Получаем пользователей с заданными ролями
+        const users = await userRepository.find({
+            where: [
+                { role: 'partner' },
+                { role: 'admin' }
+            ],
+            select: [
+                'id', 
+                'email', 
+                'name', 
+                'city', 
+                'activity',
+                'phone', 
+                'instagram', 
+                'vk', 
+                'telegram', 
+                'facebook', 
+                'about', 
+                'rating',
+                'articles',
+                'reviews',
+                'receiveNewsletter', 
+                'profileImage', 
+                'portfolioImages'
+            ]
+        });
+
+        console.log(`Найдено пользователей: ${users.length}`);
+        
+        res.status(200).json(users); // Отправляем список пользователей
+    } catch (error) {
+        console.error("Ошибка при получении списка пользователей:", error);
         res.status(500).json({ message: "Внутренняя ошибка сервера" });
     }
 };

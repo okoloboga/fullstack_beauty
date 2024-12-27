@@ -1,27 +1,32 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { NewCardProps } from '../../types';
+import { useNavigate } from 'react-router-dom';
+import { ContentCardProps } from '../../types';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 // Компонент карточки статьи
-const ArticleCard: React.FC<NewCardProps> = ({ newContent }) => {
+const ArticleCard: React.FC<ContentCardProps> = ({ content }) => {
+  const navigate = useNavigate(); // Вызываем useNavigate внутри компонента
+
   return (
     <div className="news__block__card">
       <div>
-        <p>{newContent.title}</p>
+        <p>{content.title}</p>
         {/* Изображение статьи или изображение по умолчанию */}
         <img
-          src={`${apiUrl}/${newContent.coverImage}`} // Используем apiUrl, чтобы собрать полный URL
-          alt={newContent.title}
+          src={`${apiUrl}/${content.coverImage}`} // Используем apiUrl, чтобы собрать полный URL
+          alt={content.title}
           className="news__block__card__img"
         />
         {/* Короткое содержание статьи */}
+        {/* Кнопка для перехода к полной версии статьи */}
+        <button
+          className="button__without__bg"
+          onClick={() => navigate(`/news/${content.id}`)} // Навигация при клике
+        >
+          Читать
+        </button>
       </div>
-      {/* Ссылка для перехода к полной версии статьи */}
-      <Link className="button__without__bg" to={`/news/${newContent.id}`}>
-        Читать
-      </Link>
     </div>
   );
 };

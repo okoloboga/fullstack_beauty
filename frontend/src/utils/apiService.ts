@@ -2,13 +2,14 @@ import axiosInstance from './axiosInstance'; // Импортируем экзе�
 import axios from 'axios';
 import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
-import { NewsItem, ArticleDetail, LoginFormData, ContactFormData } from '../types';
+import { ContentDetail, LoginFormData, ContactFormData } from '../types';
 const apiUrl = process.env.REACT_APP_API_URL; // Получаем URL из переменных окружения
 
 // Функция для получения статьи
-export const fetchContent = async (id: string): Promise<ArticleDetail> => {
+export const fetchContent = async (id: string): Promise<ContentDetail> => {
   try {
-    const response = await axiosInstance.get<ArticleDetail>(`${apiUrl}/api/content/${id}`);
+    const response = await axiosInstance.get<ContentDetail>(`${apiUrl}/api/content/${id}`);
+    console.log('Данные статьи:', response.data);
     return response.data; // Возвращаем данные статьи
   } catch (error) {
     throw new Error('Ошибка при загрузке статьи');
@@ -16,9 +17,10 @@ export const fetchContent = async (id: string): Promise<ArticleDetail> => {
 };
 
 // Функция для получения статей
-export const fetchArticles = async (): Promise<ArticleDetail[]> => {
+export const fetchArticles = async (): Promise<ContentDetail[]> => {
     try {
-      const response = await axiosInstance.get<ArticleDetail[]>(`${apiUrl}/api/content/articles`);
+      const response = await axiosInstance.get<ContentDetail[]>(`${apiUrl}/api/content/articles`);
+      console.log(response.data)
       return response.data;
     } catch (error) {
       console.error('Ошибка при загрузке статей:', error);
@@ -27,7 +29,7 @@ export const fetchArticles = async (): Promise<ArticleDetail[]> => {
   };
 
   // Функция для увеличения количества просмотров статьи
-export const incrementArticleViews = async (id: string): Promise<void> => {
+export const incrementViews = async (id: string): Promise<void> => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -46,9 +48,9 @@ export const incrementArticleViews = async (id: string): Promise<void> => {
 };
 
 // Функция для получения новости
-export const fetchNews = async (id: string): Promise<NewsItem> => {
+export const fetchNews = async (): Promise<ContentDetail[]> => {
   try {
-    const response = await axiosInstance.get<NewsItem>(`${apiUrl}/api/content/news`);
+    const response = await axiosInstance.get<ContentDetail[]>(`${apiUrl}/api/content/news`);
     return response.data;
   } catch (err) {
     throw new Error('Ошибка при загрузке новости');
@@ -80,51 +82,52 @@ export const createArticle = async (formData: FormData, token: string) => {
 
 
 // Функция для получения новостей с фильтрацией по типу
-export const fetchFilteredNews = async (type: string): Promise<NewsItem[]> => {
-    try {
-      const response = await axiosInstance.get<NewsItem[]>(`${apiUrl}/api/content`);
+// export const fetchFilteredNews = async (type: string): Promise<NewsItem[]> => {
+//     try {
+//       const response = await axiosInstance.get<NewsItem[]>(`${apiUrl}/api/content`);
   
-      let newsData = response.data;
+//       let newsData = response.data;
   
-      // Фильтруем новости в зависимости от типа
-      if (type === 'newest') {
-        newsData = newsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      } else if (type === 'best') {
-        newsData = newsData.sort((a, b) => b.likes - a.likes);
-      }
+//       // Фильтруем новости в зависимости от типа
+//       if (type === 'newest') {
+//         newsData = newsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+//       } else if (type === 'best') {
+//         newsData = newsData.sort((a, b) => b.likes - a.likes);
+//       }
   
-      return newsData;
-    } catch (error) {
-      console.error('Ошибка при загрузке новостей:', error);
-      throw error; // Прокидываем ошибку для обработки в вызывающем коде
-    }
-  };
+//       return newsData;
+//     } catch (error) {
+//       console.error('Ошибка при загрузке новостей:', error);
+//       throw error; // Прокидываем ошибку для обработки в вызывающем коде
+//     }
+//   };
 
 // Функция для получения свежих новостей
-export const fetchLatestNews = async (limit: number = 6): Promise<NewsItem[]> => {
-    try {
-      const response = await axiosInstance.get<NewsItem[]>(`${apiUrl}/api/content`, {
-        params: { sort: 'newest', limit },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Ошибка при загрузке новостей:', error);
-      throw error; // Прокидываем ошибку для обработки в вызывающем коде
-    }
-  };
+// export const fetchLatestNews = async (limit: number = 6): Promise<NewsItem[]> => {
+//     try {
+//       const response = await axiosInstance.get<NewsItem[]>(`${apiUrl}/api/content`, {
+//         params: { sort: 'newest', limit },
+//       });
+//       return response.data;
+//     } catch (error) {
+//       console.error('Ошибка при загрузке новостей:', error);
+//       throw error; // Прокидываем ошибку для обработки в вызывающем коде
+//     }
+//   };
 
-// Функция для получения популярных статей
-export const fetchPopularArticles = async (limit: number = 3): Promise<ArticleDetail[]> => {
-    try {
-      const response = await axiosInstance.get<ArticleDetail[]>(`${apiUrl}/api/content`, {
-        params: { sort: 'popular', limit },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Ошибка при загрузке популярных статей:', error);
-      throw error; // Прокидываем ошибку для обработки в вызывающем коде
-    }
-  };
+// // Функция для получения популярных статей
+// export const fetchPopularArticles = async (limit: number = 3): Promise<ArticleDetail[]> => {
+//     try {
+//       const response = await axiosInstance.get<ArticleDetail[]>(`${apiUrl}/api/content`, {
+//         params: { limit },
+//       });
+//       console.log(`Получение популярных статей:`, response.data);
+//       return response.data;
+//     } catch (error) {
+//       console.error('Ошибка при загрузке популярных статей:', error);
+//       throw error; // Прокидываем ошибку для обработки в вызывающем коде
+//     }
+//   };
 
 // Функция для создания новости
 export const createNew = async (formData: FormData, token: string) => {
@@ -146,6 +149,32 @@ export const createNew = async (formData: FormData, token: string) => {
       }
     }
   };
+
+// Функция для удаления статьи
+export const deleteContent = async (contentId: number): Promise<void> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      throw new Error('Токен авторизации отсутствует');
+    }
+
+    const response = await axiosInstance.delete(
+      `/api/content/${contentId}`, // Путь к эндпоинту удаления статьи
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    toast.success(response.data.message); // Выводим сообщение об успехе
+  } catch (error) {
+    console.error('Ошибка при удалении статьи:', error);
+    toast.error('Ошибка при удалении статьи');
+    throw error; // Пробрасываем ошибку для дальнейшей обработки, если необходимо
+  }
+};
 
 // Функция для загрузки данных профиля
 export const fetchUserProfile = async (user: string): Promise<any> => {
@@ -172,6 +201,37 @@ export const fetchUserProfile = async (user: string): Promise<any> => {
       }
     }
   };
+
+// Функция загрузки профиля партнера
+export const fetchPartner = async (user: string): Promise<any> => {
+  try {
+    const response = await axiosInstance.get(`${apiUrl}/api/users/partners/${user}`);
+    return response.data; // Возвращаем данные профиля
+  } catch (error) {
+    console.error('Ошибка при загрузке данных профиля:', error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Не удалось загрузить данные профиля');
+    } else {
+      throw new Error('Неизвестная ошибка при загрузке данных профиля');
+    }
+  }
+}
+
+// Функция для загрузки пользователей с ролью partner или admin
+export const fetchUsersByRole = async (): Promise<any[]> => {
+  try {
+      const response = await axiosInstance.get(`${apiUrl}/api/users/roles`);
+      console.log('Список пользователей:', response.data);
+      return response.data; // Возвращаем список пользователей
+  } catch (error) {
+      console.error('Ошибка при загрузке списка пользователей:', error);
+      if (axios.isAxiosError(error)) {
+          throw new Error(error.response?.data?.message || 'Не удалось загрузить список пользователей');
+      } else {
+          throw new Error('Неизвестная ошибка при загрузке списка пользователей');
+      }
+  }
+};
 
 // Функция для получения избранных статей и новостей пользователя
 export const fetchUserFavorites = async (user: string): Promise<any> => {
@@ -228,73 +288,84 @@ export const fetchUserArticles = async (): Promise<any> => {
   }
 };
 
-
 // Функция для обновления профиля пользователя
 export const updateUserProfile = async (
-    user: string,
-    formData: any,
-    profileImage: File | null,
-    portfolioImage: File | null
-  ): Promise<any> => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error('Ошибка: Токен авторизации отсутствует');
-        throw new Error('Токен авторизации отсутствует');
-      }
-  
-      const formDataToSend = new FormData();
-      // Добавляем данные профиля
-      Object.keys(formData).forEach((key) => {
+  user: string,
+  formData: any,
+  profileImage: File | null,
+  portfolioImages: File[] | null
+): Promise<any> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      throw new Error('Токен авторизации отсутствует');
+    }
+
+    const formDataToSend = new FormData();
+    // Добавляем данные профиля, исключая 'portfolioImages'
+    Object.keys(formData).forEach((key) => {
+      if (key !== 'portfolioImages') { // Исключаем 'portfolioImages'
         const value = formData[key as keyof typeof formData];
         if (value !== undefined && value !== null) {
           formDataToSend.append(key, typeof value === 'boolean' ? String(value) : value);
         }
-      });
-  
-      // Добавляем изображения, если они есть
-      if (profileImage) {
-        formDataToSend.append('profileImage', profileImage);
       }
-  
-      if (portfolioImage) {
-        formDataToSend.append('portfolioImage', portfolioImage);
-      }
-  
-      // Отправляем запрос на обновление данных профиля
-      const response = await axiosInstance.put(`${apiUrl}/api/users/profile/${user}`, formDataToSend, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
-      return response.data; // Возвращаем обновленные данные профиля
-    } catch (error) {
-      console.error('Ошибка при обновлении профиля:', error);
-      if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || 'Ошибка при обновлении профиля');
-      } else {
-        throw new Error('Неизвестная ошибка при обновлении профиля');
-      }
-    }
-  };
+    });
 
-  export const loginUser = async (formData: LoginFormData): Promise<string> => {
-    try {
-      const response = await axiosInstance.post(`${apiUrl}/api/users/login`, formData);
-      return response.data.token; // Возвращаем токен
-    } catch (error) {
-      console.error('Ошибка при авторизации:', error);
-      throw error; // Прокидываем ошибку
+    // Добавляем изображение профиля, если есть
+    if (profileImage) {
+      formDataToSend.append('profileImage', profileImage);
     }
-  };
+
+    // Добавляем портфолио изображения, если есть
+    if (portfolioImages) {
+      portfolioImages.forEach((image) => {
+        formDataToSend.append('portfolioImages', image); // Добавляем каждый файл с ключом 'portfolioImages'
+      });
+    }
+
+    // Логирование содержимого FormData для проверки
+    for (let pair of formDataToSend.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+
+    // Отправляем запрос на обновление данных профиля
+    const response = await axiosInstance.put(`${apiUrl}/api/users/profile/${user}`, formDataToSend, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data; // Возвращаем обновленные данные профиля
+  } catch (error) {
+    console.error('Ошибка при обновлении профиля:', error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Ошибка при обновлении профиля');
+    } else {
+      throw new Error('Неизвестная ошибка при обновлении профиля');
+    }
+  }
+};
+
+
+export const loginUser = async (formData: LoginFormData): Promise<string> => {
+  try {
+    const response = await axiosInstance.post(`${apiUrl}/api/users/login`, formData);
+    return response.data.token; // Возвращаем токен
+  } catch (error) {
+    console.error('Ошибка при авторизации:', error);
+    throw error; // Прокидываем ошибку
+  }
+};
 
 // Функция для регистрации пользователя
-export const registerUser = async (email: string, password: string): Promise<void> => {
+export const registerUser = async (email: string, name: string, password: string): Promise<void> => {
     try {
       const response = await axiosInstance.post(`${apiUrl}/api/users/register`, {
         email,
+        name,
         password,
       });
       console.log('Успешная регистрация:', response.data);
@@ -543,3 +614,44 @@ export const fetchComments = async (articleId: number): Promise<any> => {
 };
 
 
+// Получение отзывов о партнёре
+export const fetchReviews = async (partnerId: number): Promise<any> => {
+  try {
+    const response = await axios.get(`${apiUrl}/api/reviews/${partnerId}`);
+    return response.data.reviews;
+  } catch (error) {
+    console.error("Ошибка при получении отзывов:", error);
+    throw new Error("Ошибка при получении отзывов");
+  }
+};
+
+// Создание отзыва о партнёре
+export const createReview = async (partnerId: number, reviewText: string): Promise<void> => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Ошибка: Токен авторизации отсутствует');
+      return;
+    }
+
+    const response = await axios.post(
+      `${apiUrl}/api/reviews`,
+      { partnerId, reviewText },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    toast.success(response.data.message);
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      const serverMessage = error.response.data?.message || 'Неизвестная ошибка';
+      toast.error(serverMessage);
+      return;
+    }
+    console.error('Неизвестная ошибка:', error);
+    toast.error('Ошибка при создании отзыва. Пожалуйста, попробуйте еще раз.');
+  }
+};

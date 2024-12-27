@@ -50,7 +50,7 @@ const UserFavorites: React.FC = () => {
         <div className="articles__block__cards__div">
           <div className="articles__block__cards flex">
             {favorites.map((favorite) => (
-              <ArticleCard key={favorite.id} article={favorite} />
+              <ArticleCard key={favorite.id} content={favorite} />
             ))}
           </div>
           <button className="button__with__bg" style={{ marginTop: '50px' }}>

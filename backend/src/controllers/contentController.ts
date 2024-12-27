@@ -4,6 +4,7 @@ import { Content } from "../models/Content";
 import { User } from "../models/User";
 import { ArticleViewsByIP } from "../models/ArticleViewsByIP";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { ArticleDTO } from '../dto/article.dto';
 import multer from "multer";
 import path from 'path';
 import fs from "fs";
@@ -31,7 +32,7 @@ export const createContent = [
         console.log("Тело запроса:", req.body); // Логируем тело запроса
         console.log("Полученные файлы:", req.files); // Логируем файлы
 
-        const { title, contentText, contentType } = req.body;
+        const { title, contentText, contentType, contentCategory } = req.body;
         const user = req.user?.user;
 
         console.log("Запрос на создание новой статьи");
@@ -83,6 +84,12 @@ export const createContent = [
                 return;
             }
 
+            if (!contentType) {
+                console.warn("Тип статьи не указан");
+                res.status(400).json({ message: "Content Type is required" });
+                return;
+            }
+
             // Преобразование images в массив URL-ов (если переданы изображения)
             const contentImages: string[] = files.contentImages
                 ? (files.contentImages as Express.Multer.File[]).map(file => `uploads/${file.filename}`)
@@ -97,10 +104,17 @@ export const createContent = [
             content.coverImage = coverImage;
             content.contentImages = contentImages;
             content.type = contentType;
+            content.category = contentCategory;
 
             const contentRepository = AppDataSource.getRepository(Content);
             await contentRepository.save(content);
             console.log("Статья успешно создана:", content);
+
+            // Увеличиваем счетчик статей у автора
+            author.articles = (author.articles || 0) + 1; // Если articles изначально undefined, то задаем 0
+            await userRepository.save(author);
+
+            console.log(`Обновлен счетчик статей у пользователя ${author.name}: ${author.articles}`);
 
             res.status(201).json({ message: "Статья успешно создана", content });
         } catch (error) {
@@ -116,11 +130,47 @@ export const getArticles = async (req: Request, res: Response): Promise<void> =>
 
     try {
         const contentRepository = AppDataSource.getRepository(Content);
-        const content = await contentRepository.find({
-            where: { type: 'article' },
-            relations: ["author"] });
+        const articles = await contentRepository.createQueryBuilder('content')
+            .leftJoin('content.author', 'author')
+            .where('content.type = :type', { type: 'article' })
+            .select([
+                'content.id',
+                'content.likes',
+                'content.dislikes',
+                'content.favoritesCount',
+                'content.comments',
+                'content.contentImages',
+                'content.coverImage',
+                'content.title',
+                'content.content',
+                'content.category',
+                'content.views',
+                'content.createdAt',
+                'author.name'
+            ])
+            .getMany();
 
-        console.log("Статьи успешно получены");
+        // Преобразование в DTO
+        const content: ArticleDTO[] = articles.map((article): ArticleDTO => ({
+            id: article.id,
+            likes: article.likes,
+            dislikes: article.dislikes,
+            favoritesCount: article.favoritesCount,
+            comments: article.comments,
+            contentImages: article.contentImages,
+            coverImage: article.coverImage,
+            title: article.title,
+            content: article.content,
+            category: article.category,
+            views: article.views,
+            createdAt: article.createdAt.toISOString(),
+            author: {
+                name: article.author.name
+            },
+            // Добавьте другие необходимые поля
+        }));
+
+        console.log("Статьи успешно получены:", content);
         res.status(200).json(content);
     } catch (error) {
         console.error("Ошибка при получении статей:", error);
@@ -134,9 +184,45 @@ export const getNews = async (req: Request, res: Response): Promise<void> => {
 
     try {
         const contentRepository = AppDataSource.getRepository(Content);
-        const content = await contentRepository.find({
-            where: { type: 'new' },
-            relations: ["author"] });
+        const news = await contentRepository.createQueryBuilder('content')
+            .leftJoin('content.author', 'author')
+            .where('content.type = :type', { type: 'new' })
+            .select([
+                'content.id',
+                'content.likes',
+                'content.dislikes',
+                'content.favoritesCount',
+                'content.comments',
+                'content.contentImages',
+                'content.coverImage',
+                'content.title',
+                'content.content',
+                'content.category',
+                'content.views',
+                'content.createdAt',
+                'author.name'
+            ])
+            .getMany();
+
+        // Преобразование в DTO
+        const content: ArticleDTO[] = news.map((newContent): ArticleDTO => ({
+            id: newContent.id,
+            likes: newContent.likes,
+            dislikes: newContent.dislikes,
+            favoritesCount: newContent.favoritesCount,
+            comments: newContent.comments,
+            contentImages: newContent.contentImages,
+            coverImage: newContent.coverImage,
+            title: newContent.title,
+            content: newContent.content,
+            category: newContent.category,
+            views: newContent.views,
+            createdAt: newContent.createdAt.toISOString(),
+            author: {
+                name: newContent.author.name
+            },
+            // Добавьте другие необходимые поля
+        }));
 
         console.log("Статьи успешно получены");
         res.status(200).json(content);
@@ -146,6 +232,7 @@ export const getNews = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+
 // Получить статью по ID
 export const getContentById = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
@@ -153,15 +240,52 @@ export const getContentById = async (req: Request, res: Response): Promise<void>
 
     try {
         const contentRepository = AppDataSource.getRepository(Content);
-        const content = await contentRepository.findOne({ 
-            where: { id: parseInt(id) }, 
-            relations: ["author"] });
 
-        if (!content) {
+        // Используем getOne вместо getMany
+        const article = await contentRepository.createQueryBuilder('content')
+            .leftJoinAndSelect('content.author', 'author') // Сохраняем автора в объекте
+            .where('content.id = :id', { id: parseInt(id) })
+            .select([
+                'content.id',
+                'content.likes',
+                'content.dislikes',
+                'content.favoritesCount',
+                'content.comments',
+                'content.contentImages',
+                'content.coverImage',
+                'content.title',
+                'content.content',
+                'content.category',
+                'content.views',
+                'content.createdAt',
+                'author.name'
+            ])
+            .getOne(); // Получаем один результат
+
+        if (!article) {
             console.warn(`Статья с id: ${id} не найдена`);
             res.status(404).json({ message: "Article not found" });
             return;
         }
+
+        // Преобразование в DTO
+        const content: ArticleDTO = {
+            id: article.id,
+            likes: article.likes,
+            dislikes: article.dislikes,
+            favoritesCount: article.favoritesCount,
+            comments: article.comments,
+            contentImages: article.contentImages,
+            coverImage: article.coverImage,
+            title: article.title,
+            content: article.content,
+            category: article.category,
+            views: article.views,
+            createdAt: article.createdAt.toISOString(),
+            author: {
+                name: article.author.name
+            },
+        };
 
         res.status(200).json(content);
     } catch (error) {
@@ -169,6 +293,7 @@ export const getContentById = async (req: Request, res: Response): Promise<void>
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
 
 // Получить статьи, написанные пользователем
 export const getContentByUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -179,10 +304,45 @@ export const getContentByUser = async (req: AuthenticatedRequest, res: Response)
         const contentRepository = AppDataSource.getRepository(Content);
         
         // Находим статьи, где author соответствует пользователю с id = user
-        const content = await contentRepository.find({
-            where: { author: { id: user } }, // Используем связи для поиска по пользователю
-            relations: ["author"], // Загружаем связь с автором
-        });
+        const articles = await contentRepository.createQueryBuilder('content')
+            .leftJoin('content.author', 'author')
+            .where('author.id = :authorId', { authorId: user })
+            .select([
+                'content.id',
+                'content.likes',
+                'content.dislikes',
+                'content.favoritesCount',
+                'content.comments',
+                'content.contentImages',
+                'content.coverImage',
+                'content.title',
+                'content.content',
+                'content.category',
+                'content.views',
+                'content.createdAt',
+                'author.name'
+            ])
+            .getMany();
+
+        // Преобразование в DTO
+        const content: ArticleDTO[] = articles.map((article): ArticleDTO => ({
+            id: article.id,
+            likes: article.likes,
+            dislikes: article.dislikes,
+            favoritesCount: article.favoritesCount,
+            comments: article.comments,
+            contentImages: article.contentImages,
+            coverImage: article.coverImage,
+            title: article.title,
+            content: article.content,
+            category: article.category,
+            views: article.views,
+            createdAt: article.createdAt.toISOString(),
+            author: {
+                name: article.author.name
+            },
+            // Добавьте другие необходимые поля
+        }));
 
         if (content.length === 0) {
             res.status(404).json({ message: "Нет статей от данного пользователя" });
@@ -197,68 +357,68 @@ export const getContentByUser = async (req: AuthenticatedRequest, res: Response)
 };
 
 // Обновить статью с возможностью изменить обложку
-export const updateContent = [
-    upload.array("images"), // Обработка нескольких файлов
-    async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-        const { id } = req.params;
-        const { title, contentText, images } = req.body;
-        const user = req.user?.user;
+// export const updateContent = [
+//     upload.array("images"), // Обработка нескольких файлов
+//     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+//         const { id } = req.params;
+//         const { title, contentText, images } = req.body;
+//         const user = req.user?.user;
 
-        console.log(`Запрос на обновление статьи с id: ${id}`);
+//         console.log(`Запрос на обновление статьи с id: ${id}`);
 
-        try {
-            const contentRepository = AppDataSource.getRepository(Content);
-            const content = await contentRepository.findOne({ where: { id: parseInt(id) }, relations: ["author"] });
+//         try {
+//             const contentRepository = AppDataSource.getRepository(Content);
+//             const content = await contentRepository.findOne({ where: { id: parseInt(id) }, relations: ["author"] });
 
-            if (!content) {
-                console.warn(`Статья с id: ${id} не найдена`);
-                res.status(404).json({ message: "Article not found" });
-                return;
-            }
+//             if (!content) {
+//                 console.warn(`Статья с id: ${id} не найдена`);
+//                 res.status(404).json({ message: "Article not found" });
+//                 return;
+//             }
 
-            if (content.author.id !== user) {
-                console.warn(`Пользователь с id: ${user} не имеет прав на обновление статьи с id: ${id}`);
-                res.status(403).json({ message: "Access denied" });
-                return;
-            }
+//             if (content.author.id !== user) {
+//                 console.warn(`Пользователь с id: ${user} не имеет прав на обновление статьи с id: ${id}`);
+//                 res.status(403).json({ message: "Access denied" });
+//                 return;
+//             }
 
-            // Обновление данных статьи
-            content.title = title;
-            content.content = contentText;
+//             // Обновление данных статьи
+//             content.title = title;
+//             content.content = contentText;
 
-            // Обработка файлов
-            if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-                // Удаляем старую обложку, если есть
-                if (content.coverImage) {
-                    const oldCoverImagePath = path.join(__dirname, "../../uploads", content.coverImage);
-                    fs.unlink(oldCoverImagePath, (err) => {
-                        if (err) {
-                            console.error("Не удалось удалить старую обложку:", err);
-                        } else {
-                            console.log("Старая обложка успешно удалена");
-                        }
-                    });
-                }
+//             // Обработка файлов
+//             if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+//                 // Удаляем старую обложку, если есть
+//                 if (content.coverImage) {
+//                     const oldCoverImagePath = path.join(__dirname, "../../uploads", content.coverImage);
+//                     fs.unlink(oldCoverImagePath, (err) => {
+//                         if (err) {
+//                             console.error("Не удалось удалить старую обложку:", err);
+//                         } else {
+//                             console.log("Старая обложка успешно удалена");
+//                         }
+//                     });
+//                 }
 
-                // Сохраняем новое изображение как coverImage
-                content.coverImage = `uploads/${(req.files as Express.Multer.File[])[0].filename}`;
+//                 // Сохраняем новое изображение как coverImage
+//                 content.coverImage = `uploads/${(req.files as Express.Multer.File[])[0].filename}`;
 
-                // Добавляем новые изображения в массив images
-                const imageUrls: string[] = (req.files as Express.Multer.File[]).map((file) => `uploads/${file.filename}`);
-                const existingImages = images ? JSON.parse(images) : [];
-                content.contentImages = [...existingImages, ...imageUrls];
-            }
+//                 // Добавляем новые изображения в массив images
+//                 const imageUrls: string[] = (req.files as Express.Multer.File[]).map((file) => `uploads/${file.filename}`);
+//                 const existingImages = images ? JSON.parse(images) : [];
+//                 content.contentImages = [...existingImages, ...imageUrls];
+//             }
 
-            await contentRepository.save(content);
+//             await contentRepository.save(content);
 
-            console.log(`Статья с id: ${id} успешно обновлена`);
-            res.status(200).json({ message: "Article updated successfully", content });
-        } catch (error) {
-            console.error("Ошибка при обновлении статьи:", error);
-            res.status(500).json({ message: "Internal server error" });
-        }
-    },
-];
+//             console.log(`Статья с id: ${id} успешно обновлена`);
+//             res.status(200).json({ message: "Article updated successfully", content });
+//         } catch (error) {
+//             console.error("Ошибка при обновлении статьи:", error);
+//             res.status(500).json({ message: "Internal server error" });
+//         }
+//     },
+// ];
 
 export const incrementContentViews = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const { id } = req.params;

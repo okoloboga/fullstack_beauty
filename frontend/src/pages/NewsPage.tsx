@@ -5,25 +5,16 @@ import { Link } from 'react-router-dom';
 import './styles/NewsPage.css';
 
 // Компонент страницы с самыми свежими новостями
-const NewsNewestPage: React.FC = () => {
+const NewsPage: React.FC = () => {
   return (
     <main>
       {/* Основная секция с заголовком и кнопками навигации */}
       <section className="news container">
         <div className="news__title text-center">
           <h2 className="title">НОВОСТИ</h2>
-          {/* Кнопки для переключения между самыми новыми и лучшими новостями */}
-          <div className="news__title__btns flex">
-            <Link to="/news-newest">
-              <button className="button__with__bg">СВЕЖЕЕ</button>
-            </Link>
-            <Link to="/news-best">
-              <button className="button__without__bg">ЛУЧШЕЕ</button>
-            </Link>
-          </div>
         </div>
         {/* Компонент, отображающий список самых свежих новостей */}
-        <NewsList type="newest" />
+        <NewsList />
       </section>
 
       {/* Секция для связи с пользователями */}
@@ -32,4 +23,4 @@ const NewsNewestPage: React.FC = () => {
   );
 };
 
-export default NewsNewestPage;
+export default NewsPage;

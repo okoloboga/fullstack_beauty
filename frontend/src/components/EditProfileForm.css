@@ -1,0 +1,36 @@
+.profile-page {
+    padding: 20px;
+  }
+  
+  /* Контейнер для изображений портфолио */
+  .portfolio-images {
+    display: flex;
+    flex-wrap: wrap; /* Позволяет переносить изображения на новую строку, если места недостаточно */
+    gap: 10px; /* Расстояние между изображениями */
+    margin-top: 20px;
+    justify-content: flex-start; /* Выравнивание изображений по левому краю */
+  }
+  
+  /* Обёртка для каждого изображения */
+  .portfolio-image {
+    flex: 0 0 auto; /* Запрещает изменение размера элементов */
+    max-width: 200px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Стили для изображений */
+  .portfolio-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover; /* Обрезка изображений, чтобы они заполняли контейнер без искажения */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Плавные переходы для эффектов */
+  }
+  
+  /* Эффект при наведении курсора на изображение
+  .portfolio-image img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  } */
+  

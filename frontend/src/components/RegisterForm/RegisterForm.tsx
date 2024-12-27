@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { RegisterFormData } from '../../types';
 
+
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState<RegisterFormData>({
     email: '',
+    name: '',
     password: '',
     confirmPassword: '', // Добавляем поле подтверждения пароля
   });
@@ -34,7 +36,7 @@ const RegisterForm: React.FC = () => {
 
     try {
       // Отправляем запрос на сервер для регистрации
-      await registerUser(formData.email, formData.password);
+      await registerUser(formData.email, formData.name, formData.password);
       toast.success(`На почту ${formData.email} выслано письмо для подтверждения регистрации`);
       navigate('/login');
     } catch (error) {
@@ -52,6 +54,21 @@ const RegisterForm: React.FC = () => {
             placeholder="E-mail"
             className="default__input"
             value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
+      {/* Поле для имени пользователя */}
+      <div className="form__field centered-input-wrapper">
+        <div className="form__input centered-input">
+          <input
+            type="text"
+            name="name"
+            placeholder="Имя пользователя"
+            className="default__input"
+            value={formData.name}
             onChange={handleChange}
             required
           />

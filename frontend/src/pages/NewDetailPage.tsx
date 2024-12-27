@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
-import { fetchContent } from '../utils/apiService'; // Импортируем функцию
-import { NewDetail, ContentComment } from '../types';
+import { fetchContent, incrementViews } from '../utils/apiService'; // Импортируем функцию
+import { ContentDetail } from '../types';
 import './styles/ArticleDetailPage.css';
-import eyeIcon from '../assets/images/eye-icon.svg';
 import rightArrow from '../assets/images/right-arrow.svg';
-import likes from '../assets/images/like.svg';
-import dislikes from '../assets/images/dislike.svg';
-import star from '../assets/images/star.svg';
-import commentsIcon from '../assets/images/comments.svg';
 import ConnectSection from '../components/MainContent/ConnectSection';
 
 const ArticleDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [newContent, setNew] = useState<NewDetail | null>(null);
+  const [newContent, setNew] = useState<ContentDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
@@ -23,6 +17,14 @@ const ArticleDetailPage: React.FC = () => {
   const getNew = async () => {
     try {
       if (id) {
+        const viewdNews = JSON.parse(localStorage.getItem('viewedArticles') || '[]');
+        
+        if (!viewdNews.includes(id)) {
+          await incrementViews(id);
+          viewdNews.push(id);
+          localStorage.setItem('viewedArticles', JSON.stringify(viewdNews));
+        }
+        
         const data = await fetchContent(id); // Вызов функции из articleService
         setNew(data);
       } else {
@@ -108,7 +110,7 @@ const ArticleDetailPage: React.FC = () => {
           )}
         </div>
 
-        {/* Слайдер с изображениями из article.contentImages */}
+        {/* Слайдер с изображениями из new.contentImages */}
         {newContent.contentImages && newContent.contentImages.length > 0 && (
           <div className="product__slider">
             <div className="product__slider__left">

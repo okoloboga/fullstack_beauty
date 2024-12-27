@@ -106,25 +106,25 @@ export const getComments = async (req: Request, res: Response): Promise<void> =>
 
 
 // Удалить комментарий
-export const deleteComment = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const { id } = req.params;
-    console.log(`Запрос на удаление комментария с id: ${id}`);
+// export const deleteComment = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+//     const { id } = req.params;
+//     console.log(`Запрос на удаление комментария с id: ${id}`);
 
-    try {
-        const commentRepository = AppDataSource.getRepository(Comment);
-        const comment = await commentRepository.findOneBy({ id: parseInt(id) });
+//     try {
+//         const commentRepository = AppDataSource.getRepository(Comment);
+//         const comment = await commentRepository.findOneBy({ id: parseInt(id) });
 
-        if (!comment) {
-            console.warn(`Комментарий с id: ${id} не найден`);
-            res.status(404).json({ message: "Comment not found" });
-            return;
-        }
+//         if (!comment) {
+//             console.warn(`Комментарий с id: ${id} не найден`);
+//             res.status(404).json({ message: "Comment not found" });
+//             return;
+//         }
 
-        await commentRepository.remove(comment);
-        console.log(`Комментарий с id: ${id} успешно удален`);
-        res.status(200).json({ message: "Comment deleted successfully" });
-    } catch (error) {
-        console.error("Ошибка при удалении комментария:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
+//         await commentRepository.remove(comment);
+//         console.log(`Комментарий с id: ${id} успешно удален`);
+//         res.status(200).json({ message: "Comment deleted successfully" });
+//     } catch (error) {
+//         console.error("Ошибка при удалении комментария:", error);
+//         res.status(500).json({ message: "Internal server error" });
+//     }
+// };

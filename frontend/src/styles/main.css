@@ -196,12 +196,12 @@ li {
     padding: 5px 12px;
     border: 1px solid rgba(198, 41, 37, 1);
     background-color: transparent;
-    border-radius: 20px;
+    border-radius: 50px;
     color: rgba(198, 41, 37, 1);
     font-family: Inter;
     opacity: 80%;
     font-size: 18px;
-    width: fit-content;
+    width: 100%;
   }
 
 .search-input {
@@ -228,4 +228,38 @@ li {
 .filter-btn {
     flex: 0 0 5%;
     background-color: transparent;
+  }
+
+  .form-group {
+    margin-top: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .form-group input[type="text"],
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .radio-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Две колонки */
+    gap: 5px; /* Расстояние между элементами */
+  }
+  
+  .radio-item label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .radio-item input[type="radio"] {
+    margin-right: 8px;
   }

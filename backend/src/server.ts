@@ -7,6 +7,7 @@ import commentRoutes from "./routes/commentRoutes";
 import favoriteRoutes from "./routes/favoriteRoutes";
 import likeDislokeRoutes from "./routes/likeDislikeRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import reviewRoutes from "./routes/reviewRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
 import { AppDataSource } from "./config/db";
 import path from 'path';
@@ -63,6 +64,7 @@ AppDataSource.initialize()
         app.use("/api/users", userRoutes);
         app.use("/api/content", contentRoutes);
         app.use("/api/comments", commentRoutes);
+        app.use("/api/reviews", reviewRoutes);
         app.use("/api/favorite", favoriteRoutes);
         app.use("/api/likedislike", likeDislokeRoutes);
         app.use("/api/admin", adminRoutes);

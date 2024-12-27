@@ -50,7 +50,7 @@ const ConfirmEmailPage = () => {
         <h1 className="title text-center main__title">Подтверждение email</h1>
         <div className='text-center' style={{ marginTop: '20px' }}>
           <a className="text-dark" href="/login" style={{ marginTop: '20px' }}>
-            {status && <p>{status} Вернуться на страницу входа</p>}
+            {status && <p>{status}<br />Вернуться на страницу входа</p>}
           </a>
         </div>
       </section>

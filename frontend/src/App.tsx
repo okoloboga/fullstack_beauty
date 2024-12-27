@@ -8,9 +8,9 @@ import MainContent from './pages/MainContent'; // Главный контент,
 import Footer from './components/Footer'; // Футер, который добавляем внизу страницы
 import ArticlesPage from './pages/ArticlesPage'; // Страница со списком статей
 import ArticleDetailPage from './pages/ArticleDetailPage'; // Страница с детальной информацией о статье
-import NewsBestPage from './pages/NewsBestPage'; // Страница с лучшими новостями
 import NewDetailPage from './pages/NewDetailPage'; // Страница с подробной информацией о новости
-import NewsNewestPage from './pages/NewsNewestPage'; // Страница с самыми новыми новостями
+import NewsPage from './pages/NewsPage'; // Страница с самыми новыми новостями
+import PartnersPage from './pages/PartnersPage'; // Страница со списком партнеров
 import EditProfilePage from './pages/EditProfilePage'; // Страница для редактирования профиля
 import RegisterPage from './pages/RegisterPage'; // Страница регистрации
 import UserFavorites from './pages/UserFavorites'; // Страница избранных статей
@@ -39,9 +39,9 @@ const App: React.FC = () => {
         <Route path="/" element={<MainContent />} /> {/* Главная страница */}
         <Route path="/articles" element={<ArticlesPage />} /> {/* Страница всех статей */}
         <Route path="/articles/:id" element={<ArticleDetailPage />} /> {/* Детальная страница статьи, доступ к которой осуществляется через ID статьи */}
-        <Route path="/news-best" element={<NewsBestPage />} /> {/* Страница лучших новостей */}
         <Route path="/news/:id" element={<NewDetailPage />} /> {/* Детальная страница новости, доступ к которой осуществляется через ID новости */}
-        <Route path="/news-newest" element={<NewsNewestPage />} /> {/* Страница последних новостей */}
+        <Route path="/news" element={<NewsPage />} /> {/* Страница последних новостей */}
+        <Route path="/partners" element={<PartnersPage />} /> {/* Страница партнеров */}
         <Route path="/favorite" element={<UserFavorites />} /> {/* Страница избранных статей */}
         <Route path="/my-articles" element={<UserArticles />} />  {/* Страница моих статей */}
         <Route path="/register" element={<RegisterPage />} /> {/* Страница регистрации пользователя */}

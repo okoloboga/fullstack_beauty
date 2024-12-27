@@ -5,8 +5,8 @@ import likeIcon from '../../assets/images/like.svg';
 import dislikeIcon from '../../assets/images/dislike.svg';
 import starIcon from '../../assets/images/star.svg';
 import commentsIcon from '../../assets/images/comments.svg';
-import { ArticleDetail } from '../../types';
-import { fetchPopularArticles } from '../../utils/apiService';
+import { ContentDetail } from '../../types';
+import { fetchArticles } from '../../utils/apiService';
 import './ArticlesSection.css';
 import ArticleCard from '../ArticlesPage/ArticleCard';
 
@@ -19,7 +19,7 @@ const ArticlesSection: React.FC = () => {
   const [showPrev, setShowPrev] = useState<boolean>(false);
   const [showNext, setShowNext] = useState<boolean>(true);
   // Состояние для хранения списка статей
-  const [articles, setArticles] = useState<ArticleDetail[]>([]);
+  const [articles, setArticles] = useState<ContentDetail[]>([]);
 
 
   // Фильтрация статей на основе поиска
@@ -62,7 +62,8 @@ const ArticlesSection: React.FC = () => {
   useEffect(() => {
     const loadArticles = async () => {
       try {
-        const popularArticles = await fetchPopularArticles(3); // Задаём лимит
+        const popularArticles = await fetchArticles(); // Задаём лимит
+        console.log('Полученные статьи:', popularArticles);
         setArticles(popularArticles); // Сохраняем статьи в состояние
       } catch (error) {
         console.error('Ошибка при загрузке популярных статей:', error);
@@ -116,7 +117,7 @@ const ArticlesSection: React.FC = () => {
                   <p>Загрузка статей...</p>
                 ) : (
                   filteredArticles.map((article) => (
-                    <ArticleCard key={article.id} article={article} />
+                    <ArticleCard key={article.id} content={article} />
                   ))
                 )}
               </div>

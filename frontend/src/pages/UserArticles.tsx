@@ -51,7 +51,7 @@ const UserArticles: React.FC = () => {
         <div className="articles__block__cards__div">
           <div className="articles__block__cards flex">
             {articles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
+              <ArticleCard key={article.id} content={article} />
             ))}
           </div>
           <button className="button__with__bg" style={{ marginTop: '50px' }}>

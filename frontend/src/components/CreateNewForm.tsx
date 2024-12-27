@@ -9,13 +9,14 @@ import deleteFile from '../assets/images/delete.png';
 import 'react-toastify/dist/ReactToastify.css';
 import './CreateArticleForm.css';
 
-const CreateArticleForm: React.FC = () => {
+const CreateNewForm: React.FC = () => {
   const [formData, setFormData] = useState<ContentFormData>({
     title: '',
     contentText: '',
     coverImage: null as File | null,
     contentImages: [] as ContentImage[],
-    contentType: 'new'
+    contentType: 'new',
+    contentCategory: 'Косметика'
   });
   const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
   const [contentImagesPreviews, setContentImagesPreviews] = useState<string[]>([]);  
@@ -212,6 +213,8 @@ const CreateArticleForm: React.FC = () => {
     const data = new FormData();
     data.append('title', formData.title);
     data.append('contentText', formData.contentText);
+    data.append('contentType', formData.contentType);
+    data.append('contentCategory', formData.contentCategory);
   
     // Добавляем одно изображение для обложки
     if (formData.coverImage) {
@@ -227,17 +230,17 @@ const CreateArticleForm: React.FC = () => {
   
     try {
       const response = await createNew(data, token);
-      console.log('Статья успешно написана:', response);
-      toast.success('Статья успешно сохранена!');
+      console.log('Новость успешно написана:', response);
+      toast.success('Новость успешно сохранена!');
       setTimeout(() => {
-        navigate('/articles');
-      }, 2000);
+        navigate('/news');
+      }, 1000);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        console.error('Ошибка при создании статьи:', error.response?.data?.message || error.message);
-        toast.error(error.response?.data?.message || 'Ошибка при сохранении статьи. Пожалуйста, попробуйте еще раз.');
+        console.error('Ошибка при создании новость:', error.response?.data?.message || error.message);
+        toast.error(error.response?.data?.message || 'Ошибка при сохранении новости. Пожалуйста, попробуйте еще раз.');
       } else if (error instanceof Error) {
-        console.error('Ошибка при создании статьи:', error.message);
+        console.error('Ошибка при создании новости:', error.message);
         toast.error(error.message);
       } else {
         console.error('Неизвестная ошибка', error);
@@ -250,7 +253,7 @@ const CreateArticleForm: React.FC = () => {
     <section className="container">
       <div className="create__article flex justify-center container">
         <div className="create__article__title">
-          <h1 className="title main__title">НАПИСАТЬ СТАТЬЮ</h1>
+          <h1 className="title main__title">НАПИСАТЬ НОВОСТЬ</h1>
         </div>
       </div>
       <form onSubmit={handleSubmit}>
@@ -379,4 +382,4 @@ const CreateArticleForm: React.FC = () => {
   );  
 };
 
-export default CreateArticleForm;
+export default CreateNewForm;

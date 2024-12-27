@@ -18,7 +18,6 @@ export class Content {
     @Column({ default: 0 })
     comments!: number;  // Количество комментов
 
-    // Новое поле для дополнительных изображений
     @Column("simple-array", { default: [] })
     contentImages!: string[];  // Массив строк для хранения URL-ов картинок
 
@@ -30,6 +29,9 @@ export class Content {
 
     @Column()
     content!: string;
+
+    @Column()
+    category!: string;
 
     @ManyToOne(() => User, (user) => user.id)
     author!: User;

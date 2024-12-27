@@ -2,17 +2,24 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import noPhoto from '../assets/images/no-image.png';
-import star from '../assets/images/star.svg';
 import addFile from '../assets/images/add-file.svg';
-import { ProfileData } from '../types';
+import deleteFile from '../assets/images/delete.png';
+import { ProfileData, PortfolioImage } from '../types';
 import { fetchUserProfile, updateUserProfile } from '../utils/apiService';
+import star0Icon from '../assets/images/star0.svg';
+import star1Icon from '../assets/images/star1.svg';
+import star2Icon from '../assets/images/star2.svg';
+import star3Icon from '../assets/images/star3.svg';
+import star4Icon from '../assets/images/star4.svg';
+import star5Icon from '../assets/images/star5.svg';
 import './EditProfileForm.css';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const EditProfileForm: React.FC = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [portfolioImage, setPortfolioImage] = useState<File | null>(null); // Изменено на один файл
+  const [portfolioImagesPreviews, setPortfolioImagesPreviews] = useState<string[]>([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [formData, setFormData] = useState<ProfileData>({
     password: '',
     name: '',
@@ -25,9 +32,13 @@ const EditProfileForm: React.FC = () => {
     facebook: '',
     about: '',
     receiveNewsletter: false,
-    profileImage: '',
-    portfolioImage: '',
+    rating: 4,
+    reviews: 0,
+    profileImage: null as File | null,
+    portfolioImages: [],
   });
+  const [existingPortfolioImages, setExistingPortfolioImages] = useState<string[]>([]);
+  const starIcons = [star0Icon, star1Icon, star2Icon, star3Icon, star4Icon, star5Icon];
 
   // Функция для получения ID пользователя из токена
   const getUserIdFromToken = (): string | null => {
@@ -58,7 +69,7 @@ const EditProfileForm: React.FC = () => {
         const profileData = await fetchUserProfile(user); // Используем функцию из сервиса
         console.log('Данные профиля:', profileData);
         setFormData(profileData);
-        setPortfolioImage(null); // Очищаем состояние для загруженного файла, если он был ранее
+        setExistingPortfolioImages(profileData.portfolioImages || []);
         toast.success('Данные профиля успешно загружены');
       } catch (error) {
         console.error('Ошибка при загрузке данных профиля:', error);
@@ -110,27 +121,121 @@ const EditProfileForm: React.FC = () => {
     }
   };
 
-  // Обработчик изменения изображения портфолио (только одно изображение)
-  const handlePortfolioImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
-        return;
-      }
-
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-
-      img.onload = () => {
-        if (img.width > 1920 || img.height > 1080) {
-          toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1080.');
+  // Загрузка фотографий портфолио
+  const handlePortfolioImagesChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const validTypes = ['image/jpeg', 'image/png'];
+      const validPortfolioImages: PortfolioImage[] = []; // Храним файл и URL
+      const portfolioPreviews: string[] = [];
+  
+      const promises = Array.from(files).map(async (file) => {
+        console.log('Загружается файл:', file);
+  
+        // Проверяем тип файла
+        if (!validTypes.includes(file.type)) {
+          toast.error('Разрешены только файлы формата JPG и PNG.');
+          console.log('Неверный формат файла:', file.type);
           return;
         }
+  
+        // Проверяем размер файла
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error('Файл слишком большой. Пожалуйста, загрузите изображение размером не более 5MB.');
+          console.log('Файл слишком большой:', file.size);
+          return;
+        }
+  
+        const img = new Image();
+        const fileUrl = URL.createObjectURL(file);
+  
+        // Ожидаем загрузки изображения
+        await new Promise<void>((resolve) => {
+          img.src = fileUrl;
+          img.onload = () => {
+            console.log('Размер изображения:', img.width, img.height);
+            if (img.width > 1920 || img.height > 1920) {
+              toast.error('Разрешение изображения слишком велико. Пожалуйста, загрузите изображение с разрешением не более 1920x1920.');
+              console.log('Разрешение изображения слишком велико');
+              return;
+            }
+  
+            // Сохраняем файл и его URL
+            validPortfolioImages.push({ file, previewUrl: fileUrl });
+            portfolioPreviews.push(fileUrl);
+            resolve();
+          };
+        });
+      });
+  
+      await Promise.all(promises);
 
-        setPortfolioImage(file);
-        toast.success('Изображение портфолио успешно загружено');
-      };
+      // Обновляем состояние с новым контентом
+      setFormData((prev) => ({
+        ...prev,
+        portfolioImages: [
+          ...prev.portfolioImages.filter(
+            (img): img is PortfolioImage => typeof img === 'object' && img !== null && 'previewUrl' in img
+          ),
+          ...validPortfolioImages,
+        ],
+      }));
+  
+      // Обновляем превью
+      setPortfolioImagesPreviews((prev) => {
+        const newPreviews = portfolioPreviews.filter((preview) => !prev.includes(preview));
+        return [...prev, ...newPreviews];
+      });
+
+    }
+  };
+  
+  // Обработчик удаления изображения
+  const handleImageRemove = (image: string, e: React.MouseEvent<HTMLButtonElement>) => {
+    // Останавливаем стандартное поведение кнопки
+    e.preventDefault();
+    e.stopPropagation();
+
+    console.log('Попытка удалить изображение:', image);
+
+    // Получаем индекс удаляемого превью
+    const indexToRemove = portfolioImagesPreviews.findIndex((preview) => preview === image);
+    console.log('Индекс изображения в portfolioImagesPreviews:', indexToRemove);
+
+    if (indexToRemove !== -1) {
+      // Удаляем изображение из списка превью
+      const updatedPreviews = [...portfolioImagesPreviews];
+      updatedPreviews.splice(indexToRemove, 1);
+      setPortfolioImagesPreviews(updatedPreviews);
+      console.log('Обновленные превью после удаления:', updatedPreviews);
+
+      // Освобождаем память, удаляя Object URL
+      URL.revokeObjectURL(image);
+    } else {
+      console.log('Не удалось найти изображение в portfolioImagesPreviews для удаления.');
+    }
+
+    // Находим файл для удаления по сохраненной ссылке
+    const imageFileToRemove = formData.portfolioImages.find(
+      (portfolioImage) => portfolioImage.previewUrl === image
+    );
+
+    console.log('Ищем файл для удаления в formData.portfolioImages...');
+    if (imageFileToRemove) {
+      console.log('Найден файл для удаления:', imageFileToRemove.file.name);
+
+      // Удаляем файл из массива portfolioImages по previewUrl
+      const updatedPortfolioImages = formData.portfolioImages.filter(
+        (portfolioImage) => portfolioImage.previewUrl !== image
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        portfolioImages: updatedPortfolioImages,
+      }));
+      console.log('Обновленные portfolioImages после удаления:', updatedPortfolioImages);
+    } else {
+      console.log('Файл не найден в formData.portfolioImages.');
     }
   };
 
@@ -142,7 +247,11 @@ const EditProfileForm: React.FC = () => {
     }
 
     try {
-      const response = await updateUserProfile(user, formData, profileImage, portfolioImage);
+      const portfolioImages = (formData.portfolioImages || []).map(image => image.file);
+
+      console.log('portfolioImages:', formData.portfolioImages);
+
+      const response = await updateUserProfile(user, formData, profileImage, portfolioImages);
       console.log('Профиль успешно обновлен:', response);
       setFormData((prev) => ({
         ...prev,
@@ -159,6 +268,22 @@ const EditProfileForm: React.FC = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleProfileUpdate();
+  };
+
+  const prevImage = () => {
+    if (formData && formData.portfolioImages.length > 0) {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === 0 ? formData.portfolioImages.length - 1 : prevIndex - 1
+      );
+    }
+  };
+
+  const nextImage = () => {
+    if (formData && formData.portfolioImages.length > 0) {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === formData.portfolioImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }
   };
 
   return (
@@ -425,35 +550,91 @@ const EditProfileForm: React.FC = () => {
             ></textarea>
           </div>
 
-        {/* Поле для портфолио (только одно изображение) */}
-        <div className="form__field form-portfolio">
-          <div className="flex-profile item-center gap-2">
+          {/* Слайдер с изображениями портфолио */}
+          {formData?.portfolioImages && formData.portfolioImages.length > 0 && (
+          <div className="portfolio-images">
+            {existingPortfolioImages.map((image, index) => (
+              <div key={index} className="portfolio-image">
+                <img
+                  src={`${process.env.REACT_APP_API_URL}/${image}`}
+                  alt={`portfolio-${index}`}
+                  loading="lazy"
+                  onError={(e) => { (e.target as HTMLImageElement).src = '/path/to/fallback-image.jpg'; }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+          {/* Поле для портфолио */}
+          <form>
+            {/* Загрузка изображений */}
             <p>Портфолио</p>
-            <button className="article-upload article-upload-md" type="button">
-              <label htmlFor="portfolio-file">
-                <img src={addFile} alt="Добавить файл" />
-              </label>
-            </button>
-            <div className="form__input">
+            <div className="field">
               <input
-                id="portfolio-file"
+                id="imagesInput"
                 type="file"
+                name="images"
                 accept="image/*"
-                hidden
-                onChange={handlePortfolioImageChange}
+                multiple
+                onChange={handlePortfolioImagesChange}
+                style={{ display: 'none' }}
               />
+              <button className="article-upload article-upload-md" type="button">
+                <label htmlFor="imagesInput">
+                  <img src={addFile} alt="Добавить изображения" />
+                </label>
+              </button>
+
+              {/* Превью изображений */}
+              {portfolioImagesPreviews.length > 0 && (
+                <div className="images-preview" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                  {portfolioImagesPreviews.map((imagePreview, index) => {
+                    const portfolioImage = formData.portfolioImages?.[index];  // Получаем сам объект ContentImage
+                    const imageFile = portfolioImage?.file;  // Извлекаем сам файл из объекта ContentImage
+                    const isCover = portfolioImage?.previewUrl === imagePreview;   // Сравниваем только имя файла
+
+                    return (
+                      <div
+                        key={index}
+                        style={{
+                          margin: '10px',
+                          display: 'inline-block',
+                          background: 'transparent',
+                          cursor: 'pointer',
+                          position: 'relative',
+                        }}
+                      >
+                        <img
+                          src={imagePreview}
+                          alt={`Preview ${index}`}
+                          style={{
+                            maxWidth: '200px',
+                            maxHeight: '200px',
+                            filter: 'opacity(0.5)',
+                          }}
+                        />
+                        {/* Кнопка удаления */}
+                        <button
+                          onClick={(e) => handleImageRemove(imagePreview, e)}
+                          style={{
+                            position: 'absolute',
+                            background: 'transparent',
+                            borderRadius: '50%',
+                            padding: '5px',
+                            cursor: 'pointer',
+                            transform: 'translate(-45px, -45px) scale(0.5)',
+                          }}
+                        >
+                          <img src={deleteFile} alt="Удалить" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          </div>
-          <div className="images">
-            {formData.portfolioImage && (
-              <img
-                src={`${apiUrl}/${formData.portfolioImage}`}
-                alt="Portfolio"
-                className="portfolio-image"
-              />
-            )}
-          </div>
-        </div>
+          </form>
 
           {/* Поле для подписки на рассылку */}
           <div className="form__field">
@@ -472,21 +653,16 @@ const EditProfileForm: React.FC = () => {
             Сохранить
           </button>
         </div>
-        {/* Рейтинг пользователя */}
-        <div className="user__stars">
-          <div className="flex-profile item-center gap-2">
-            {/* Отображение звезд рейтинга пользователя */}
-            {[...Array(5)].map((_, index) => (
-              <img
-                key={index}
-                src={star}
-                alt="Star"
-                width={30}
-                height={30}
-              />
-            ))}
+        {/* Рейтинг */}
+        <div className="card__rating">
+          <p>Рейтинг: {formData.rating.toFixed(1)}</p>
+          <div className="stars">
+            <img
+            src={starIcons[Math.round(formData.rating)]}
+            alt={`Рейтинг: ${formData.rating}`}
+            className="rating-icon"
+            />
           </div>
-          <p>4.0</p>
         </div>
       </form>
     </section>

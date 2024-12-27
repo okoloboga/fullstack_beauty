@@ -1,44 +1,70 @@
-import React, { useEffect, useState } from 'react';
-import { fetchFilteredNews } from '../../utils/apiService';
+import React, { useEffect, useState, useMemo } from 'react';
+import { fetchNews } from '../../utils/apiService';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import NewsCard from '../NewsCard';
-import { NewsItem, NewsListProps, DecodedToken } from '../../types';
+import NewCard from './NewCard';
+import { ContentDetail, DecodedToken, NewFilters } from '../../types';
+import { toast } from 'react-toastify';
 
-const NewsList: React.FC<NewsListProps> = ({ type }) => {
-  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
+const NewsList: React.FC = () => {
+  const [newsItems, setNewsItems] = useState<ContentDetail[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [filters, setFilters] = useState<NewFilters>({
+    sortBy: 'new', // По умолчанию сортировка по новым
+  });
 
   // Получаем роль пользователя из токена
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const decodedToken = jwtDecode<DecodedToken>(token) as DecodedToken;
+        const decodedToken = jwtDecode<DecodedToken>(token);
+        console.log('Роль пользователя:', decodedToken.role);
         setUserRole(decodedToken.role);
       } catch (error) {
         console.error('Ошибка декодирования токена:', error);
       }
     }
   }, []);
-  
-  // Получаем новости с сервера и фильтруем их в зависимости от типа
+
+  // Получаем новости с сервера
   useEffect(() => {
     const loadNews = async () => {
       try {
-        const filteredNews = await fetchFilteredNews(type); // Получаем новости с учётом типа
-        setNewsItems(filteredNews); // Устанавливаем новости в состояние
+        const newsData = await fetchNews(); // Предполагается, что fetchNews возвращает массив ContentDetail
+        setNewsItems(newsData);
       } catch (error) {
         setError('Ошибка при загрузке новостей');
+        console.error('Ошибка при загрузке новостей:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadNews(); // Вызываем функцию загрузки новостей
-  }, [type]); // Перезагружаем новости при изменении типа
+    loadNews();
+  }, []);
+
+  // Обработчик изменения фильтров
+  const handleCategorySelect = (category: 'new' | 'best') => {
+    setFilters({
+      sortBy: category,
+    });
+  };
+
+  // Мемоизируем отсортированные новости
+  const sortedNewsItems = useMemo(() => {
+    const sorted = [...newsItems];
+    if (filters.sortBy === 'best') {
+      // Сортировка по количеству просмотров (views) в порядке убывания
+      sorted.sort((a, b) => Number(b.views) - Number(a.views));
+    } else if (filters.sortBy === 'new') {
+      // Сортировка по дате создания (createdAt) в порядке убывания
+      sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+    return sorted;
+  }, [newsItems, filters.sortBy]);
 
   if (loading) {
     return <p>Загрузка новостей...</p>;
@@ -57,10 +83,24 @@ const NewsList: React.FC<NewsListProps> = ({ type }) => {
           </button>
         )}
       </div>
+      <div className="news__title__btns flex">
+        <button
+          className={`${filters.sortBy === 'new' ? 'button__with__bg' : 'button__without__bg'}`}
+          onClick={() => handleCategorySelect('new')}
+        >
+          СВЕЖЕЕ
+        </button>
+        <button
+          className={`${filters.sortBy === 'best' ? 'button__with__bg' : 'button__without__bg'}`}
+          onClick={() => handleCategorySelect('best')}
+        >
+          ЛУЧШЕЕ
+        </button>
+      </div>
       <div className="news__cards flex flex-column">
         {/* Отображаем карточки новостей */}
-        {newsItems.map((newContent) => (
-          <NewsCard key={newContent.id} news={newContent} />
+        {sortedNewsItems.map((newContent) => (
+          <NewCard key={newContent.id} content={newContent} />
         ))}
       </div>
     </div>
