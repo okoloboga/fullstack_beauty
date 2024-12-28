@@ -15,7 +15,7 @@ import star4Icon from '../assets/images/star4.svg';
 import star5Icon from '../assets/images/star5.svg';
 import './EditProfileForm.css';
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL || '';
 
 const EditProfileForm: React.FC = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
