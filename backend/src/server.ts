@@ -9,6 +9,7 @@ import likeDislokeRoutes from "./routes/likeDislikeRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import reviewRoutes from "./routes/reviewRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
+import testRouter from "./controllers/testController";
 import { AppDataSource } from "./config/db";
 import path from 'path';
 import dotenv from 'dotenv';
@@ -61,6 +62,7 @@ AppDataSource.initialize()
         console.log("Connected to the database");
 
         // Роуты
+        app.use(testRouter);
         app.use("/api/users", userRoutes);
         app.use("/api/content", contentRoutes);
         app.use("/api/comments", commentRoutes);
