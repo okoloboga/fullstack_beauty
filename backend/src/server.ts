@@ -62,7 +62,7 @@ AppDataSource.initialize()
         console.log("Connected to the database");
 
         // Роуты
-        app.use(testRouter);
+        app.use("/api/test", testRouter);
         app.use("/api/users", userRoutes);
         app.use("/api/content", contentRoutes);
         app.use("/api/comments", commentRoutes);
