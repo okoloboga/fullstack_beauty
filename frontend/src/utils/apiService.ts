@@ -3,7 +3,19 @@ import axios from 'axios';
 import { AxiosError } from 'axios';
 import { toast } from 'react-toastify';
 import { ContentDetail, LoginFormData, ContactFormData } from '../types';
-const apiUrl = process.env.REACT_APP_API_URL; // Получаем URL из переменных окружения
+const apiUrl = process.env.REACT_APP_API_URL || ''; // Получаем URL из переменных окружения
+
+export const testConnect = async () => {
+  try {
+    console.log('Проверяем соединение...');
+    const response = await axiosInstance.get(`${apiUrl}/api/test/test`);
+    console.log('Проверка соединения:', response.data);
+    return response.data; // Возвращаем ответ от сервера
+  } catch (error) {
+    console.error('Ошибка при проверке соединения:', error);
+    throw error; // Прокидываем ошибку
+  }
+}
 
 // Функция для получения статьи
 export const fetchContent = async (id: string): Promise<ContentDetail> => {

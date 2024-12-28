@@ -1,12 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import rightArrow from '../../assets/images/right-arrow.svg';
-import likeIcon from '../../assets/images/like.svg';
-import dislikeIcon from '../../assets/images/dislike.svg';
-import starIcon from '../../assets/images/star.svg';
-import commentsIcon from '../../assets/images/comments.svg';
 import { ContentDetail } from '../../types';
-import { fetchArticles } from '../../utils/apiService';
+import { fetchArticles, testConnect } from '../../utils/apiService';
 import './ArticlesSection.css';
 import ArticleCard from '../ArticlesPage/ArticleCard';
 
@@ -62,6 +58,7 @@ const ArticlesSection: React.FC = () => {
   useEffect(() => {
     const loadArticles = async () => {
       try {
+        await testConnect();
         const popularArticles = await fetchArticles(); // Задаём лимит
         console.log('Полученные статьи:', popularArticles);
         setArticles(popularArticles); // Сохраняем статьи в состояние
