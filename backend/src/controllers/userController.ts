@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
-
+const domain = process.env.DOMAIN || 'http://localhost:3000';
 const upload = multer({ storage });
 
 // Регистрация пользователя
@@ -76,7 +76,7 @@ export const registerUser = async (req: Request, res: Response) => {
         
 
         // Ссылка на подтверждение регистрации
-        const confirmationUrl = `http://localhost:3000/confirm-email?token=${confirmationToken}`;
+        const confirmationUrl = `${domain}/confirm-email?token=${confirmationToken}`;
         console.log(`[DEBUG] Ссылка подтверждения: ${confirmationUrl}`);
 
         const mailOptions = {
@@ -231,7 +231,7 @@ export const requestPasswordReset = async (req: Request, res: Response): Promise
             },
         });
     
-        const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}`;
+        const resetUrl = `${domain}/reset-password?token=${resetToken}`;
     
         const mailOptions = {
             from: process.env.EMAIL_USER,
