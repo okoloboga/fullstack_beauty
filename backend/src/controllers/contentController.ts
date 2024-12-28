@@ -298,7 +298,7 @@ export const getContentById = async (req: Request, res: Response): Promise<void>
 // Получить статьи, написанные пользователем
 export const getContentByUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     // Получаем ID пользователя из токена
-    const user = req.user; // Предположим, что ID пользователя находится в токене после авторизации
+    const user = req.user.user; // Предположим, что ID пользователя находится в токене после авторизации
 
     try {
         const contentRepository = AppDataSource.getRepository(Content);
