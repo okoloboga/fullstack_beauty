@@ -189,7 +189,7 @@ export const deleteContent = async (contentId: number): Promise<void> => {
 };
 
 // Функция для загрузки данных профиля
-export const fetchUserProfile = async (user: string): Promise<any> => {
+export const fetchUserProfile = async (user: number): Promise<any> => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -302,7 +302,7 @@ export const fetchUserArticles = async (): Promise<any> => {
 
 // Функция для обновления профиля пользователя
 export const updateUserProfile = async (
-  user: string,
+  user: number,
   formData: any,
   profileImage: File | null,
   portfolioImages: File[] | null

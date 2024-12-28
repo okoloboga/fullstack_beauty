@@ -126,6 +126,7 @@ export interface ProfileNavigationProps {
 export interface DecodedToken {
     role: string;
     name: string;
+    user: number;
   }
 
 export interface LoginFormData {

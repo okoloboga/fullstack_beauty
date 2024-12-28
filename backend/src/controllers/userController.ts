@@ -294,15 +294,15 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
   };
 
 // Обновление профиля пользователя
-const deleteFile = (filePath: string) => {
-    fs.unlink(path.join(__dirname, filePath), (err) => {
-        if (err) {
-            console.error('Ошибка при удалении файла:', err);
-        } else {
-            console.log(`Файл ${filePath} успешно удалён`);
-        }
-    });
-};
+// const deleteFile = (filePath: string) => {
+//     fs.unlink(path.join(__dirname, filePath), (err) => {
+//         if (err) {
+//             console.error('Ошибка при удалении файла:', err);
+//         } else {
+//             console.log(`Файл ${filePath} успешно удалён`);
+//         }
+//     });
+// };
 
 // Обновление профиля пользователя
 export const updateUserProfile = [

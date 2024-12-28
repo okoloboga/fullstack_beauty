@@ -42,7 +42,7 @@ const EditProfileForm: React.FC = () => {
   const starIcons = [star0Icon, star1Icon, star2Icon, star3Icon, star4Icon, star5Icon];
 
   // Функция для получения ID пользователя из токена
-  const getUserIdFromToken = (): string | null => {
+  const getUserIdFromToken = (): number | null => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
@@ -51,7 +51,7 @@ const EditProfileForm: React.FC = () => {
         console.log('decodedPayload:', decodedPayload);
         const parsedPayload: DecodedToken = JSON.parse(decodedPayload);
         console.log('parsedPayload:', parsedPayload);
-        return parsedPayload.name; // Убедись, что тип соответствует
+        return parsedPayload.user; // Убедись, что тип соответствует
       } catch (error) {
         console.error('Ошибка при декодировании токена:', error);
         return null;
