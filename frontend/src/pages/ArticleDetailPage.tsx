@@ -40,12 +40,15 @@ const ArticleDetailPage: React.FC = () => {
   const getArticle = async () => {
     try {
       if (id) {
-        const viewedArticles = JSON.parse(localStorage.getItem('viewedArticles') || '[]');
-  
-        if (!viewedArticles.includes(id)) {
-          await incrementViews(id);
-          viewedArticles.push(id);
-          localStorage.setItem('viewedArticles', JSON.stringify(viewedArticles));
+        const token = localStorage.getItem('token'); // Проверяем наличие токена
+        if (token) {
+          const viewedArticles = JSON.parse(localStorage.getItem('viewedArticles') || '[]');
+          
+          if (!viewedArticles.includes(id)) {
+            await incrementViews(id); // Увеличиваем просмотры только при наличии токена
+            viewedArticles.push(id);
+            localStorage.setItem('viewedArticles', JSON.stringify(viewedArticles));
+          }
         }
   
         const data = await fetchContent(id); // Вызов функции из articleService
