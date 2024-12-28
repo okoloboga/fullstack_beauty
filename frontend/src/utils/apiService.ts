@@ -276,18 +276,8 @@ export const fetchUserFavorites = async (user: string): Promise<any> => {
 // Функция для получения избранных статей и новостей пользователя
 export const fetchUserArticles = async (): Promise<any> => {
   try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error('Ошибка: Токен авторизации отсутствует');
-      throw new Error('Токен авторизации отсутствует');
-    }
-
     // Отправляем GET-запрос на сервер
-    const response = await axiosInstance.get(`${apiUrl}/api/content/my-articles`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axiosInstance.get(`${apiUrl}/api/content/my-articles`);
 
     return response.data; // Возвращаем список статей
   } catch (error) {
