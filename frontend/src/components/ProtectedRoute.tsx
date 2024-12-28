@@ -1,12 +1,18 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { ProtectedRouteProps } from '../types';
+import { base64UrlDecode } from '../utils/base64UrlDecode';
 import './ProtectedRoute.css';
 
 // Функция декодирования токена, чтобы получить информацию о пользователе
 const decodeToken = (token: string) => {
   try {
-    return JSON.parse(atob(token.split('.')[1]));
+    console.log('before Decoding token:', token);
+    const payload = token.split('.')[1];
+    const decodedPayload = base64UrlDecode(payload);
+    const decodedToken = JSON.parse(decodedPayload);
+    console.log('decodedToken:', decodedToken);
+    return decodedToken;
   } catch (error) {
     console.error('Ошибка декодирования токена:', error);
     return null;
@@ -16,7 +22,11 @@ const decodeToken = (token: string) => {
 // Функция для проверки срока действия токена
 const isTokenExpired = (token: string): boolean => {
   try {
-    const decodedToken = JSON.parse(atob(token.split('.')[1]));
+    console.log('before Decoding token:', token);
+    const payload = token.split('.')[1];
+    const decodedPayload = base64UrlDecode(payload);
+    const decodedToken = JSON.parse(decodedPayload);
+    console.log('decodedToken:', decodedToken);
     const currentTime = Math.floor(Date.now() / 1000);
     return decodedToken.exp < currentTime;
   } catch (error) {
@@ -24,7 +34,6 @@ const isTokenExpired = (token: string): boolean => {
     return true;
   }
 };
-
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
   const token = localStorage.getItem('token');
