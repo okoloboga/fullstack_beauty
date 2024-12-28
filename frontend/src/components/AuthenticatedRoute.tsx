@@ -16,6 +16,8 @@ const isTokenExpired = (token: string): boolean => {
 // Компонент защищенного маршрута, который проверяет наличие токена и его срок действия
 const AuthenticatedRoute: React.FC = () => {
   // Получаем токен из localStorage
+  console.log('localStorage', localStorage);
+  console.log('token:', localStorage.getItem('token'));
   const token = localStorage.getItem('token');
 
   // Если токена нет или срок истек, перенаправляем пользователя на страницу логина

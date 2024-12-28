@@ -35,7 +35,9 @@ const LoginForm: React.FC = () => {
 
       // Сохраняем токен в localStorage
       localStorage.setItem('token', token);
-      toast.success('Авторизация успешна!'); // Успешное уведомление
+      toast.success('Авторизация успешна!'); // Успешное уведомление\
+      console.log('token:', token);
+      console.log('localStorage:', localStorage);
       navigate('/edit-profile');
     } catch (error) {
       // Обрабатываем ошибки авторизации
