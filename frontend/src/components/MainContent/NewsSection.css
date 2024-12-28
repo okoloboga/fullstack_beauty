@@ -57,7 +57,7 @@
   margin-top: 20px;
 }
 
-.news__cards p {
+.news__block__cards p {
     margin-bottom: 20px;
     font-family: Playfair Display;
     font-size: 30px;
@@ -65,14 +65,14 @@
     text-align: center;
   }
 
-.news__cards img {
+.news__block__cards img {
     width: 100%; /* Устанавливает ширину изображения */
     max-height: 600px; /* Ограничивает максимальную высоту */
     object-fit: cover; /* Устанавливает обрезание, чтобы изображение заполнило контейнер */
     object-position: center; /* Центрирует изображение внутри контейнера */
   }
 
-.news__cards button {
+.news__block__cards button {
     width: 100%;
     font-weight: 600;
     border: 1.55px solid #C62925;
