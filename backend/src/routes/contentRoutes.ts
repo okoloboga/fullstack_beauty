@@ -16,7 +16,7 @@ router.get("/articles", getArticles);
 router.get("/news", getNews);
 
 // Получить статьи пользователя (доступно всем)
-router.get("/my-articles", getContentByUser);
+router.get("/my-articles", authenticateToken, getContentByUser);
 
 // Получить статью по id (доступно всем)
 router.get("/:id", getContentById);
