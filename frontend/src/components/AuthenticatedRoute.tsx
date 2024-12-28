@@ -4,6 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 // Функция для проверки срока действия токена
 const isTokenExpired = (token: string): boolean => {
   try {
+    console.log('before Decoding token:', token);
     const decodedToken = JSON.parse(atob(token.split('.')[1]));
     console.log('decodedToken:', decodedToken);
     const currentTime = Math.floor(Date.now() / 1000);
