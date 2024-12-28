@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchNews } from '../../utils/apiService';
 import { ContentDetail } from '../../types';
+import NewCard from '../NewsPage/NewCard';
 import './NewsSection.css';
 
 const NewsSection: React.FC = () => {
@@ -40,40 +41,18 @@ const NewsSection: React.FC = () => {
         <div>
           {/* Первый ряд новостей (показываем первые 3 новости) */}
           <div className="news__block__cards flex">
-            {news.slice(0, 3).map((item) => (
-              <div key={item.id}>
-                <div className="news__block__card">
-                  <div>
-                    <img src={item.coverImage} alt={item.title} />
-                    <p>{item.content}</p>
-                  </div>
-                  <Link className="button__without__bg" to={`/news/${item.id}`}>
-                    Читать далее
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Второй ряд новостей (остальные новости после первых трех) */}
-          <div className="news__block__cards2 flex">
-            {news.slice(3).map((item) => (
-              <div key={item.id} className="news__block__card">
-                <div>
-                  <img src={item.coverImage} alt={item.title} />
-                  <p>{item.content}</p>
-                </div>
-                <Link className="button__without__bg" to={`/news/${item.id}`}>
-                  Читать далее
-                </Link>
-              </div>
-            ))}
+            {loading ? (
+              <p>Загрузка новостей...</p>
+                ) : (
+                  news.map((newsContent) => (
+                    <NewCard key={newsContent.id} content={newsContent} />
+                  ))
+                )}
           </div>
         </div>
-
         {/* Кнопка для перехода ко всем новостям */}
         <div className="news__block__card__btn">
-          <Link className="button__with__bg" to="/news-best">
+          <Link className="button__with__bg" to="/news">
             Все новости
           </Link>
         </div>
