@@ -15,5 +15,5 @@ COPY . .
 RUN npm run build
 
 # Запускаем приложение из скомпилированных файлов
-EXPOSE 4000
+EXPOSE 5000
 CMD ["npm", "run", "start"]
