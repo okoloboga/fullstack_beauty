@@ -16,7 +16,7 @@ import star3Icon from '../../assets/images/star3.svg';
 import star4Icon from '../../assets/images/star4.svg';
 import star5Icon from '../../assets/images/star5.svg';
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL || '';
 
 const PartnerCard: React.FC<PartnerCardProps> = ({ partner }) => {
   // Функция для генерации звезд рейтинга
@@ -130,7 +130,7 @@ const PartnerCard: React.FC<PartnerCardProps> = ({ partner }) => {
               {partner.portfolioImages.slice(0, 3).map((image, index) => (
                 <div key={index} className="portfolio-image">
                   <img
-                    src={`${process.env.REACT_APP_API_URL}/${image}`}
+                    src={`${apiUrl}/${image}`}
                     alt={`portfolio-${index}`}
                     loading="lazy"
                     onError={(e) => { (e.target as HTMLImageElement).src = '/path/to/fallback-image.jpg'; }}

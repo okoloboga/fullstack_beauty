@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { toast } from 'react-toastify';
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL || '';
 
 const axiosInstance = axios.create({
   baseURL: apiUrl,

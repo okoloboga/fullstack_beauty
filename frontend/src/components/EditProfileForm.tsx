@@ -561,7 +561,7 @@ const EditProfileForm: React.FC = () => {
             {existingPortfolioImages.map((image, index) => (
               <div key={index} className="portfolio-image">
                 <img
-                  src={`${process.env.REACT_APP_API_URL}/${image}`}
+                  src={`${apiUrl}/${image}`}
                   alt={`portfolio-${index}`}
                   loading="lazy"
                   onError={(e) => { (e.target as HTMLImageElement).src = '/path/to/fallback-image.jpg'; }}

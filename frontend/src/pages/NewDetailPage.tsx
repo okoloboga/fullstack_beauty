@@ -6,6 +6,8 @@ import './styles/ArticleDetailPage.css';
 import rightArrow from '../assets/images/right-arrow.svg';
 import ConnectSection from '../components/MainContent/ConnectSection';
 
+const apiUrl = process.env.REACT_APP_API_URL || '';
+
 const ArticleDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [newContent, setNew] = useState<ContentDetail | null>(null);
@@ -83,7 +85,7 @@ const ArticleDetailPage: React.FC = () => {
         <div className="product__img relative">
           <p>{newContent.title}</p>
           <img 
-            src={`${process.env.REACT_APP_API_URL}/${newContent.coverImage}`} 
+            src={`${apiUrl}/${newContent.coverImage}`} 
             alt={newContent.title} 
             className="article-detail-image"
           />
@@ -131,7 +133,7 @@ const ArticleDetailPage: React.FC = () => {
                       >
                         <div>
                           <img
-                            src={`${process.env.REACT_APP_API_URL}/${image}`}
+                            src={`${apiUrl}/${image}`}
                             alt={`article-image-${index}`}
                             className="articles__block__card__img"
                           />

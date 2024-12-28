@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ContentCardProps } from '../../types';
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL || '';
 
 // Компонент карточки статьи
 const ArticleCard: React.FC<ContentCardProps> = ({ content }) => {

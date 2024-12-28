@@ -6,7 +6,7 @@ import starIcon from '../../assets/images/star.svg';
 import commentsIcon from '../../assets/images/comments.svg';
 import { ContentCardProps } from '../../types';
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL || '';
 
 // Компонент карточки статьи
 const ArticleCard: React.FC<ContentCardProps> = ({ content }) => {

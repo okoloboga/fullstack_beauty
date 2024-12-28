@@ -19,7 +19,7 @@ import star4Icon from '../../assets/images/star4.svg';
 import star5Icon from '../../assets/images/star5.svg';
 import ConnectSection from '../components/MainContent/ConnectSection';
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL || '';
 
 const PartnerDetailPage: React.FC = () => {
   const navigate = useNavigate();

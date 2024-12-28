@@ -17,6 +17,8 @@ import star from '../assets/images/star.svg';
 import commentsIcon from '../assets/images/comments.svg';
 import ConnectSection from '../components/MainContent/ConnectSection';
 
+const apiUrl = process.env.REACT_APP_API_URL || '';
+
 const ArticleDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -250,7 +252,7 @@ const ArticleDetailPage: React.FC = () => {
         <div className="product__img relative">
           <p>{article.title}</p>
           <img 
-            src={`${process.env.REACT_APP_API_URL}/${article.coverImage}`} 
+            src={`${apiUrl}/${article.coverImage}`} 
             alt={article.title} 
             className="article-detail-image"
           />
@@ -312,7 +314,7 @@ const ArticleDetailPage: React.FC = () => {
                       >
                         <div>
                           <img
-                            src={`${process.env.REACT_APP_API_URL}/${image}`}
+                            src={`${apiUrl}/${image}`}
                             alt={`article-image-${index}`}
                             className="articles__block__card__img"
                           />
