@@ -4,8 +4,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import noPhoto from '../assets/images/no-image.png';
 import addFile from '../assets/images/add-file.svg';
 import deleteFile from '../assets/images/delete.png';
-import { ProfileData, PortfolioImage } from '../types';
+import { ProfileData, PortfolioImage, DecodedToken } from '../types';
 import { fetchUserProfile, updateUserProfile } from '../utils/apiService';
+import { base64UrlDecode } from '../utils/base64UrlDecode';
 import star0Icon from '../assets/images/star0.svg';
 import star1Icon from '../assets/images/star1.svg';
 import star2Icon from '../assets/images/star2.svg';
@@ -45,8 +46,12 @@ const EditProfileForm: React.FC = () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.user;
+        const payload = token.split('.')[1];
+        const decodedPayload = base64UrlDecode(payload);
+        console.log('decodedPayload:', decodedPayload);
+        const parsedPayload: DecodedToken = JSON.parse(decodedPayload);
+        console.log('parsedPayload:', parsedPayload);
+        return parsedPayload.name; // Убедись, что тип соответствует
       } catch (error) {
         console.error('Ошибка при декодировании токена:', error);
         return null;
