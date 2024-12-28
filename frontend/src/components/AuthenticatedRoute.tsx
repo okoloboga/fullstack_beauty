@@ -5,6 +5,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 const isTokenExpired = (token: string): boolean => {
   try {
     const decodedToken = JSON.parse(atob(token.split('.')[1]));
+    console.log('decodedToken:', decodedToken);
     const currentTime = Math.floor(Date.now() / 1000);
     return decodedToken.exp < currentTime;
   } catch (error) {
@@ -19,7 +20,7 @@ const AuthenticatedRoute: React.FC = () => {
   console.log('localStorage', localStorage);
   console.log('token:', localStorage.getItem('token'));
   const token = localStorage.getItem('token');
-
+  console.log('token:', token);
   // Если токена нет или срок истек, перенаправляем пользователя на страницу логина
   if (!token || isTokenExpired(token)) {
     localStorage.removeItem('token'); // Удаляем токен из localStorage
