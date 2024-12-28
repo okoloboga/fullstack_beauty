@@ -25,3 +25,58 @@
 .news__block__card__btn {
     margin-top: 60px;
   }
+
+  .news__title h2 {
+    margin-top: 50px;
+  }
+
+.news__title__btns {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    gap: 20px;
+  }
+
+.news__title__btns a {
+    width: 100%;
+    height: auto;
+  }
+
+.news__title__btns a button {
+    width: 100%;
+    font-family: Playfair Display;
+    border-radius: 50px;
+    height: 54px;
+  }
+
+.news__cards {
+    gap: 90px;
+    margin-top: 40px;
+  }
+
+.news__div__controls {
+  margin-top: 20px;
+}
+
+.news__cards p {
+    margin-bottom: 20px;
+    font-family: Playfair Display;
+    font-size: 30px;
+    font-weight: 400;
+    text-align: center;
+  }
+
+.news__cards img {
+    width: 100%; /* Устанавливает ширину изображения */
+    max-height: 600px; /* Ограничивает максимальную высоту */
+    object-fit: cover; /* Устанавливает обрезание, чтобы изображение заполнило контейнер */
+    object-position: center; /* Центрирует изображение внутри контейнера */
+  }
+
+.news__cards button {
+    width: 100%;
+    font-weight: 600;
+    border: 1.55px solid #C62925;
+    margin-top: 20px;
+    height: 51px;
+    border-radius: 50px;
+  }
